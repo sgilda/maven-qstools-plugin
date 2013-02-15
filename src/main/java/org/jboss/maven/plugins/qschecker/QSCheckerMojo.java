@@ -16,15 +16,19 @@ package org.jboss.maven.plugins.qschecker;
  * limitations under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
- * Goal which touches a timestamp file.
+ * Execute all quickstart checks
  * 
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY)
@@ -32,12 +36,20 @@ public class QSCheckerMojo extends AbstractMojo {
 
     @Component
     private MavenProject project;
-    
+
     @Component
-    private QSChecker checker;
+    private PlexusContainer container;
 
     public void execute() throws MojoExecutionException {
         System.out.println(project);
-        checker.check();
+        List<QSChecker> checkers;
+        try {
+            checkers = container.lookupList(QSChecker.class);
+            for (QSChecker qc : checkers) {
+                qc.check();
+            }
+        } catch (ComponentLookupException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
     }
 }
