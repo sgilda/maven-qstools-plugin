@@ -25,13 +25,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * Execute all quickstart checks
  * 
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY)
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresProject=true)
 public class QSCheckerMojo extends AbstractMojo {
 
     @Component
@@ -41,14 +40,15 @@ public class QSCheckerMojo extends AbstractMojo {
     private PlexusContainer container;
 
     public void execute() throws MojoExecutionException {
-        System.out.println(project);
+       
         List<QSChecker> checkers;
         try {
-            checkers = container.lookupList(QSChecker.class);
+            checkers = container.lookupList(QSChecker.class);            
             for (QSChecker qc : checkers) {
+                qc.setup(project, getLog());
                 qc.check();
             }
-        } catch (ComponentLookupException e) {
+        } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
     }

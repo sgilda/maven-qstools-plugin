@@ -1,0 +1,17 @@
+^<\?xml.*>$
+\/\*$
+<!--
+^\W*JBoss, Home of Professional Open Source.*$
+^\W*Copyright [0-9]+, Red Hat, Inc. and/or its affiliates, and individual.*$
+^\W*contributors by the @authors tag\. See the copyright\.txt in the.*$
+^\W*distribution for a full listing of individual contributors..*$
+^.*$
+^\W*Licensed under the Apache License, Version 2.0 \(the "License"\);.*$
+^\W*you may not use this file except in compliance with the License..*$
+^\W*You may obtain a copy of the License at.*$
+^\W*http://www.apache.org/licenses/LICENSE-2.0.*$
+^\W*Unless required by applicable law or agreed to in writing, software.*$
+^\W*distributed under the License is distributed on an "AS IS" BASIS,.*$
+^\W*WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\..*$
+^\W*See the License for the specific language governing permissions and.*$
+^\W*limitations under the License..*$
