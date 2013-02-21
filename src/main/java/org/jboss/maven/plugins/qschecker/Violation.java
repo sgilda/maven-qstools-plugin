@@ -21,6 +21,7 @@
  */
 package org.jboss.maven.plugins.qschecker;
 
+
 /**
  * @author rafaelbenevides
  * 
@@ -30,8 +31,11 @@ public class Violation {
     private int lineNumber;
 
     private String violationMessage;
+    
+    private Class<? extends QSChecker> sourceChecker;
 
-    public Violation(int lineNumber, String violationMessage) {
+    public Violation(Class<? extends QSChecker> checker, int lineNumber, String violationMessage) {
+        this.sourceChecker = checker;
         this.lineNumber = lineNumber;
         this.violationMessage = violationMessage;
     }
@@ -48,6 +52,13 @@ public class Violation {
      */
     public String getViolationMessage() {
         return violationMessage;
+    }
+    
+    /**
+     * @return the sourceChecker
+     */
+    public Class<? extends QSChecker> getSourceChecker() {
+        return sourceChecker;
     }
 
 }

@@ -19,8 +19,8 @@ import org.jboss.maven.plugins.qschecker.Violation;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
-@Component(role = QSChecker.class, hint = "fileheader")
-public class FileHeaderChecker implements QSChecker {
+@Component(role = QSChecker.class, hint = "indentationchecker")
+public class IndentationChecker implements QSChecker {
 
     @Requirement(role = CheckstyleExecutor.class)
     private DefaultCheckstyleExecutor checkstyleExecutor;
@@ -38,11 +38,10 @@ public class FileHeaderChecker implements QSChecker {
             .setTestSourceDirectory(project.getBasedir())
             .setFailsOnError(false)
             .setProject(project)
-            .setConfigLocation("checkstyle-header.xml")
+            .setConfigLocation("checkstyle-indentation.xml")
             .setLog(log)
             .setEncoding("UTF-8")
-            .setHeaderLocation("header.txt")
-            .setIncludes("**/*.java, **/*.xml, **/*.properties")
+            .setIncludes("**/*.java")
             .setExcludes("**/target/**");
         
         try {
@@ -71,7 +70,7 @@ public class FileHeaderChecker implements QSChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project files (*.java, *.xml, *.properties) contains license header";
+        return "Verifies if project files (*.java, *.xml, *.properties) is using proper identation";
     }
 
 }

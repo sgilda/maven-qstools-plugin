@@ -13,9 +13,7 @@ public interface QSChecker {
     /** The Plexus role identifier. */
     String ROLE = QSChecker.class.getName();
     
-    public void setup(MavenProject project, List<MavenProject> reactorProjects, Log log);
-
-    public Map<String, List<Violation>> check() throws QSCheckerException;
+    public Map<String, List<Violation>> check(MavenProject project, List<MavenProject> reactorProjects, Log log) throws QSCheckerException;
     
     public String getCheckerDescription();
 
