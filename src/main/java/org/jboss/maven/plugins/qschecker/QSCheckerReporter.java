@@ -35,6 +35,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -48,14 +49,14 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 
 /**
- * @author rafaelbenevides
+ * @author Rafael Benevides
  * 
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, 
     requiresDependencyResolution = ResolutionScope.COMPILE, 
     requiresProject = true, 
-    aggregator = true, 
     threadSafe = true)
+@Execute(phase=LifecyclePhase.INSTALL) //Some Checkers needs an installed artifact
 public class QSCheckerReporter extends AbstractMavenReport {
 
     @Component
@@ -151,7 +152,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
-                Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, reactorProjects, getLog());
+                Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, mavenSession, reactorProjects, getLog());
                 addCheckerViolationsToGlobalFilesViolations(globalFilesViolations, checkerViolations);
             }
             doFileSummary(globalFilesViolations);
@@ -272,15 +273,25 @@ public class QSCheckerReporter extends AbstractMavenReport {
                 sink.tableCell();
                 
                 //Only Java files has XREF
-                File xrefSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref/" + file.replaceAll( "\\.java$", ".html" ));
-                if (xrefSource.exists()){
-                    String linelink = xrefSource.getAbsolutePath() + "#" + violation.getLineNumber();
-                    sink.link(linelink);
+                String expression = "src/main/java";
+                int pathIndex = file.lastIndexOf(expression);
+                if (pathIndex > 0){
+                    String path = file.substring(pathIndex + expression.length()).replaceAll( "\\.java$", ".html" );
+                    File xrefSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref/" + path);
+                    if (xrefSource.exists()){
+                        String linelink = xrefSource.getAbsolutePath() + "#" + violation.getLineNumber();
+                        sink.link(linelink);
+                    }
                 }
-                File xrefTestSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref-test/" + file.replaceAll( "\\.java$", ".html" ));
-                if (xrefTestSource.exists()){
-                    String linelink = xrefTestSource.getAbsolutePath() + "#" + violation.getLineNumber();
-                    sink.link(linelink);
+                expression = "src/test/java";
+                pathIndex = file.lastIndexOf(expression);
+                if (pathIndex > 0){
+                    String path = file.substring(pathIndex + expression.length()).replaceAll( "\\.java$", ".html" );
+                    File xrefTestSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref-test/" + path);
+                    if (xrefTestSource.exists()){
+                        String linelink = xrefTestSource.getAbsolutePath() + "#" + violation.getLineNumber();
+                        sink.link(linelink);
+                    }
                 }
                 sink.text(String.valueOf(violation.getLineNumber()));
                 sink.link_();
@@ -377,9 +388,16 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.sectionTitle1_();
         
         sink.text("The following Checkers were used: ");
+        sink.list();
         for(QSChecker checker: checkers){
-            sink.text(checker.getClass().getSimpleName() + ",") ;
+            sink.listItem();
+            sink.bold();
+            sink.text(checker.getClass().getSimpleName());
+            sink.bold_();
+            sink.text(" - " + checker.getCheckerDescription()) ;
+            sink.listItem_();
         }
+        sink.list_();
         
         sink.section1_(); //Section 1 End
     }
