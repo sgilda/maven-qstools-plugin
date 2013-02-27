@@ -18,8 +18,10 @@ package org.jboss.maven.plugins.qschecker.checkers;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.xpath.XPath;
@@ -30,6 +32,9 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedValueSourceWrapper;
@@ -56,11 +61,15 @@ public class BomChecker implements QSChecker {
 
     private XPath xPath = XPathFactory.newInstance().newXPath();
 
-    private StringSearchInterpolator interpolator = new StringSearchInterpolator();;
+    private StringSearchInterpolator interpolator = new StringSearchInterpolator();
+
+    public static final String CONTEXT_BOMVERSION = "recommendedBomVersion";
+
+    @Requirement
+    private Context context;
 
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-            List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         this.mavenSession = mavenSession;
 
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
@@ -75,40 +84,83 @@ public class BomChecker implements QSChecker {
         return results;
     }
 
-    private void processProject(final MavenProject project, final Map<String, List<Violation>> results)
-            throws Exception {
-        checkBomVersion(project, results);
+    private void processProject(final MavenProject project, final Map<String, List<Violation>> results) throws Exception {
+        Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
+        checkBomVersion(project, doc, results);
+        checkDuplicateProperties(project, doc, results);
+        checkDuplicateDependencies(project, doc, results);
+    }
+
+    /**
+     * Check if the POM has duplicate dependencies (managed or not)
+     */
+    private void checkDuplicateDependencies(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        NodeList artifacts = (NodeList) xPath.evaluate("//dependency/artifactId", doc, XPathConstants.NODESET);
+        Set<String> declaredArtifacts = new HashSet<String>();
+        for (int x = 0; x < artifacts.getLength(); x++) {
+            Node artifact = artifacts.item(x);
+            String artifactName = artifact.getTextContent();
+            int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            if (!declaredArtifacts.add(artifactName)) {
+                String msg = "Dependency [%s] is declared more than once";
+                addViolation(project, results, new Violation(BomChecker.class, lineNumber, String.format(msg, artifactName)));
+            }
+        }
+    }
+
+    /**
+     * Check if the POM has duplicate declared properties
+     */
+    private void checkDuplicateProperties(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        NodeList properties = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
+        Set<String> declaredProperties = new HashSet<String>();
+        for (int x = 0; x < properties.getLength(); x++) {
+            Node property = properties.item(x);
+            String propertyName = property.getNodeName();
+            int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            if (!declaredProperties.add(propertyName)) {
+                String msg = "Property [%s] is declared more than once";
+                addViolation(project, results, new Violation(BomChecker.class, lineNumber, String.format(msg, propertyName)));
+            }
+        }
     }
 
     /**
      * Check if project is using a JDF BOM with recommended Version
+     * 
+     * @param doc
      */
-    private void checkBomVersion(MavenProject project, Map<String, List<Violation>> results) throws Exception {
-        Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
-        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency", doc,
-                XPathConstants.NODESET);
+    private void checkBomVersion(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         List<MavenDependency> managedDependencies = new ArrayList<MavenDependency>();
         // Iterate over all Declared Managed Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
-            Bom bomUsed = null;
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
             managedDependencies.add(mavenDependency);
+            // find if has a jdf bom using stacks
+            Bom bomUsed = null;
             for (Bom bom : stacks.getAvailableBoms()) {
-                if (bom.getGroupId().equals(mavenDependency.getGroupId())
-                        && bom.getArtifactId().equals(mavenDependency.getArtifactId())) {
+                if (bom.getGroupId().equals(mavenDependency.getGroupId()) && bom.getArtifactId().equals(mavenDependency.getArtifactId())) {
                     bomUsed = bom;
                 }
             }
             int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (bomUsed == null // No JDF Bom used
                     && !mavenDependency.getGroupId().equals("org.jboss.as.quickstarts")) { // Escape internal project
-                addViolation(project, results, new Violation(BomChecker.class, lineNumber, mavenDependency
-                        + " isn't a JBoss/JDF BOM"));
-            } else if (bomUsed != null && !bomUsed.getRecommendedVersion().equals(mavenDependency.getVersion())) {
-                String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency,
-                        bomUsed.getRecommendedVersion());
-                addViolation(project, results, new Violation(BomChecker.class, lineNumber, violationMsg));
+                addViolation(project, results, new Violation(BomChecker.class, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM"));
+            } else if (bomUsed != null) {
+                // find the recommended BOM version from Context or from Stacks
+                String recommendedBomVersion;
+                try {
+                    recommendedBomVersion = (String) context.get(CONTEXT_BOMVERSION);
+                } catch (ContextException e) { // if no context value, it throws a exception
+                    recommendedBomVersion = bomUsed.getRecommendedVersion();
+                }
+                if (!mavenDependency.getVersion().equals(recommendedBomVersion)) {
+                    String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency, recommendedBomVersion);
+                    addViolation(project, results, new Violation(BomChecker.class, lineNumber, violationMsg));
+                }
             }
         }
     }
@@ -143,18 +195,15 @@ public class BomChecker implements QSChecker {
     private String resolveMavenProperty(MavenProject project, String textContent) throws InterpolationException {
         interpolator.clearFeedback(); // Clear the feedback messages from previous interpolate(..) calls.
         // Associate project.model with ${project.*} and ${pom.*} prefixes
-        PrefixedValueSourceWrapper modelWrapper = new PrefixedValueSourceWrapper(
-                new ObjectBasedValueSource(project.getModel()), "project.", true);
+        PrefixedValueSourceWrapper modelWrapper = new PrefixedValueSourceWrapper(new ObjectBasedValueSource(project.getModel()), "project.", true);
         interpolator.addValueSource(modelWrapper);
         interpolator.addValueSource(new PropertiesBasedValueSource(project.getModel().getProperties()));
         return interpolator.interpolate(textContent);
     }
 
-    private void addViolation(final MavenProject mavenProject, final Map<String, List<Violation>> results,
-            final Violation violation) {
+    private void addViolation(final MavenProject mavenProject, final Map<String, List<Violation>> results, final Violation violation) {
         // Get relative path based on maven work dir
-        String fileAsString = mavenProject.getFile().getAbsolutePath()
-                .replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
+        String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
         if (results.get(fileAsString) == null) {
             results.put(fileAsString, new ArrayList<Violation>());
         }
@@ -170,5 +219,4 @@ public class BomChecker implements QSChecker {
     public String getCheckerDescription() {
         return "Check and verify if all quickstarts are using the same/latest BOM versions";
     }
-
 }

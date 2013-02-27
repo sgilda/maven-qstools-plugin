@@ -44,19 +44,17 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
+import org.jboss.maven.plugins.qschecker.checkers.BomChecker;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
-
 
 /**
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, 
-    requiresDependencyResolution = ResolutionScope.COMPILE, 
-    requiresProject = true, 
-    threadSafe = true)
-@Execute(phase=LifecyclePhase.INSTALL) //Some Checkers needs an installed artifact
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
+@Execute(phase = LifecyclePhase.INSTALL)
+// Some Checkers needs an installed artifact
 public class QSCheckerReporter extends AbstractMavenReport {
 
     @Component
@@ -71,11 +69,17 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Component
     private BuildPluginManager pluginManager;
 
-    @Parameter(property = "session", required = true, readonly = true)
+    @Component
     private MavenSession mavenSession;
 
-    @Parameter(property = "reactorProjects", readonly = true)
+    @Parameter(property = "reactorProjects", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
+
+    /**
+     * Overwrite the recommended Bom Version
+     */
+    @Parameter(property = "jboss.bom.version")
+    private String bomVersion;
 
     /*
      * (non-Javadoc)
@@ -145,16 +149,17 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         try {
+            setPlexusContextValues();
             executeJXRAndSitePlugins();
-            
-            List<QSChecker>  checkers = container.lookupList(QSChecker.class);
-            startReport(checkers, locale);
-    
+
+            List<QSChecker> checkers = container.lookupList(QSChecker.class);
+
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
                 Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, mavenSession, reactorProjects, getLog());
                 addCheckerViolationsToGlobalFilesViolations(globalFilesViolations, checkerViolations);
             }
+            startReport(checkers, locale);
             doFileSummary(globalFilesViolations);
             doFileReports(globalFilesViolations);
         } catch (Exception e) {
@@ -165,187 +170,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
     }
 
     /**
-     * @throws MojoExecutionException
-     * 
+     * Add Mojo parameter to Plexus Context
      */
-    private void executeJXRAndSitePlugins() throws MojoExecutionException {
-        //Execute JXR Plugin
-        executeMojo(
-                plugin(
-                        groupId( "org.apache.maven.plugins"),
-                        artifactId("maven-jxr-plugin"),
-                        version("2.3")
-                ), 
-                goal("aggregate"), 
-                configuration(
-                ),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
-   
-        //Execute JXR Plugin
-        executeMojo(
-                plugin(
-                        groupId( "org.apache.maven.plugins"),
-                        artifactId("maven-jxr-plugin"),
-                        version("2.3")
-                ), 
-                goal("test-aggregate"), 
-                configuration(
-                ),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
-        
-        //Execute Site Plugin
-        executeMojo(
-                plugin(
-                        groupId( "org.apache.maven.plugins"),
-                        artifactId("maven-site-plugin"),
-                        version("3.2")
-                ), 
-                goal("site"), 
-                configuration(
-                ),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
-    }
-
-    /**
-     * End the HTML report
-     * 
-     */
-    private void endReport() {
-        Sink sink = getSink();
-        sink.body_();
-        sink.flush();
-        sink.close();
-    }
-
-    /**
-     * Prints a File and each violations it have.
-     * 
-     * @param fileViolations
-     */
-    private void doFileReports(Map<String, List<Violation>> fileViolations) {
-        Sink sink = getSink();
-
-        sink.section1(); //Start Section 1
-        sink.sectionTitle1();
-        sink.text("Files Violations");
-        sink.sectionTitle1_();
-        
-        // File Sections
-        for (String file : fileViolations.keySet()) {
-            sink.anchor( file.replace( '/', '.' ) );
-            sink.anchor_();
-
-            sink.section2(); //Section 2 start
-            sink.sectionTitle2();
-            sink.text(file);
-            sink.sectionTitle2_();
-            
-            sink.table();
-            // Headers
-            sink.tableRow();
-            sink.tableHeaderCell();
-            sink.text("Checker");
-            sink.tableHeaderCell_();
-            
-            sink.tableHeaderCell();
-            sink.text("Message");
-            sink.tableHeaderCell_();
-            
-            sink.tableHeaderCell();
-            sink.text("Line num.");
-            sink.tableHeaderCell_();
-            sink.tableRow_();
-
-            // Each file violation
-            List<Violation> violations = fileViolations.get(file);
-            for (Violation violation : violations) {
-                
-                sink.tableRow();
-
-                sink.tableCell();
-                sink.text(violation.getSourceChecker().getSimpleName());
-                sink.tableCell_();
-                
-                sink.tableCell();
-                sink.text(violation.getViolationMessage());
-                sink.tableCell_();
-                
-                sink.tableCell();
-                
-                //Only Java files has XREF
-                String expression = "src/main/java";
-                int pathIndex = file.lastIndexOf(expression);
-                if (pathIndex > 0){
-                    String path = file.substring(pathIndex + expression.length()).replaceAll( "\\.java$", ".html" );
-                    File xrefSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref/" + path);
-                    if (xrefSource.exists()){
-                        String linelink = xrefSource.getAbsolutePath() + "#" + violation.getLineNumber();
-                        sink.link(linelink);
-                    }
-                }
-                expression = "src/test/java";
-                pathIndex = file.lastIndexOf(expression);
-                if (pathIndex > 0){
-                    String path = file.substring(pathIndex + expression.length()).replaceAll( "\\.java$", ".html" );
-                    File xrefTestSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref-test/" + path);
-                    if (xrefTestSource.exists()){
-                        String linelink = xrefTestSource.getAbsolutePath() + "#" + violation.getLineNumber();
-                        sink.link(linelink);
-                    }
-                }
-                sink.text(String.valueOf(violation.getLineNumber()));
-                sink.link_();
-                sink.tableCell_();
-                
-                sink.tableRow_();
-            }
-            sink.table_();
-            sink.section2_(); //End Section 2
-        }
-        sink.section1_(); // End Section 1
-    }
-
-    /**
-     * Prints file summary
-     * 
-     * @param filesViolations
-     */
-    private void doFileSummary(Map<String, List<Violation>> filesViolations) {
-        Sink sink = getSink();
-        sink.section1(); //Start Section 1
-        sink.sectionTitle1();
-        sink.text("Files");
-        sink.sectionTitle2_();
-
-        sink.table();
-        // Headers
-        sink.tableRow();
-        sink.tableHeaderCell();
-        sink.text("File");
-        sink.tableHeaderCell_();
-        
-        sink.tableHeaderCell();
-        sink.text("Violations qtd.");
-        sink.tableHeaderCell_();
-        sink.tableRow();
-        
-        for (String file: filesViolations.keySet()){
-            sink.tableRow();
-            sink.tableCell();
-            sink.link("#" + file.replace( '/', '.' ) );
-            sink.text(file);
-            sink.link_();
-            sink.tableCell_();
- 
-            sink.tableCell();
-            sink.text(String.valueOf(filesViolations.get(file).size()));
-            sink.tableCell_();
-            sink.tableRow();
-            
-        }
-        sink.table_();
-        sink.section1_(); //End Section 1
-        
+    private void setPlexusContextValues() {
+        container.getContext().put(BomChecker.CONTEXT_BOMVERSION, bomVersion);
     }
 
     /**
@@ -366,8 +194,158 @@ public class QSCheckerReporter extends AbstractMavenReport {
     }
 
     /**
+     * @throws MojoExecutionException
+     * 
+     */
+    private void executeJXRAndSitePlugins() throws MojoExecutionException {
+        // Execute JXR Plugin
+        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("aggregate"), configuration(),
+                executionEnvironment(mavenProject, mavenSession, pluginManager));
+
+        // Execute JXR Plugin for test sources
+        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("test-aggregate"), configuration(),
+                executionEnvironment(mavenProject, mavenSession, pluginManager));
+
+        // Execute Site Plugin
+        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-site-plugin"), version("3.2")), goal("site"), configuration(),
+                executionEnvironment(mavenProject, mavenSession, pluginManager));
+    }
+
+    /**
+     * Prints a File and each violations it have.
+     * 
+     * @param fileViolations
+     */
+    private void doFileReports(Map<String, List<Violation>> fileViolations) {
+        Sink sink = getSink();
+
+        sink.section1(); // Start Section 1
+        sink.sectionTitle1();
+        sink.text("Files Violations");
+        sink.sectionTitle1_();
+
+        // File Sections
+        for (String file : fileViolations.keySet()) {
+            sink.anchor(file.replace('/', '.'));
+            sink.anchor_();
+
+            sink.section2(); // Section 2 start
+            sink.sectionTitle2();
+            sink.text(file);
+            sink.sectionTitle2_();
+
+            sink.table();
+            // Headers
+            sink.tableRow();
+            sink.tableHeaderCell();
+            sink.text("Checker");
+            sink.tableHeaderCell_();
+
+            sink.tableHeaderCell();
+            sink.text("Message");
+            sink.tableHeaderCell_();
+
+            sink.tableHeaderCell();
+            sink.text("Line num.");
+            sink.tableHeaderCell_();
+            sink.tableRow_();
+
+            // Each file violation
+            List<Violation> violations = fileViolations.get(file);
+            for (Violation violation : violations) {
+
+                sink.tableRow();
+
+                sink.tableCell();
+                sink.text(violation.getSourceChecker().getSimpleName());
+                sink.tableCell_();
+
+                sink.tableCell();
+                sink.text(violation.getViolationMessage());
+                sink.tableCell_();
+
+                sink.tableCell();
+
+                // Only Java files has XREF
+                String expression = "src/main/java";
+                int pathIndex = file.lastIndexOf(expression);
+                if (pathIndex > 0) {
+                    String path = file.substring(pathIndex + expression.length()).replaceAll("\\.java$", ".html");
+                    File xrefSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref/" + path);
+                    if (xrefSource.exists()) {
+                        String linelink = xrefSource.getAbsolutePath() + "#" + violation.getLineNumber();
+                        sink.link(linelink);
+                    }
+                }
+                expression = "src/test/java";
+                pathIndex = file.lastIndexOf(expression);
+                if (pathIndex > 0) {
+                    String path = file.substring(pathIndex + expression.length()).replaceAll("\\.java$", ".html");
+                    File xrefTestSource = new File(mavenProject.getModel().getReporting().getOutputDirectory() + "/xref-test/" + path);
+                    if (xrefTestSource.exists()) {
+                        String linelink = xrefTestSource.getAbsolutePath() + "#" + violation.getLineNumber();
+                        sink.link(linelink);
+                    }
+                }
+                sink.text(String.valueOf(violation.getLineNumber()));
+                sink.link_();
+                sink.tableCell_();
+
+                sink.tableRow_();
+            }
+            sink.table_();
+            sink.section2_(); // End Section 2
+        }
+        sink.section1_(); // End Section 1
+    }
+
+    /**
+     * Prints file summary
+     * 
+     * @param filesViolations
+     */
+    private void doFileSummary(Map<String, List<Violation>> filesViolations) {
+        Sink sink = getSink();
+        sink.section1(); // Start Section 1
+        sink.sectionTitle1();
+        sink.text("Files");
+        sink.sectionTitle2_();
+
+        sink.table();
+        // Headers
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text("File");
+        sink.tableHeaderCell_();
+
+        sink.tableHeaderCell();
+        sink.text("Violations qtd.");
+        sink.tableHeaderCell_();
+        sink.tableRow();
+
+        for (String file : filesViolations.keySet()) {
+            sink.tableRow();
+            sink.tableCell();
+            sink.link("#" + file.replace('/', '.'));
+            sink.text(file);
+            sink.link_();
+            sink.tableCell_();
+
+            sink.tableCell();
+            sink.text(String.valueOf(filesViolations.get(file).size()));
+            sink.tableCell_();
+            sink.tableRow();
+
+        }
+        sink.table_();
+        sink.section1_(); // End Section 1
+
+    }
+
+    /**
      * Start the Reporter HTML
-     * @param checkers 
+     * 
+     * @param checkers
      * 
      * @param locale
      * @param sink
@@ -381,25 +359,36 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.title_();
         sink.head_();
         sink.body();
-        
-        sink.section1(); //Section 1 Start
+
+        sink.section1(); // Section 1 Start
         sink.sectionTitle1();
         sink.text("Quickstart Check Results");
         sink.sectionTitle1_();
-        
+
         sink.text("The following Checkers were used: ");
         sink.list();
-        for(QSChecker checker: checkers){
+        for (QSChecker checker : checkers) {
             sink.listItem();
             sink.bold();
             sink.text(checker.getClass().getSimpleName());
             sink.bold_();
-            sink.text(" - " + checker.getCheckerDescription()) ;
+            sink.text(" - " + checker.getCheckerDescription());
             sink.listItem_();
         }
         sink.list_();
-        
-        sink.section1_(); //Section 1 End
+
+        sink.section1_(); // Section 1 End
+    }
+
+    /**
+     * End the HTML report
+     * 
+     */
+    private void endReport() {
+        Sink sink = getSink();
+        sink.body_();
+        sink.flush();
+        sink.close();
     }
 
 }
