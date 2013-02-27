@@ -16,20 +16,12 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -44,7 +36,6 @@ import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.QSCheckerException;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
 import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
@@ -52,85 +43,31 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-@Component(role = QSChecker.class, hint = "bomChecker")
-public class BomChecker implements QSChecker {
-
-    private Stacks stacks = new StacksClient().getStacks();
-
-    private MavenSession mavenSession;
-
-    private XPath xPath = XPathFactory.newInstance().newXPath();
-
-    private StringSearchInterpolator interpolator = new StringSearchInterpolator();
+/**
+ * @author Rafael Benevides
+ * 
+ */
+@Component(role = QSChecker.class, hint = "bomVersionChecker")
+public class BomVersionChecker extends AbstractPomChecker {
 
     public static final String CONTEXT_BOMVERSION = "recommendedBomVersion";
 
     @Requirement
     private Context context;
 
-    @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
-        this.mavenSession = mavenSession;
+    private Stacks stacks = new StacksClient().getStacks();
+    
+    private StringSearchInterpolator interpolator = new StringSearchInterpolator();
+    
 
-        Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-
-        try {
-            for (MavenProject mavenProject : reactorProjects) {
-                processProject(mavenProject, results);
-            }
-        } catch (Exception e) {
-            throw new QSCheckerException(e);
-        }
-        return results;
-    }
-
-    private void processProject(final MavenProject project, final Map<String, List<Violation>> results) throws Exception {
-        Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
-        checkBomVersion(project, doc, results);
-        checkDuplicateProperties(project, doc, results);
-        checkDuplicateDependencies(project, doc, results);
-    }
-
-    /**
-     * Check if the POM has duplicate dependencies (managed or not)
-     */
-    private void checkDuplicateDependencies(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList artifacts = (NodeList) xPath.evaluate("//dependency/artifactId", doc, XPathConstants.NODESET);
-        Set<String> declaredArtifacts = new HashSet<String>();
-        for (int x = 0; x < artifacts.getLength(); x++) {
-            Node artifact = artifacts.item(x);
-            String artifactName = artifact.getTextContent();
-            int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-            if (!declaredArtifacts.add(artifactName)) {
-                String msg = "Dependency [%s] is declared more than once";
-                addViolation(project, results, new Violation(BomChecker.class, lineNumber, String.format(msg, artifactName)));
-            }
-        }
-    }
-
-    /**
-     * Check if the POM has duplicate declared properties
-     */
-    private void checkDuplicateProperties(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList properties = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
-        Set<String> declaredProperties = new HashSet<String>();
-        for (int x = 0; x < properties.getLength(); x++) {
-            Node property = properties.item(x);
-            String propertyName = property.getNodeName();
-            int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-            if (!declaredProperties.add(propertyName)) {
-                String msg = "Property [%s] is declared more than once";
-                addViolation(project, results, new Violation(BomChecker.class, lineNumber, String.format(msg, propertyName)));
-            }
-        }
-    }
-
-    /**
-     * Check if project is using a JDF BOM with recommended Version
+    /*
+     * (non-Javadoc)
      * 
-     * @param doc
+     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * org.w3c.dom.Document, java.util.Map)
      */
-    private void checkBomVersion(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    @Override
+    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         List<MavenDependency> managedDependencies = new ArrayList<MavenDependency>();
         // Iterate over all Declared Managed Dependencies
@@ -138,7 +75,7 @@ public class BomChecker implements QSChecker {
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
             managedDependencies.add(mavenDependency);
-            // find if has a jdf bom using stacks
+            // use stacks to find if the project is using a jdf bom
             Bom bomUsed = null;
             for (Bom bom : stacks.getAvailableBoms()) {
                 if (bom.getGroupId().equals(mavenDependency.getGroupId()) && bom.getArtifactId().equals(mavenDependency.getArtifactId())) {
@@ -148,7 +85,7 @@ public class BomChecker implements QSChecker {
             int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (bomUsed == null // No JDF Bom used
                     && !mavenDependency.getGroupId().equals("org.jboss.as.quickstarts")) { // Escape internal project
-                addViolation(project, results, new Violation(BomChecker.class, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM"));
+                addViolation(project, results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {
                 // find the recommended BOM version from Context or from Stacks
                 String recommendedBomVersion;
@@ -159,7 +96,7 @@ public class BomChecker implements QSChecker {
                 }
                 if (!mavenDependency.getVersion().equals(recommendedBomVersion)) {
                     String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency, recommendedBomVersion);
-                    addViolation(project, results, new Violation(BomChecker.class, lineNumber, violationMsg));
+                    addViolation(project, results, lineNumber, violationMsg);
                 }
             }
         }
@@ -201,15 +138,6 @@ public class BomChecker implements QSChecker {
         return interpolator.interpolate(textContent);
     }
 
-    private void addViolation(final MavenProject mavenProject, final Map<String, List<Violation>> results, final Violation violation) {
-        // Get relative path based on maven work dir
-        String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
-        if (results.get(fileAsString) == null) {
-            results.put(fileAsString, new ArrayList<Violation>());
-        }
-        results.get(fileAsString).add(violation);
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -219,4 +147,5 @@ public class BomChecker implements QSChecker {
     public String getCheckerDescription() {
         return "Check and verify if all quickstarts are using the same/latest BOM versions";
     }
+
 }

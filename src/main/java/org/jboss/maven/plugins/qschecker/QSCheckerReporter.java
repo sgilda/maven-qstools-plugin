@@ -22,6 +22,15 @@
 
 package org.jboss.maven.plugins.qschecker;
 
+import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +53,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
-import org.jboss.maven.plugins.qschecker.checkers.BomChecker;
-
-import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
+import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
 
 /**
  * @author Rafael Benevides
@@ -156,6 +163,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
 
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
+                getLog().info("Running Checker:" + checker.getClass().getSimpleName());
                 Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, mavenSession, reactorProjects, getLog());
                 addCheckerViolationsToGlobalFilesViolations(globalFilesViolations, checkerViolations);
             }
@@ -173,7 +181,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
      * Add Mojo parameter to Plexus Context
      */
     private void setPlexusContextValues() {
-        container.getContext().put(BomChecker.CONTEXT_BOMVERSION, bomVersion);
+        container.getContext().put(BomVersionChecker.CONTEXT_BOMVERSION, bomVersion);
     }
 
     /**

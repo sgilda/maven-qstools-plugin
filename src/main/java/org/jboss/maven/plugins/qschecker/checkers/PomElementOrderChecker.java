@@ -16,11 +16,22 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
-import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
+import java.util.List;
+import java.util.Map;
 
-@Component(role = QSChecker.class, hint = "fileFormatChecker")
-public class FileFormatChecker extends AbstractCheckstyleChecker {
+import org.apache.maven.project.MavenProject;
+import org.jboss.maven.plugins.qschecker.Violation;
+import org.w3c.dom.Document;
+
+/**
+ * @author Rafael Benevides
+ *
+ */
+public class PomElementOrderChecker extends AbstractPomChecker {
+    
+    private static enum POM_ELEMENTS {
+        parent, modules, properties, dependencyManagement, dependencies, build, profiles
+    }
 
 
     /* (non-Javadoc)
@@ -28,17 +39,17 @@ public class FileFormatChecker extends AbstractCheckstyleChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project sources (*.java) is using proper identation and spaces as tab";
+        // TODO Auto-generated method stub
+        return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+     */
     @Override
-    String getIncludes() {
-        return "**/*.java";
-    }
+    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        // TODO Auto-generated method stub
 
-    @Override
-    String getCheckstyleConfig() {
-       return "checkstyle-format.xml";
     }
 
 }
