@@ -23,16 +23,19 @@ public class MavenDependency {
     
     private String artifactId;
         
-    private String version;
+    private String declaredVersion;
+    
+    private String interpoledVersion;
     
     private String type;
     
     private String scope;
 
-    public MavenDependency( String groupId, String artifactId, String version, String type, String scope) {
+    public MavenDependency( String groupId, String artifactId, String declaredVersion, String interpoledVersion, String type, String scope) {
         this.groupId = groupId;
         this.artifactId = artifactId;
-        this.version = version;
+        this.declaredVersion = declaredVersion;
+        this.interpoledVersion = interpoledVersion;
         this.type = type;
         this.scope = scope;
     }
@@ -44,11 +47,15 @@ public class MavenDependency {
     public String getGroupId() {
         return groupId;
     }
-
-    public String getVersion() {
-        return version;
+    
+    public String getDeclaredVersion() {
+        return declaredVersion;
     }
 
+    public String getInterpoledVersion() {
+        return interpoledVersion;
+    }
+     
     public String getType() {
         return type;
     }
@@ -62,10 +69,9 @@ public class MavenDependency {
      */
     @Override
     public String toString() {
-        return String.format("MavenDependency [groupId=%s, artifactId=%s, version=%s, type=%s, scope=%s]", groupId, artifactId,
-                version, type, scope);
+        return String.format("MavenDependency [groupId=%s, artifactId=%s, declaredVersion=%s, interpoledVersion=%s, type=%s, scope=%s]", groupId, artifactId, declaredVersion,
+                interpoledVersion, type, scope);
     }
-    
-    
 
+   
 }

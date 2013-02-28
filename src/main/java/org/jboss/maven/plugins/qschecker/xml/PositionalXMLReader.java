@@ -39,7 +39,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * 
  */
 public class PositionalXMLReader {
-    
+
     public final static String LINE_NUMBER_KEY_NAME = "lineNumber";
 
     public static Document readXML(final InputStream is) throws IOException, SAXException {
@@ -67,8 +67,7 @@ public class PositionalXMLReader {
             }
 
             @Override
-            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
-                    throws SAXException {
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 addTextIfNeeded();
                 final Element el = doc.createElement(qName);
                 for (int i = 0; i < attributes.getLength(); i++) {
@@ -105,7 +104,11 @@ public class PositionalXMLReader {
                 }
             }
         };
-        parser.parse(is, handler);
+        try {
+            parser.parse(is, handler);
+        } finally {
+            is.close();
+        }
 
         return doc;
     }

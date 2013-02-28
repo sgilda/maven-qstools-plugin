@@ -28,15 +28,24 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PrefixedValueSourceWrapper;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.QSCheckerException;
 import org.jboss.maven.plugins.qschecker.Violation;
+import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
 import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public abstract class AbstractPomChecker implements QSChecker {
 
     private MavenSession mavenSession;
+
+    private StringSearchInterpolator interpolator = new StringSearchInterpolator();
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -55,6 +64,44 @@ public abstract class AbstractPomChecker implements QSChecker {
             throw new QSCheckerException(e);
         }
         return results;
+    }
+
+    protected MavenDependency getDependencyFromNode(MavenProject project, Node dependency) throws InterpolationException {
+        String groupId = null;
+        String artifactId = null;
+        String declaredVersion = null;
+        String interpoledVersion = null;
+        String type = null;
+        String scope = null;
+        for (int x = 0; x < dependency.getChildNodes().getLength(); x++) {
+            Node node = dependency.getChildNodes().item(x);
+            if ("groupId".equals(node.getNodeName())) {
+                groupId = node.getTextContent();
+            }
+            if ("artifactId".equals(node.getNodeName())) {
+                artifactId = node.getTextContent();
+            }
+            if ("version".equals(node.getNodeName())) {
+                declaredVersion = node.getTextContent();
+                interpoledVersion = resolveMavenProperty(project, declaredVersion);
+            }
+            if ("type".equals(node.getNodeName())) {
+                type = node.getTextContent();
+            }
+            if ("scope".equals(node.getNodeName())) {
+                scope = node.getTextContent();
+            }
+        }
+        return new MavenDependency(groupId, artifactId, declaredVersion, interpoledVersion, type, scope);
+    }
+
+    private String resolveMavenProperty(MavenProject project, String textContent) throws InterpolationException {
+        interpolator.clearFeedback(); // Clear the feedback messages from previous interpolate(..) calls.
+        // Associate project.model with ${project.*} and ${pom.*} prefixes
+        PrefixedValueSourceWrapper modelWrapper = new PrefixedValueSourceWrapper(new ObjectBasedValueSource(project.getModel()), "project.", true);
+        interpolator.addValueSource(modelWrapper);
+        interpolator.addValueSource(new PropertiesBasedValueSource(project.getModel().getProperties()));
+        return interpolator.interpolate(textContent);
     }
 
     protected void addViolation(final MavenProject mavenProject, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {

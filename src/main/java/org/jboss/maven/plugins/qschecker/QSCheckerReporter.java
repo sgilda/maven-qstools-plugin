@@ -56,6 +56,9 @@ import org.codehaus.plexus.PlexusContainer;
 import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
 
 /**
+ * 
+ * Generate the Quickstart repots with all Checks
+ * 
  * @author Rafael Benevides
  * 
  */
@@ -85,7 +88,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     /**
      * Overwrite the recommended Bom Version
      */
-    @Parameter(property = "jboss.bom.version")
+    @Parameter(property = "qstools.jboss.bom.version")
     private String bomVersion;
 
     /*
