@@ -18,6 +18,7 @@ package org.jboss.maven.plugins.qschecker.checkers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.xpath.XPathConstants;
 
@@ -37,7 +38,9 @@ import org.w3c.dom.NodeList;
  */
 @Component(role = QSChecker.class, hint = "propertiesNameChecker")
 public class PropertiesNameChecker extends AbstractPomChecker {
-
+    
+    private static Properties recommendedPropertiesNames;
+    
     /*
      * (non-Javadoc)
      * 
@@ -56,7 +59,11 @@ public class PropertiesNameChecker extends AbstractPomChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList dependencies = (NodeList) xPath.evaluate("//dependency | //plugin", doc, XPathConstants.NODESET);
+        if (recommendedPropertiesNames == null){
+            recommendedPropertiesNames = new Properties();
+            recommendedPropertiesNames.load(this.getClass().getResourceAsStream("/properties_names.properties"));
+        }
+        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);

@@ -89,7 +89,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                     declaredProperties.put(propertyName, pi);
                 }
                 // find all uses for properties expression
-                Pattern p = Pattern.compile("\\$\\{\\w+(\\.\\w+)*\\}");
+                Pattern p = Pattern.compile("\\$\\{\\w+(.\\w+)*(-\\w+)*\\}");
                 for (int x = 0; x < allNodes.getLength(); x++) {
                     Node node = allNodes.item(x);
                     String nodeContent = node.getTextContent();

@@ -17,21 +17,20 @@
 package org.jboss.maven.plugins.qschecker.maven;
 
 public class MavenDependency {
-    
 
     private String groupId;
-    
+
     private String artifactId;
-        
+
     private String declaredVersion;
-    
+
     private String interpoledVersion;
-    
+
     private String type;
-    
+
     private String scope;
 
-    public MavenDependency( String groupId, String artifactId, String declaredVersion, String interpoledVersion, String type, String scope) {
+    public MavenDependency(String groupId, String artifactId, String declaredVersion, String interpoledVersion, String type, String scope) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.declaredVersion = declaredVersion;
@@ -47,7 +46,7 @@ public class MavenDependency {
     public String getGroupId() {
         return groupId;
     }
-    
+
     public String getDeclaredVersion() {
         return declaredVersion;
     }
@@ -55,7 +54,7 @@ public class MavenDependency {
     public String getInterpoledVersion() {
         return interpoledVersion;
     }
-     
+
     public String getType() {
         return type;
     }
@@ -64,7 +63,9 @@ public class MavenDependency {
         return scope;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
@@ -73,5 +74,5 @@ public class MavenDependency {
                 interpoledVersion, type, scope);
     }
 
-   
+
 }

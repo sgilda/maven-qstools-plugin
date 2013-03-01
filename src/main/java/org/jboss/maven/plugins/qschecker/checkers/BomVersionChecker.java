@@ -104,7 +104,7 @@ public class BomVersionChecker extends AbstractPomChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check and verify if all quickstarts are using the same/latest BOM versions";
+        return "Check and verify if all quickstarts are using the recommended BOM version";
     }
 
 }

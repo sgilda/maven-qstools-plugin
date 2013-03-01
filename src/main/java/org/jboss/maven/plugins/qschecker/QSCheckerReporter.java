@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.execution.MavenSession;
@@ -53,6 +54,7 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
+import org.jboss.maven.plugins.qschecker.checkers.DependencyChecker;
 
 /**
  * 
@@ -61,7 +63,7 @@ import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator=true)
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = true)
 public class QSCheckerReporter extends AbstractMavenReport {
 
     @Component
@@ -81,6 +83,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
+
+    @Parameter(property = "project.remoteArtifactRepositories", readonly = true, required = true)
+    private java.util.List<ArtifactRepository> remoteRepos;
+
+    @Parameter(property = "localRepository", readonly = true, required = true)
+    private ArtifactRepository localRepository;
 
     /**
      * Overwrite the recommended Bom Version
@@ -182,6 +190,8 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     private void setPlexusContextValues() {
         container.getContext().put(BomVersionChecker.CONTEXT_BOMVERSION, bomVersion);
+        container.getContext().put(DependencyChecker.CONTEXT_LOCAL_REPOSITORY, localRepository);
+        container.getContext().put(DependencyChecker.CONTEXT_REMOTE_REPOSITORIES, remoteRepos);
     }
 
     /**
@@ -373,7 +383,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.text("Quickstart Check Results");
         sink.sectionTitle1_();
 
-        sink.text("The following Checkers were used: ");
+        sink.text("The following checkers were used: ");
         sink.list();
         for (QSChecker checker : checkers) {
             sink.listItem();
