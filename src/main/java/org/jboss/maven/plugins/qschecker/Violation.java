@@ -23,7 +23,7 @@ package org.jboss.maven.plugins.qschecker;
 
 
 /**
- * @author rafaelbenevides
+ * @author Rafael Benevides
  * 
  */
 public class Violation {

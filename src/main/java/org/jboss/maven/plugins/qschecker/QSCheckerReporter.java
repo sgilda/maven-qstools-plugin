@@ -44,7 +44,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -62,8 +61,8 @@ import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true)
-@Execute(phase = LifecyclePhase.INSTALL)
+@Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator=true)
+//@Execute(phase = LifecyclePhase.INSTALL)
 // Some Checkers needs an installed artifact
 public class QSCheckerReporter extends AbstractMavenReport {
 
@@ -166,7 +165,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
 
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
-                getLog().info("Running Checker:" + checker.getClass().getSimpleName());
+                getLog().info("Running Checker: " + checker.getClass().getSimpleName());
                 Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, mavenSession, reactorProjects, getLog());
                 addCheckerViolationsToGlobalFilesViolations(globalFilesViolations, checkerViolations);
             }

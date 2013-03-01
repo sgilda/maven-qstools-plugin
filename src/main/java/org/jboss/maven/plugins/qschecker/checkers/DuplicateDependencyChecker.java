@@ -57,17 +57,31 @@ public class DuplicateDependencyChecker extends AbstractPomChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList artifacts = (NodeList) xPath.evaluate("//dependency/artifactId", doc, XPathConstants.NODESET);
-        Set<String> declaredArtifacts = new HashSet<String>();
-        for (int x = 0; x < artifacts.getLength(); x++) {
-            Node artifact = artifacts.item(x);
+        //Check Managed Dependencies
+        Set<String> declaredManagedDependencies = new HashSet<String>();
+        NodeList managedDependency = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        for (int x = 0; x < managedDependency.getLength(); x++) {
+            Node artifact = managedDependency.item(x);
             String artifactName = artifact.getTextContent();
             int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-            if (!declaredArtifacts.add(artifactName)) { // return false if already exists
+            if (!declaredManagedDependencies.add(artifactName)) { // return false if already exists
+                String msg = "Managed Dependency [%s] is declared more than once";
+                addViolation(project, results, lineNumber, String.format(msg, artifactName));
+            }
+        }
+        //Check Dependencies
+        Set<String> declaredDependencies = new HashSet<String>();
+        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        for (int x = 0; x < dependencies.getLength(); x++) {
+            Node artifact = dependencies.item(x);
+            String artifactName = artifact.getTextContent();
+            int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            if (!declaredDependencies.add(artifactName)) { // return false if already exists
                 String msg = "Dependency [%s] is declared more than once";
                 addViolation(project, results, lineNumber, String.format(msg, artifactName));
             }
         }
+
     }
 
 }

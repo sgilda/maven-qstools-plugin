@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
 public class UnusedPropertiesChecker implements QSChecker {
 
     private Map<String, PomInformation> declaredProperties = new HashMap<String, PomInformation>();
-    
+
     private Set<String> usedProperties = new HashSet<String>();
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
@@ -75,6 +75,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         try {
+            // iterate over all reactor projects to find what properties was declared and what was really used
             for (MavenProject mavenProject : reactorProjects) {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
@@ -98,6 +99,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                     }
                 }
             }
+            // search if all declared properties have been used
             for (String declared : declaredProperties.keySet()) {
                 if (!declared.startsWith("project") && // Escape project configuration
                         !usedProperties.contains(declared)) {
@@ -107,9 +109,12 @@ public class UnusedPropertiesChecker implements QSChecker {
                     if (results.get(fileAsString) == null) {
                         results.put(fileAsString, new ArrayList<Violation>());
                     }
-                    String msg = "Propety [%s] was declared but was never used";
+                    String msg = "Property [%s] was declared but was never used";
                     results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, declared)));
                 }
+            }
+            if (results.size() > 0) {
+                log.info("There are " + results.size() + " checkers errors");
             }
         } catch (Exception e) {
             throw new QSCheckerException(e);

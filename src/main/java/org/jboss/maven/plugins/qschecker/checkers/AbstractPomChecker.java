@@ -60,6 +60,9 @@ public abstract class AbstractPomChecker implements QSChecker {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 processProject(mavenProject, doc, results);
             }
+            if (results.size() > 0){
+                log.info("There are " + results.size() + " checkers errors");
+            }
         } catch (Exception e) {
             throw new QSCheckerException(e);
         }
