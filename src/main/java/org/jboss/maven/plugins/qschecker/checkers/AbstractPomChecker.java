@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.TreeMap;
 
 import javax.xml.xpath.XPath;
@@ -48,6 +49,8 @@ public abstract class AbstractPomChecker implements QSChecker {
     private StringSearchInterpolator interpolator = new StringSearchInterpolator();
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
+    
+    protected Properties recommendedPropertiesNames = new Properties();
 
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
@@ -56,6 +59,7 @@ public abstract class AbstractPomChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
 
         try {
+            recommendedPropertiesNames.load(this.getClass().getResourceAsStream("/properties_names.properties"));
             for (MavenProject mavenProject : reactorProjects) {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 processProject(mavenProject, doc, results);

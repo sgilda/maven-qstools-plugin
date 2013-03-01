@@ -62,8 +62,6 @@ import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
  * 
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator=true)
-//@Execute(phase = LifecyclePhase.INSTALL)
-// Some Checkers needs an installed artifact
 public class QSCheckerReporter extends AbstractMavenReport {
 
     @Component

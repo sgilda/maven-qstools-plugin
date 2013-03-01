@@ -22,20 +22,25 @@ import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.annotations.Component;
+import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
+import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
  * @author Rafael Benevides
- *
+ * 
  */
-//@Component(role=QSChecker.class, hint="propertiesNameChecker")
+@Component(role = QSChecker.class, hint = "propertiesNameChecker")
 public class PropertiesNameChecker extends AbstractPomChecker {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
      */
     @Override
@@ -43,18 +48,31 @@ public class PropertiesNameChecker extends AbstractPomChecker {
         return "Check if POM properties are using standard names";
     }
 
-    /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList dependencies = (NodeList) xPath.evaluate("//dependency", doc, XPathConstants.NODESET);
-        // Iterate over all Declared Managed Dependencies
+        NodeList dependencies = (NodeList) xPath.evaluate("//dependency | //plugin", doc, XPathConstants.NODESET);
+        // Iterate over all Declared Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
-            System.out.println(mavenDependency);
+            String groupId = mavenDependency.getGroupId();
+            String artifactId = mavenDependency.getArtifactId();
+            String version = mavenDependency.getDeclaredVersion() == null ? null : mavenDependency.getDeclaredVersion().replaceAll("[${}]", "");
+            
+            if (groupId != null && version != null// If it has a groupId and a version 
+                    && recommendedPropertiesNames.containsKey(groupId) // that we manage
+                    && !recommendedPropertiesNames.get(groupId).equals(version)) { // and it has a different value
+                int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                String recommendedName = recommendedPropertiesNames.getProperty(groupId);
+                String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
+                addViolation(project, results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));
+            }
         }
     }
-
 }
