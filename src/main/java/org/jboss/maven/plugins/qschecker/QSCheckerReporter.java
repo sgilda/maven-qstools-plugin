@@ -170,6 +170,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             startReport(checkers, locale);
             doFileSummary(globalFilesViolations);
             doFileReports(globalFilesViolations);
+            getLog().info("Your report is ready at " + mavenProject.getModel().getReporting().getOutputDirectory() + File.separator + getOutputName() + ".html");
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }

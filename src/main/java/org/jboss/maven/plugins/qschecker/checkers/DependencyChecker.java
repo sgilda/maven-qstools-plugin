@@ -60,6 +60,9 @@ public class DependencyChecker extends AbstractPomChecker {
     @Requirement
     private RepositorySystem repositorySystem;
 
+    /**
+     * Parse all BOMs to find all dependencies that it manages
+     */
     private void setupManagedDependencies(MavenProject project) throws Exception {
         managedDependencies = new HashMap<MavenGA, Set<Bom>>();
         StacksClient sc = new StacksClient();
@@ -69,20 +72,34 @@ public class DependencyChecker extends AbstractPomChecker {
         }
     }
 
+    /**
+     * Resolve Each Maven Artifact from BOM Information
+     * 
+     * @param mavenProject the project used to retrieve the remote artifact repositories
+     * @param bom the bom model that is being parsed
+     * @param groupId
+     * @param artifactId
+     * @param version
+     * @throws Exception
+     */
     private void readBOMArtifact(MavenProject mavenProject, Bom bom, String groupId, String artifactId, String version) throws Exception {
         Artifact pomArtifact = repositorySystem.createArtifact(groupId, artifactId, version, "", "pom");
         ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
 
         arr.setArtifact(pomArtifact).setRemoteRepositories(mavenProject.getRemoteArtifactRepositories()).setLocalRepository(mavenSession.getLocalRepository());
         repositorySystem.resolve(arr);
+        // Given the resolved maven artifact for BOM, parse it.
         readBOM(mavenProject, bom, pomArtifact);
 
     }
 
     /**
+     * 
+     * Parse the BOM file recursively to find all managed dependencies
+     * 
      * @param mavenProject
-     * @param bomVersion
-     * @param pomArtifact
+     * @param bom the BOM model that originates the request
+     * @param pomArtifact the maven artifact that represents the BOM
      * @throws Exception
      */
     private void readBOM(MavenProject mavenProject, Bom bom, Artifact pomArtifact) throws Exception {
@@ -96,6 +113,7 @@ public class DependencyChecker extends AbstractPomChecker {
             }
             if (model.getDependencyManagement() != null) {
                 for (Dependency dep : model.getDependencyManagement().getDependencies()) {
+                    //For each dependency add its bom
                     MavenGA mvnDependency = new MavenGA(dep.getGroupId(), dep.getArtifactId());
                     if (managedDependencies.get(mvnDependency) == null) {
                         managedDependencies.put(mvnDependency, new HashSet<Bom>());
@@ -151,6 +169,10 @@ public class DependencyChecker extends AbstractPomChecker {
         }
     }
 
+    /**
+     * Represents the Maven GroupId and ArtifactId
+     * 
+     */
     private class MavenGA {
         private String groupId;
 
