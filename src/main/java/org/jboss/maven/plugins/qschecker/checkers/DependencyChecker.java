@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
@@ -36,7 +35,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.context.Context;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.maven.plugins.qschecker.QSChecker;
@@ -59,51 +57,42 @@ public class DependencyChecker extends AbstractPomChecker {
      */
     private static Map<MavenGA, Set<Bom>> managedDependencies;
 
-    public static final String CONTEXT_REMOTE_REPOSITORIES = "remoteRepos";
-
-    public static final String CONTEXT_LOCAL_REPOSITORY = "localRepository";
-
     @Requirement
     private RepositorySystem repositorySystem;
 
-    @Requirement
-    private Context context;
-
-    private void setupManagedDependencies() throws Exception {
+    private void setupManagedDependencies(MavenProject project) throws Exception {
         managedDependencies = new HashMap<MavenGA, Set<Bom>>();
         StacksClient sc = new StacksClient();
         List<Bom> boms = sc.getStacks().getAvailableBoms();
         for (Bom bom : boms) {
-            readBOMArtifact(bom, bom.getGroupId(), bom.getArtifactId(), bom.getRecommendedVersion());
+            readBOMArtifact(project, bom, bom.getGroupId(), bom.getArtifactId(), bom.getRecommendedVersion());
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void readBOMArtifact(Bom bom, String groupId, String artifactId, String version) throws Exception {
+    private void readBOMArtifact(MavenProject mavenProject, Bom bom, String groupId, String artifactId, String version) throws Exception {
         Artifact pomArtifact = repositorySystem.createArtifact(groupId, artifactId, version, "", "pom");
         ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
 
-        List<ArtifactRepository> remoteRepos = (List<ArtifactRepository>) context.get(CONTEXT_REMOTE_REPOSITORIES);
-        ArtifactRepository localRepository = (ArtifactRepository) context.get(CONTEXT_LOCAL_REPOSITORY);
-        arr.setArtifact(pomArtifact).setRemoteRepositories(remoteRepos).setLocalRepository(localRepository);
+        arr.setArtifact(pomArtifact).setRemoteRepositories(mavenProject.getRemoteArtifactRepositories()).setLocalRepository(mavenSession.getLocalRepository());
         repositorySystem.resolve(arr);
-        readBOM(bom, pomArtifact);
+        readBOM(mavenProject, bom, pomArtifact);
 
     }
 
     /**
+     * @param mavenProject
      * @param bomVersion
      * @param pomArtifact
      * @throws Exception
      */
-    private void readBOM(Bom bom, Artifact pomArtifact) throws Exception {
+    private void readBOM(MavenProject mavenProject, Bom bom, Artifact pomArtifact) throws Exception {
         if (pomArtifact.getFile().exists()) {
             MavenXpp3Reader reader = new MavenXpp3Reader();
             Model model = reader.read(new FileReader(pomArtifact.getFile()));
             // recursive parent search
             if (model.getParent() != null) {
                 Parent p = model.getParent();
-                readBOMArtifact(bom, p.getGroupId(), p.getArtifactId(), p.getVersion());
+                readBOMArtifact(mavenProject, bom, p.getGroupId(), p.getArtifactId(), p.getVersion());
             }
             if (model.getDependencyManagement() != null) {
                 for (Dependency dep : model.getDependencyManagement().getDependencies()) {
@@ -139,7 +128,7 @@ public class DependencyChecker extends AbstractPomChecker {
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         if (managedDependencies == null) {
-            setupManagedDependencies();
+            setupManagedDependencies(project);
         }
         NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
         for (int x = 0; x < dependencies.getLength(); x++) {

@@ -43,15 +43,15 @@ import org.w3c.dom.Node;
 
 public abstract class AbstractPomChecker implements QSChecker {
 
-    private MavenSession mavenSession;
-
     private StringSearchInterpolator interpolator = new StringSearchInterpolator();
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
     protected Log log;
-    
-     @Override
+
+    protected MavenSession mavenSession;
+
+    @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         this.mavenSession = mavenSession;
         this.log = log;
@@ -62,7 +62,7 @@ public abstract class AbstractPomChecker implements QSChecker {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 processProject(mavenProject, doc, results);
             }
-            if (results.size() > 0){
+            if (results.size() > 0) {
                 log.info("There are " + results.size() + " checkers errors");
             }
         } catch (Exception e) {
