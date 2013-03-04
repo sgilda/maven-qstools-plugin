@@ -16,28 +16,26 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
-import java.util.HashSet;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "duplicatePropertiesChecker")
-public class DuplicatePropertiesChecker extends AbstractProjectChecker {
+@Component(role = QSChecker.class, hint = "moduleDefinedChecker")
+public class ModuleDefinedChecker extends AbstractProjectChecker {
+
+    private static final String[] IGNORE_MODULES = new String[] { "dist", "template" };
 
     /*
      * (non-Javadoc)
@@ -46,26 +44,41 @@ public class DuplicatePropertiesChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if the POM has duplicate declared property";
+        return "Check if all project sub directories are defined as module";
+    }
+
+    /**
+     * Check if given directory is a project folder
+     * 
+     * @param f
+     * @return
+     */
+    private boolean isProjectSubdir(File f) {
+        return Arrays.asList(f.list()).contains("pom.xml");
+
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * @see
+     * org.jboss.maven.plugins.qschecker.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList properties = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
-        Set<String> declaredProperties = new HashSet<String>();
-        for (int x = 0; x < properties.getLength(); x++) {
-            Node property = properties.item(x);
-            String propertyName = property.getNodeName();
-            int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-            if (!declaredProperties.add(propertyName)) { // return false if already exists
-                String msg = "Property [%s] is declared more than once";
-                addViolation(project, results, lineNumber, String.format(msg, propertyName));
+        File rootDir = project.getBasedir();
+        List<String> submodules = new ArrayList<String>();
+        for (File f : rootDir.listFiles()) {
+            if (f.isDirectory() && isProjectSubdir(f)) {
+                submodules.add(f.getName());
+            }
+        }
+        submodules.removeAll(Arrays.asList(IGNORE_MODULES));
+        for (String dir : submodules) {
+            if (!project.getModules().contains(dir)) {
+                String msg = "The following dir [%s] is not listed as one of project submodules";
+                addViolation(project, results, 0, String.format(msg, dir));
             }
         }
     }

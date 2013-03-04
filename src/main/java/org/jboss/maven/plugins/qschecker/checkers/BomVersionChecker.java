@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "bomVersionChecker")
-public class BomVersionChecker extends AbstractPomChecker {
+public class BomVersionChecker extends AbstractProjectChecker {
 
     public static final String CONTEXT_BOMVERSION = "recommendedBomVersion";
 

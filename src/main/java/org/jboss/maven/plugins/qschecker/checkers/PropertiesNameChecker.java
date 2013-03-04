@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "propertiesNameChecker")
-public class PropertiesNameChecker extends AbstractPomChecker {
+public class PropertiesNameChecker extends AbstractProjectChecker {
     
     private static Properties recommendedPropertiesNames;
     

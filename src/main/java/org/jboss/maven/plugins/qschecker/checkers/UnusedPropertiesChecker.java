@@ -103,14 +103,14 @@ public class UnusedPropertiesChecker implements QSChecker {
             for (String declared : declaredProperties.keySet()) {
                 if (!declared.startsWith("project") && // Escape project configuration
                         !usedProperties.contains(declared)) {
-                    PomInformation pi = declaredProperties.get(declared);
+                    PomInformation pomInformation = declaredProperties.get(declared);
                     // Get relative path based on maven work dir
-                    String fileAsString = pi.getProject().getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
+                    String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
                     if (results.get(fileAsString) == null) {
                         results.put(fileAsString, new ArrayList<Violation>());
                     }
                     String msg = "Property [%s] was declared but was never used";
-                    results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, declared)));
+                    results.get(fileAsString).add(new Violation(getClass(), pomInformation.getLine(), String.format(msg, declared)));
                 }
             }
             if (results.size() > 0) {

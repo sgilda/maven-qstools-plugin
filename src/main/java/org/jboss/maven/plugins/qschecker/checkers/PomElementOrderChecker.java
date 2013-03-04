@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "pomElementOrderChecker")
-public class PomElementOrderChecker extends AbstractPomChecker {
+public class PomElementOrderChecker extends AbstractProjectChecker {
 
     private static final String[] pomElements = new String[] { "parent", "modules", "properties", "dependencyManagement", "dependencies", "build", "profiles" };
 

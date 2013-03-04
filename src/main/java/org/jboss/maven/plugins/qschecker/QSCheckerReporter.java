@@ -56,7 +56,7 @@ import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
 
 /**
  * 
- * Generate the Quickstart repots with all Checks
+ * Generate the Quickstart reports with all Checks
  * 
  * @author Rafael Benevides
  * 

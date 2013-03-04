@@ -41,7 +41,7 @@ import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public abstract class AbstractPomChecker implements QSChecker {
+public abstract class AbstractProjectChecker implements QSChecker {
 
     private StringSearchInterpolator interpolator = new StringSearchInterpolator();
 

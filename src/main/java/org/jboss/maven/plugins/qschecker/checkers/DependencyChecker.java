@@ -50,10 +50,10 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "dependencyChecker")
-public class DependencyChecker extends AbstractPomChecker {
+public class DependencyChecker extends AbstractProjectChecker {
 
     /**
-     * List of all managed Dependencies from each BOM (Bill of Materials)
+     * List of all managed Dependencies and what BOMs it is present
      */
     private static Map<MavenGA, Set<Bom>> managedDependencies;
 

@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "duplicateDependencyChecker")
-public class DuplicateDependencyChecker extends AbstractPomChecker {
+public class DuplicateDependencyChecker extends AbstractProjectChecker {
 
     /*
      * (non-Javadoc)
