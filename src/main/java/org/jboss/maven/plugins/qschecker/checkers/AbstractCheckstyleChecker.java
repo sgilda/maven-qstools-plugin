@@ -60,7 +60,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
             .setEncoding("UTF-8")
             .setHeaderLocation("header.txt")
             .setIncludes(getIncludes())
-            .setExcludes("**/target/**, **/.*/*.*");
+            .setExcludes("**/target/**, **/.*/*.*, .*");
         
         try {
             CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
