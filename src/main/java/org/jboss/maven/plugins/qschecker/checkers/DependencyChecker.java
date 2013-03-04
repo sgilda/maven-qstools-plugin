@@ -113,7 +113,7 @@ public class DependencyChecker extends AbstractProjectChecker {
             }
             if (model.getDependencyManagement() != null) {
                 for (Dependency dep : model.getDependencyManagement().getDependencies()) {
-                    //For each dependency add its bom
+                    // For each dependency add its bom
                     MavenGA mvnDependency = new MavenGA(dep.getGroupId(), dep.getArtifactId());
                     if (managedDependencies.get(mvnDependency) == null) {
                         managedDependencies.put(mvnDependency, new HashSet<Bom>());
@@ -164,7 +164,7 @@ public class DependencyChecker extends AbstractProjectChecker {
                         sb.append(String.format("%s:%s:%s / ", bom.getGroupId(), bom.getArtifactId(), bom.getRecommendedVersion()));
                     }
                 }
-                addViolation(project, results, lineNumber, sb.toString());
+                addViolation(project.getFile(), results, lineNumber, sb.toString());
             }
         }
     }

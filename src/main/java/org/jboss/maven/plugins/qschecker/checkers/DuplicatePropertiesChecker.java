@@ -65,7 +65,7 @@ public class DuplicatePropertiesChecker extends AbstractProjectChecker {
             int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (!declaredProperties.add(propertyName)) { // return false if already exists
                 String msg = "Property [%s] is declared more than once";
-                addViolation(project, results, lineNumber, String.format(msg, propertyName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, propertyName));
             }
         }
     }

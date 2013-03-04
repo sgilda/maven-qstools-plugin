@@ -38,9 +38,9 @@ import org.w3c.dom.NodeList;
  */
 @Component(role = QSChecker.class, hint = "propertiesNameChecker")
 public class PropertiesNameChecker extends AbstractProjectChecker {
-    
+
     private static Properties recommendedPropertiesNames;
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -59,7 +59,7 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        if (recommendedPropertiesNames == null){
+        if (recommendedPropertiesNames == null) {
             recommendedPropertiesNames = new Properties();
             recommendedPropertiesNames.load(this.getClass().getResourceAsStream("/properties_names.properties"));
         }
@@ -71,14 +71,14 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
             String groupId = mavenDependency.getGroupId();
             String artifactId = mavenDependency.getArtifactId();
             String version = mavenDependency.getDeclaredVersion() == null ? null : mavenDependency.getDeclaredVersion().replaceAll("[${}]", "");
-            
-            if (groupId != null && version != null// If it has a groupId and a version 
+
+            if (groupId != null && version != null// If it has a groupId and a version
                     && recommendedPropertiesNames.containsKey(groupId) // that we manage
                     && !recommendedPropertiesNames.get(groupId).equals(version)) { // and it has a different value
                 int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
                 String recommendedName = recommendedPropertiesNames.getProperty(groupId);
                 String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
-                addViolation(project, results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));
             }
         }
     }

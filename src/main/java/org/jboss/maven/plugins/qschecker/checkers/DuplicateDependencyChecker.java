@@ -57,7 +57,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        //Check Managed Dependencies
+        // Check Managed Dependencies
         Set<String> declaredManagedDependencies = new HashSet<String>();
         NodeList managedDependency = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
         for (int x = 0; x < managedDependency.getLength(); x++) {
@@ -66,10 +66,10 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
             int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (!declaredManagedDependencies.add(artifactName)) { // return false if already exists
                 String msg = "Managed Dependency [%s] is declared more than once";
-                addViolation(project, results, lineNumber, String.format(msg, artifactName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));
             }
         }
-        //Check Dependencies
+        // Check Dependencies
         Set<String> declaredDependencies = new HashSet<String>();
         NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
         for (int x = 0; x < dependencies.getLength(); x++) {
@@ -78,7 +78,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
             int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (!declaredDependencies.add(artifactName)) { // return false if already exists
                 String msg = "Dependency [%s] is declared more than once";
-                addViolation(project, results, lineNumber, String.format(msg, artifactName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));
             }
         }
 

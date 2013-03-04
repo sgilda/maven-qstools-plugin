@@ -78,7 +78,7 @@ public class ModuleDefinedChecker extends AbstractProjectChecker {
         for (String dir : submodules) {
             if (!project.getModules().contains(dir)) {
                 String msg = "The following dir [%s] is not listed as one of project submodules";
-                addViolation(project, results, 0, String.format(msg, dir));
+                addViolation(project.getFile(), results, 0, String.format(msg, dir));
             }
         }
     }

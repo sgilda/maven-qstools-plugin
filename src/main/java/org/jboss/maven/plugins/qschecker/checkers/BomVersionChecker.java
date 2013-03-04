@@ -51,7 +51,6 @@ public class BomVersionChecker extends AbstractProjectChecker {
     private Context context;
 
     private Stacks stacks = new StacksClient().getStacks();
-    
 
     /*
      * (non-Javadoc)
@@ -78,7 +77,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
             int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
             if (bomUsed == null // No JDF Bom used
                     && !mavenDependency.getGroupId().equals("org.jboss.as.quickstarts")) { // Escape internal project
-                addViolation(project, results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
+                addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {
                 // find the recommended BOM version from Context or from Stacks
                 String recommendedBomVersion;
@@ -89,13 +88,11 @@ public class BomVersionChecker extends AbstractProjectChecker {
                 }
                 if (!mavenDependency.getInterpoledVersion().equals(recommendedBomVersion)) {
                     String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency, recommendedBomVersion);
-                    addViolation(project, results, lineNumber, violationMsg);
+                    addViolation(project.getFile(), results, lineNumber, violationMsg);
                 }
             }
         }
     }
-
-
 
     /*
      * (non-Javadoc)

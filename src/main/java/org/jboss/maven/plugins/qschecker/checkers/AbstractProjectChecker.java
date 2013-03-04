@@ -16,6 +16,7 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -109,9 +110,13 @@ public abstract class AbstractProjectChecker implements QSChecker {
         return interpolator.interpolate(textContent);
     }
 
-    protected void addViolation(final MavenProject mavenProject, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
+    /**
+     * Adds violation referencing the pom.xml file as the violated file
+     * 
+     */
+    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
         // Get relative path based on maven work dir
-        String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
+        String fileAsString = file.getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
         if (results.get(fileAsString) == null) {
             results.put(fileAsString, new ArrayList<Violation>());
         }
