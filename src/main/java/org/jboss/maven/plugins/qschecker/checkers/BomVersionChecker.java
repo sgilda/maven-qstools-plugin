@@ -33,7 +33,6 @@ import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -74,7 +73,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
                     bomUsed = bom;
                 }
             }
-            int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            int lineNumber = getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
                     && !mavenDependency.getGroupId().equals("org.jboss.as.quickstarts")) { // Escape internal project
                 addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");

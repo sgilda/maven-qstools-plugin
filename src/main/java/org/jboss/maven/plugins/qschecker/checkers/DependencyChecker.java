@@ -40,7 +40,6 @@ import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -152,7 +151,7 @@ public class DependencyChecker extends AbstractProjectChecker {
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
-            int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            int lineNumber = getLineNumberFromNode(dependency);
             MavenGA ga = new MavenGA(mavenDependency.getGroupId(), mavenDependency.getArtifactId());
             if (mavenDependency.getDeclaredVersion() != null) {
                 StringBuilder sb = new StringBuilder(String.format("You shoul NOT declare versions as declared for %s:%s:%s. Consider using a BOM. ", mavenDependency.getGroupId(),

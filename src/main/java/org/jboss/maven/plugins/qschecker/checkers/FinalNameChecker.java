@@ -16,10 +16,8 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.xpath.XPathConstants;
 
@@ -29,14 +27,13 @@ import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "duplicatePropertiesChecker")
-public class DuplicatePropertiesChecker extends AbstractProjectChecker {
+@Component(role = QSChecker.class, hint = "finalNameChecker")
+public class FinalNameChecker extends AbstractProjectChecker {
 
     /*
      * (non-Javadoc)
@@ -45,27 +42,22 @@ public class DuplicatePropertiesChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if the POM has duplicate declared property";
+        return "Check if pom.xml contains <finalName>${project.artifactId}</finalName>";
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * @see
+     * org.jboss.maven.plugins.qschecker.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList properties = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
-        Set<String> declaredProperties = new HashSet<String>();
-        for (int x = 0; x < properties.getLength(); x++) {
-            Node property = properties.item(x);
-            String propertyName = property.getNodeName();
-            int lineNumber = getLineNumberFromNode(property);
-            if (!declaredProperties.add(propertyName)) { // return false if already exists
-                String msg = "Property [%s] is declared more than once";
-                addViolation(project.getFile(), results, lineNumber, String.format(msg, propertyName));
-            }
+        Node finalNameNode = (Node) xPath.evaluate("//finalName", doc, XPathConstants.NODE);
+        if (finalNameNode == null || !finalNameNode.getTextContent().equals("${project.artifactId}")){ 
+            int lineNumber = finalNameNode == null?0:getLineNumberFromNode(finalNameNode);
+            addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName>");
         }
     }
 

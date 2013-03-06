@@ -27,7 +27,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -63,7 +62,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
         for (int x = 0; x < managedDependency.getLength(); x++) {
             Node artifact = managedDependency.item(x);
             String artifactName = artifact.getTextContent();
-            int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            int lineNumber = getLineNumberFromNode(artifact);
             if (!declaredManagedDependencies.add(artifactName)) { // return false if already exists
                 String msg = "Managed Dependency [%s] is declared more than once";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));
@@ -75,7 +74,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node artifact = dependencies.item(x);
             String artifactName = artifact.getTextContent();
-            int lineNumber = Integer.parseInt((String) artifact.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            int lineNumber = getLineNumberFromNode(artifact);
             if (!declaredDependencies.add(artifactName)) { // return false if already exists
                 String msg = "Dependency [%s] is declared more than once";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));

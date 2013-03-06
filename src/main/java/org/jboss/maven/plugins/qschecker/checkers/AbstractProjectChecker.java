@@ -100,6 +100,11 @@ public abstract class AbstractProjectChecker implements QSChecker {
         }
         return new MavenDependency(groupId, artifactId, declaredVersion, interpoledVersion, type, scope);
     }
+    
+    
+    protected int getLineNumberFromNode(Node node){
+        return Integer.parseInt((String) node.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+    }
 
     private String resolveMavenProperty(MavenProject project, String textContent) throws InterpolationException {
         interpolator.clearFeedback(); // Clear the feedback messages from previous interpolate(..) calls.

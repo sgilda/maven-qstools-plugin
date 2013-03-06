@@ -27,7 +27,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -75,7 +74,7 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
             if (groupId != null && version != null// If it has a groupId and a version
                     && recommendedPropertiesNames.containsKey(groupId) // that we manage
                     && !recommendedPropertiesNames.get(groupId).equals(version)) { // and it has a different value
-                int lineNumber = Integer.parseInt((String) dependency.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                int lineNumber = getLineNumberFromNode(dependency);
                 String recommendedName = recommendedPropertiesNames.getProperty(groupId);
                 String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));

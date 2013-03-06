@@ -33,7 +33,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -76,7 +75,7 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
             arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(mavenSession.getLocalRepository());
             ArtifactResolutionResult result = repositorySystem.resolve(arr);
             Node dependencyNode = (Node) xPath.evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
-            int lineNumber = Integer.parseInt((String) dependencyNode.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+            int lineNumber = getLineNumberFromNode(dependencyNode);
             if (!result.isSuccess()){
                 addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
             }

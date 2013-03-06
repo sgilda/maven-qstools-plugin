@@ -27,7 +27,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -63,7 +62,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
         for (String element : pomElements) {
             Node elementNode = (Node) xPath.evaluate("/project/" + element, doc, XPathConstants.NODE);
             if (elementNode != null) {
-                int lineNumber = Integer.parseInt((String) elementNode.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                int lineNumber = getLineNumberFromNode(elementNode);
                 elementsFound.put(element, lineNumber);
             }
 
