@@ -6,7 +6,7 @@
 	<module name="RegexpHeader">
 		<property name="headerFile" value="${checkstyle.header.file}"/>
 		<property name="charset" value="UTF-8" />
-		<property name="multiLines" value="1, 2, 3"/>
+		<property name="multiLines" value="1, 2, 3, 4, 5"/>
 		<property name="fileExtensions" value="xml, java, properties"/>
 	</module>
 </module>
