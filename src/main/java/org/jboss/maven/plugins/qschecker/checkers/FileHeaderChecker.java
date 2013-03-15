@@ -27,12 +27,12 @@ public class FileHeaderChecker extends AbstractCheckstyleChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project files (*.java, *.xml, *.properties) contains license header";
+        return "Verifies if project files contains license header";
     }
 
     @Override
     String getIncludes() {
-       return "**/*.java, **/*.xml, **/*.properties";
+       return "**/*.*";
     }
 
     @Override
