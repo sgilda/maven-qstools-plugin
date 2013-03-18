@@ -44,7 +44,7 @@ public class ModuleDefinedChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if all project sub directories are defined as module";
+        return "Checks if all project subdirectories are defined as module";
     }
 
     /**

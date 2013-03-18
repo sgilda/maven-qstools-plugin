@@ -62,7 +62,7 @@ public class UnusedPropertiesChecker implements QSChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if a project and its modules has a declared and unused propery";
+        return "Checks if a project and its modules has a declared and unused propery";
     }
 
     /*

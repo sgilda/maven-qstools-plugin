@@ -42,7 +42,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if pom.xml contains <finalName>${project.artifactId}</finalName>";
+        return "Checks if the pom.xml contains <finalName>${project.artifactId}</finalName>";
     }
 
     /*

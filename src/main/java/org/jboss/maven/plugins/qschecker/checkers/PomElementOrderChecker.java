@@ -46,7 +46,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if POM xml elements are in specific order";
+        return "Checks if POM xml elements are in specific order";
     }
 
     /*
@@ -74,7 +74,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
             if (previousElement != null) {
                 int previousElementLineNumber = elementsFound.get(previousElement);
                 if (lineNumber < previousElementLineNumber) {
-                    String msg = "Element [%s] is not on required order: " + Arrays.toString(pomElements) + ". It shoud come after [%s] that is actually on line %s";
+                    String msg = "Element [%s] is not in the correct order: " + Arrays.toString(pomElements) + ". It shoud come after [%s] on line %s";
                     addViolation(project.getFile(), results, lineNumber, String.format(msg, element, previousElement, previousElementLineNumber));
                 }
             }

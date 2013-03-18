@@ -121,7 +121,7 @@ public class DependencyChecker extends AbstractProjectChecker {
                 }
             }
         } else {
-            String msg = String.format("BOM %s (from jdf-stacks) was not found. Maybe you need to setup a EAP/WFK repository on your settings.xml.", pomArtifact);
+            String msg = String.format("BOM %s (from jdf-stacks) was not found. You may need to configure an EAP/WFK repository in your settings.xml.", pomArtifact);
             log.debug(msg);
         }
     }
@@ -133,7 +133,7 @@ public class DependencyChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if all dependencies are using a BOM (not declare a version) and suggest what BOMs to use";
+        return "Checks if all dependencies are using a BOM (not declare a version) and suggest what BOMs to use";
     }
 
     /*
@@ -154,7 +154,7 @@ public class DependencyChecker extends AbstractProjectChecker {
             int lineNumber = getLineNumberFromNode(dependency);
             MavenGA ga = new MavenGA(mavenDependency.getGroupId(), mavenDependency.getArtifactId());
             if (mavenDependency.getDeclaredVersion() != null) {
-                StringBuilder sb = new StringBuilder(String.format("You shoul NOT declare versions as declared for %s:%s:%s. Consider using a BOM. ", mavenDependency.getGroupId(),
+                StringBuilder sb = new StringBuilder(String.format("You should NOT declare a version for %s:%s:%s. Consider using a BOM. ", mavenDependency.getGroupId(),
                         mavenDependency.getArtifactId(), mavenDependency.getDeclaredVersion()));
                 // If has a BOM for it
                 if (managedDependencies.get(ga) != null) {

@@ -53,7 +53,7 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if all dependencies are in Central Maven repo";
+        return "Checks if all dependencies are in Central Maven repository";
     }
 
     /*

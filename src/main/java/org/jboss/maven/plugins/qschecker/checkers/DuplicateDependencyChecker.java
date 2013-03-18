@@ -45,7 +45,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if the POM has any duplicate dependency";
+        return "Checks if the POM has any duplicate dependency";
     }
 
     /*

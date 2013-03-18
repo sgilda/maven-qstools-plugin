@@ -52,7 +52,7 @@ public class ReadmeChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if Readme.md metadata is defined and if the title matches the folder name";
+        return "Checks if README.md metadata is defined and if the title matches the folder name";
     }
 
     /*

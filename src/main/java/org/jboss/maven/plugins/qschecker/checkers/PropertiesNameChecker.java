@@ -47,7 +47,7 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if POM properties are using standard names";
+        return "Checks if POM properties are using standard names";
     }
 
     /*
