@@ -4,12 +4,36 @@
 
     <groupId>org.jboss.maven.plugins</groupId>
     <artifactId>qstools</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>maven-plugin</packaging>
 
     <name>quickstart-checker Maven Plugin</name>
+    <description>JDF Quickstarts tools (plugins and reporters)</description>
 
     <url>http://www.jboss.org/jdf</url>
+
+    <scm>
+        <connection>scm:git:git@github.com:rafabene/qstools.git</connection>
+        <developerConnection>scm:git:git@github.com:rafabene/qstools.git</developerConnection>
+        <url>http://github.com/rafabene/qstools</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>jboss.org</id>
+            <name>JBoss.org Community</name>
+            <organization>JBoss.org</organization>
+            <organizationUrl>http://www.jboss.org</organizationUrl>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License, Version 2.1</name>
+            <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +41,29 @@
 		<!-- maven-compiler-plugin -->
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+        
+        <!-- Repository Deployment URLs -->
+
+        <jboss.releases.repo.url>
+            https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/
+        </jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>
+            https://repository.jboss.org/nexus/content/repositories/snapshots/
+        </jboss.snapshots.repo.url>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>jboss-releases-repository</id>
+            <name>JBoss Releases Repository</name>
+            <url>${jboss.releases.repo.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>jboss-snapshots-repository</id>
+            <name>JBoss Snapshots Repository</name>
+            <url>${jboss.snapshots.repo.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
