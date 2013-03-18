@@ -14,27 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker;
+package org.jboss.maven.plugins.qschecker.checkers;
 
-import java.util.List;
-import java.util.Map;
+import org.codehaus.plexus.component.annotations.Component;
+import org.jboss.maven.plugins.qschecker.QSChecker;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
+@Component(role = QSChecker.class, hint = "IndentationChecker")
+public class IndentationChecker extends AbstractCheckstyleChecker {
 
 
-public interface QSChecker {
+    /* (non-Javadoc)
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     */
+    @Override
+    public String getCheckerDescription() {
+        return "Verifies if project sources (*.java) are using proper indentation";
+    }
 
-    /** The Plexus role identifier. */
-    String ROLE = QSChecker.class.getName();
-    
-    public Map<String, List<Violation>> check(final MavenProject project, final MavenSession mavenSession, final List<MavenProject> reactorProjects, final Log log) throws QSCheckerException;
-    
-    public String getCheckerDescription();
-    
-    public int getViolatonsQtd();
-    
-    public void resetViolationsQtd();
+    @Override
+    String getIncludes() {
+        return "**/*.java";
+    }
+
+    @Override
+    String getCheckstyleConfig() {
+       return "checkstyle-indentation.xml";
+    }
 
 }

@@ -55,6 +55,28 @@ public class UnusedPropertiesChecker implements QSChecker {
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
+    private int violationsQtd;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     */
+    @Override
+    public int getViolatonsQtd() {
+        return violationsQtd;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     */
+    @Override
+    public void resetViolationsQtd() {
+        violationsQtd = 0;
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -102,7 +124,7 @@ public class UnusedPropertiesChecker implements QSChecker {
             // search if all declared properties have been used
             for (String declared : declaredProperties.keySet()) {
                 if (!declared.startsWith("project") && // Escape project configuration
-                        !usedProperties.contains(declared)) {
+                    !usedProperties.contains(declared)) {
                     PomInformation pomInformation = declaredProperties.get(declared);
                     // Get relative path based on maven work dir
                     String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
@@ -114,6 +136,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                 }
             }
             if (results.size() > 0) {
+                violationsQtd = results.size();
                 log.info("There are " + results.size() + " checkers errors");
             }
         } catch (Exception e) {

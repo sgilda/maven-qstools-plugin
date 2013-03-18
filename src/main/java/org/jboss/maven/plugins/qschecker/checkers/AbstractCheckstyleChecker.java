@@ -36,16 +36,35 @@ import org.jboss.maven.plugins.qschecker.Violation;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
 public abstract class AbstractCheckstyleChecker implements QSChecker {
-    
+
+    private int violationsQtd;
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     */
+    @Override
+    public int getViolatonsQtd() {
+        return violationsQtd;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     */
+    @Override
+    public void resetViolationsQtd() {
+        violationsQtd = 0;
+    }
 
     @Requirement(role = CheckstyleExecutor.class)
     private DefaultCheckstyleExecutor checkstyleExecutor;
 
-
-
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-            List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
 
@@ -61,17 +80,17 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
             .setHeaderLocation("header.txt")
             .setIncludes(getIncludes())
             .setExcludes("**/target/**, **/.*/*.*, .*");
-        
+
         try {
             CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
             Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
             for (String file : files.keySet()) {
                 List<AuditEvent> events = files.get(file);
-                //If file has events/violations
-                if (events.size() > 0){
+                // If file has events/violations
+                if (events.size() > 0) {
                     List<Violation> violations = new ArrayList<Violation>();
-                    for(AuditEvent event: events){
-                        //Add each checktyle AuditEvent as a new Violation
+                    for (AuditEvent event : events) {
+                        // Add each checktyle AuditEvent as a new Violation
                         violations.add(new Violation(this.getClass(), event.getLine(), event.getMessage()));
                     }
                     results.put(file, violations);
@@ -80,16 +99,12 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
         } catch (Exception e) {
             throw new QSCheckerException(e);
         }
+        violationsQtd = results.size();
         return results;
     }
 
+    abstract String getIncludes();
 
-
-   abstract String getIncludes();
-
-
-
-   abstract String getCheckstyleConfig();
-
+    abstract String getCheckstyleConfig();
 
 }

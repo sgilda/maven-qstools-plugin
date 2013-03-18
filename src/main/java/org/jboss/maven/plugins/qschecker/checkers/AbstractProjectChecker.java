@@ -51,6 +51,24 @@ public abstract class AbstractProjectChecker implements QSChecker {
     protected Log log;
 
     protected MavenSession mavenSession;
+    
+    private int violationsQtd;
+    
+    /* (non-Javadoc)
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     */
+    @Override
+    public int getViolatonsQtd() {
+        return violationsQtd;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     */
+    @Override
+    public void resetViolationsQtd() {
+        violationsQtd = 0;
+    }
 
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
@@ -126,6 +144,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
             results.put(fileAsString, new ArrayList<Violation>());
         }
         results.get(fileAsString).add(new Violation(getClass(), lineNumber, violationMessage));
+        violationsQtd++;
     }
 
     public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;

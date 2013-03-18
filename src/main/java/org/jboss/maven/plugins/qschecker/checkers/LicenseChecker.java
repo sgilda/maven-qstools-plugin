@@ -16,29 +16,43 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.xpath.XPathConstants;
+
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
+import org.jboss.maven.plugins.qschecker.Violation;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-@Component(role = QSChecker.class, hint = "IdentationChecker")
-public class IdentationChecker extends AbstractCheckstyleChecker {
-
+/**
+ * @author Rafael Benevides
+ *
+ */
+@Component(role = QSChecker.class, hint = "LicenseChecker")
+public class LicenseChecker extends AbstractProjectChecker {
 
     /* (non-Javadoc)
      * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project sources (*.java) is using proper identation";
+        return "Check if a POM.xml contains Apache License";
     }
 
+    /* (non-Javadoc)
+     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+     */
     @Override
-    String getIncludes() {
-        return "**/*.java";
-    }
+    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        Node licenseURL = (Node) xPath.evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
+        if (licenseURL == null || !licenseURL.getTextContent().contains("apache")){ 
+            addViolation(project.getFile(), results, 0, "File doesn't the 'Apache License, Version 2.0' license");
+        }
 
-    @Override
-    String getCheckstyleConfig() {
-       return "checkstyle-indentation.xml";
     }
 
 }

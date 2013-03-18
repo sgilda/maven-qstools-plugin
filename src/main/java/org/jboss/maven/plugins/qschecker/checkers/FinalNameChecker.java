@@ -27,6 +27,9 @@ import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author Rafael Benevides
@@ -34,6 +37,8 @@ import org.w3c.dom.Node;
  */
 @Component(role = QSChecker.class, hint = "finalNameChecker")
 public class FinalNameChecker extends AbstractProjectChecker {
+    
+    private String[] projectPlugins = new String[]{"maven-ear-plugin", "maven-war-plugin", "maven-ejb-plugin", "maven-jar-plugin", "maven-rar-plugin"};
 
     /*
      * (non-Javadoc)
@@ -42,7 +47,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Checks if the pom.xml contains <finalName>${project.artifactId}</finalName>";
+        return "Checks if the pom.xml for (EAR, WAR, JAR, EJB) contains <finalName>${project.artifactId}</finalName>";
     }
 
     /*
@@ -53,12 +58,19 @@ public class FinalNameChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        Node finalNameNode = (Node) xPath.evaluate("//finalName", doc, XPathConstants.NODE);
-        if (finalNameNode == null || !finalNameNode.getTextContent().equals("${project.artifactId}")){ 
-            int lineNumber = finalNameNode == null?0:getLineNumberFromNode(finalNameNode);
-            addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName>");
+        NodeList plugins = (NodeList) xPath.evaluate("//plugin/artifactId", doc, XPathConstants.NODESET);
+        List<String> pluginsList = Arrays.asList(projectPlugins);
+        for (int x = 0; x < plugins.getLength(); x++) {
+            Node pluginArtifact = plugins.item(x);
+            if (pluginsList.contains(pluginArtifact.getTextContent())){
+                Node finalNameNode = (Node) xPath.evaluate("//finalName", doc, XPathConstants.NODE);
+                if (finalNameNode == null || !finalNameNode.getTextContent().equals("${project.artifactId}")) {
+                    int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
+                    addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName>");
+                }
+            }
         }
     }
-
 }

@@ -164,6 +164,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
                 getLog().info("Running Checker: " + checker.getClass().getSimpleName());
+                checker.resetViolationsQtd();
                 Map<String, List<Violation>> checkerViolations = checker.check(mavenProject, mavenSession, reactorProjects, getLog());
                 addCheckerViolationsToGlobalFilesViolations(globalFilesViolations, checkerViolations);
             }
@@ -375,17 +376,43 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.sectionTitle1_();
 
         sink.text("The following checkers were used: ");
-        sink.list();
+        sink.table();
+        // Headers
+        sink.tableRow();
+        sink.tableHeaderCell();
+        sink.text("Checker");
+        sink.tableHeaderCell_();
+
+        sink.tableHeaderCell();
+        sink.text("Description");
+        sink.tableHeaderCell_();
+
+        sink.tableHeaderCell();
+        sink.text("Violations qtd.");
+        sink.tableHeaderCell_();
+        sink.tableRow();
+
         for (QSChecker checker : checkers) {
-            sink.listItem();
+            sink.tableRow();
+            sink.tableCell();
             sink.bold();
             sink.text(checker.getClass().getSimpleName());
             sink.bold_();
-            sink.text(" - " + checker.getCheckerDescription());
-            sink.listItem_();
-        }
-        sink.list_();
+            sink.link_();
+            sink.tableCell_();
 
+            sink.tableCell();
+            sink.text(checker.getCheckerDescription());
+            sink.tableCell_();
+
+            sink.tableCell();
+            sink.text(String.valueOf(checker.getViolatonsQtd()));
+            sink.tableCell_();
+            
+            sink.tableRow();
+        }
+        sink.table_();
+        
         sink.section1_(); // Section 1 End
     }
 
