@@ -19,8 +19,8 @@ package org.jboss.maven.plugins.qschecker.checkers;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 
-@Component(role = QSChecker.class, hint = "fileFormatChecker")
-public class FileFormatChecker extends AbstractCheckstyleChecker {
+@Component(role = QSChecker.class, hint = "IdentationChecker")
+public class IdentationChecker extends AbstractCheckstyleChecker {
 
 
     /* (non-Javadoc)
@@ -28,7 +28,7 @@ public class FileFormatChecker extends AbstractCheckstyleChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project sources (*.java) is using proper identation and spaces as tab";
+        return "Verifies if project sources (*.java) is using proper identation";
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FileFormatChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-       return "checkstyle-format.xml";
+       return "checkstyle-indentation.xml";
     }
 
 }

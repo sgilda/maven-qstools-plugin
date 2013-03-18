@@ -9,10 +9,5 @@
         <module name="Indentation">
         </module>
     </module>
-
-    <!-- Check if using space instead of Tab -->
-    <module name="FileTabCharacter">
-        <property name="eachLine" value="true" />
-    </module>
     
 </module>
