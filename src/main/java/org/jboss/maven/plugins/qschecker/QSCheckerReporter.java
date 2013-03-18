@@ -33,6 +33,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +54,8 @@ import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * 
@@ -159,7 +162,16 @@ public class QSCheckerReporter extends AbstractMavenReport {
             setPlexusContextValues();
             executeJXRAndSitePlugins();
 
-            List<QSChecker> checkers = container.lookupList(QSChecker.class);
+            List<QSChecker> checkersFound = container.lookupList(QSChecker.class);
+            List<QSChecker> checkers = new ArrayList<QSChecker>(checkersFound);
+            //sort the checkers
+            Collections.sort(checkers, new Comparator<QSChecker>() {
+
+                @Override
+                public int compare(QSChecker o1, QSChecker o2) {
+                    return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+                }
+            });
 
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
             for (QSChecker checker : checkers) {
