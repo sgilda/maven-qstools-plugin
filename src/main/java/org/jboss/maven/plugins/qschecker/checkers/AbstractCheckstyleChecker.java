@@ -92,6 +92,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                     for (AuditEvent event : events) {
                         // Add each checktyle AuditEvent as a new Violation
                         violations.add(new Violation(this.getClass(), event.getLine(), event.getMessage()));
+                        violationsQtd++;
                     }
                     results.put(file, violations);
                 }
@@ -99,7 +100,6 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
         } catch (Exception e) {
             throw new QSCheckerException(e);
         }
-        violationsQtd = results.size();
         return results;
     }
 

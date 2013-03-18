@@ -75,7 +75,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
             }
             int lineNumber = getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
-                    && !mavenDependency.getGroupId().equals("org.jboss.as.quickstarts")) { // Escape internal project
+                    && !mavenDependency.getGroupId().startsWith("org.jboss")) { // Escape jboss boms 
                 addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {
                 // find the recommended BOM version from Context or from Stacks

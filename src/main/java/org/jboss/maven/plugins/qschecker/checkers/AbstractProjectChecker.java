@@ -82,6 +82,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
                 processProject(mavenProject, doc, results);
             }
             if (results.size() > 0) {
+                violationsQtd = results.size();
                 log.info("There are " + results.size() + " checkers errors");
             }
         } catch (Exception e) {
@@ -144,7 +145,6 @@ public abstract class AbstractProjectChecker implements QSChecker {
             results.put(fileAsString, new ArrayList<Violation>());
         }
         results.get(fileAsString).add(new Violation(getClass(), lineNumber, violationMessage));
-        violationsQtd++;
     }
 
     public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;
