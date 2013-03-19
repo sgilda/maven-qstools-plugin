@@ -32,6 +32,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,6 +54,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
+import org.jboss.jdf.stacks.client.StacksClient;
+import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -86,10 +89,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
     private List<MavenProject> reactorProjects;
 
     /**
-     * Overwrite the recommended Bom Version
+     * Overwrite the stacks file
      */
-    @Parameter(property = "qstools.jboss.bom.version")
-    private String bomVersion;
+    @Parameter(property = "qstools.stacks.url")
+    private URL stacksUrl;
 
     /*
      * (non-Javadoc)
@@ -159,12 +162,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         try {
-            setPlexusContextValues();
+            configureStacks();
             executeJXRAndSitePlugins();
 
             List<QSChecker> checkersFound = container.lookupList(QSChecker.class);
+            // sort the checkers
             List<QSChecker> checkers = new ArrayList<QSChecker>(checkersFound);
-            //sort the checkers
             Collections.sort(checkers, new Comparator<QSChecker>() {
 
                 @Override
@@ -192,10 +195,17 @@ public class QSCheckerReporter extends AbstractMavenReport {
     }
 
     /**
-     * Add Mojo parameter to Plexus Context
+     * Check if a Custom Stacks URL was informed and configure Stacks client
+     * 
      */
-    private void setPlexusContextValues() {
-        container.getContext().put(BomVersionChecker.CONTEXT_BOMVERSION, bomVersion);
+    private void configureStacks() {
+        StacksClient stacksClient = new StacksClient();
+        if (stacksUrl != null) {
+            stacksClient.getActualConfiguration().setUrl(stacksUrl);
+        }
+        getLog().info("Using the following Stacks YML file: " + stacksClient.getActualConfiguration().getUrl());
+        Stacks stacks = stacksClient.getStacks();
+        container.getContext().put(BomVersionChecker.STACKS, stacks);
     }
 
     /**
@@ -222,15 +232,15 @@ public class QSCheckerReporter extends AbstractMavenReport {
     private void executeJXRAndSitePlugins() throws MojoExecutionException {
         // Execute JXR Plugin
         executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("aggregate"), configuration(),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
+            executionEnvironment(mavenProject, mavenSession, pluginManager));
 
         // Execute JXR Plugin for test sources
         executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("test-aggregate"), configuration(),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
+            executionEnvironment(mavenProject, mavenSession, pluginManager));
 
         // Execute Site Plugin
         executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-site-plugin"), version("3.2")), goal("site"), configuration(),
-                executionEnvironment(mavenProject, mavenSession, pluginManager));
+            executionEnvironment(mavenProject, mavenSession, pluginManager));
     }
 
     /**
@@ -420,11 +430,11 @@ public class QSCheckerReporter extends AbstractMavenReport {
             sink.tableCell();
             sink.text(String.valueOf(checker.getViolatonsQtd()));
             sink.tableCell_();
-            
+
             sink.tableRow();
         }
         sink.table_();
-        
+
         sink.section1_(); // Section 1 End
     }
 

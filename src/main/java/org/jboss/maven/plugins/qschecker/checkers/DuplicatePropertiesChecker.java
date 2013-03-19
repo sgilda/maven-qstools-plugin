@@ -56,7 +56,7 @@ public class DuplicatePropertiesChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList properties = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
+        NodeList properties = (NodeList) getxPath().evaluate("/project/properties/*", doc, XPathConstants.NODESET);
         Set<String> declaredProperties = new HashSet<String>();
         for (int x = 0; x < properties.getLength(); x++) {
             Node property = properties.item(x);

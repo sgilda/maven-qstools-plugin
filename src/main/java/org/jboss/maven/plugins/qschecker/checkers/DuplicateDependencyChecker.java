@@ -58,7 +58,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         // Check Managed Dependencies
         Set<String> declaredManagedDependencies = new HashSet<String>();
-        NodeList managedDependency = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        NodeList managedDependency = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
         for (int x = 0; x < managedDependency.getLength(); x++) {
             Node artifact = managedDependency.item(x);
             String artifactName = artifact.getTextContent();
@@ -70,7 +70,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
         }
         // Check Dependencies
         Set<String> declaredDependencies = new HashSet<String>();
-        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node artifact = dependencies.item(x);
             String artifactName = artifact.getTextContent();

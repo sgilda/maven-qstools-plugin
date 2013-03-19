@@ -72,9 +72,9 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
             List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
             remoteRepositories.add(repositorySystem.createDefaultRemoteRepository());
 
-            arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(mavenSession.getLocalRepository());
+            arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
             ArtifactResolutionResult result = repositorySystem.resolve(arr);
-            Node dependencyNode = (Node) xPath.evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
+            Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
             int lineNumber = getLineNumberFromNode(dependencyNode);
             if (!result.isSuccess()){
                 addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");

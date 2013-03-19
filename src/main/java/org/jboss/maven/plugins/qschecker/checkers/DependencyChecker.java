@@ -85,7 +85,7 @@ public class DependencyChecker extends AbstractProjectChecker {
         Artifact pomArtifact = repositorySystem.createArtifact(groupId, artifactId, version, "", "pom");
         ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
 
-        arr.setArtifact(pomArtifact).setRemoteRepositories(mavenProject.getRemoteArtifactRepositories()).setLocalRepository(mavenSession.getLocalRepository());
+        arr.setArtifact(pomArtifact).setRemoteRepositories(mavenProject.getRemoteArtifactRepositories()).setLocalRepository(getMavenSession().getLocalRepository());
         repositorySystem.resolve(arr);
         // Given the resolved maven artifact for BOM, parse it.
         readBOM(mavenProject, bom, pomArtifact);
@@ -122,7 +122,7 @@ public class DependencyChecker extends AbstractProjectChecker {
             }
         } else {
             String msg = String.format("BOM %s (from jdf-stacks) was not found. You may need to configure an EAP/WFK repository in your settings.xml.", pomArtifact);
-            log.debug(msg);
+            getLog().debug(msg);
         }
     }
 
@@ -147,15 +147,15 @@ public class DependencyChecker extends AbstractProjectChecker {
         if (managedDependencies == null) {
             setupManagedDependencies(project);
         }
-        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
+        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
-            MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
+            MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             int lineNumber = getLineNumberFromNode(dependency);
             MavenGA ga = new MavenGA(mavenDependency.getGroupId(), mavenDependency.getArtifactId());
             if (mavenDependency.getDeclaredVersion() != null) {
                 StringBuilder sb = new StringBuilder(String.format("You should NOT declare a version for %s:%s:%s. Consider using a BOM. ", mavenDependency.getGroupId(),
-                        mavenDependency.getArtifactId(), mavenDependency.getDeclaredVersion()));
+                    mavenDependency.getArtifactId(), mavenDependency.getDeclaredVersion()));
                 // If has a BOM for it
                 if (managedDependencies.get(ga) != null) {
                     sb.append("Recommended BOMs with this dependency: ");

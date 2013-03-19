@@ -60,7 +60,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
         Map<String, Integer> elementsFound = new LinkedHashMap<String, Integer>();
         // Find all elements position
         for (String element : pomElements) {
-            Node elementNode = (Node) xPath.evaluate("/project/" + element, doc, XPathConstants.NODE);
+            Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
             if (elementNode != null) {
                 int lineNumber = getLineNumberFromNode(elementNode);
                 elementsFound.put(element, lineNumber);

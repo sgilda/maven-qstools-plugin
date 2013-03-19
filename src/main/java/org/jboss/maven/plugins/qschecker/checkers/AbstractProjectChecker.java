@@ -29,40 +29,45 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.interpolation.InterpolationException;
-import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
-import org.codehaus.plexus.interpolation.PrefixedValueSourceWrapper;
-import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
-import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.context.Context;
+import org.jboss.maven.plugins.qschecker.DependencyProvider;
 import org.jboss.maven.plugins.qschecker.QSChecker;
 import org.jboss.maven.plugins.qschecker.QSCheckerException;
 import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
 import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 public abstract class AbstractProjectChecker implements QSChecker {
 
-    private StringSearchInterpolator interpolator = new StringSearchInterpolator();
+    @Requirement
+    private Context context;
 
-    protected XPath xPath = XPathFactory.newInstance().newXPath();
+    @Requirement
+    private DependencyProvider dependencyProvider;
 
-    protected Log log;
+    private XPath xPath = XPathFactory.newInstance().newXPath();
 
-    protected MavenSession mavenSession;
-    
+    private Log log;
+
+    private MavenSession mavenSession;
+
     private int violationsQtd;
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
      */
     @Override
     public int getViolatonsQtd() {
         return violationsQtd;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
      */
     @Override
@@ -91,47 +96,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
         return results;
     }
 
-    protected MavenDependency getDependencyFromNode(MavenProject project, Node dependency) throws InterpolationException {
-        String groupId = null;
-        String artifactId = null;
-        String declaredVersion = null;
-        String interpoledVersion = null;
-        String type = null;
-        String scope = null;
-        for (int x = 0; x < dependency.getChildNodes().getLength(); x++) {
-            Node node = dependency.getChildNodes().item(x);
-            if ("groupId".equals(node.getNodeName())) {
-                groupId = node.getTextContent();
-            }
-            if ("artifactId".equals(node.getNodeName())) {
-                artifactId = node.getTextContent();
-            }
-            if ("version".equals(node.getNodeName())) {
-                declaredVersion = node.getTextContent();
-                interpoledVersion = resolveMavenProperty(project, declaredVersion);
-            }
-            if ("type".equals(node.getNodeName())) {
-                type = node.getTextContent();
-            }
-            if ("scope".equals(node.getNodeName())) {
-                scope = node.getTextContent();
-            }
-        }
-        return new MavenDependency(groupId, artifactId, declaredVersion, interpoledVersion, type, scope);
-    }
-    
-    
-    protected int getLineNumberFromNode(Node node){
+    protected int getLineNumberFromNode(Node node) {
         return Integer.parseInt((String) node.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-    }
-
-    private String resolveMavenProperty(MavenProject project, String textContent) throws InterpolationException {
-        interpolator.clearFeedback(); // Clear the feedback messages from previous interpolate(..) calls.
-        // Associate project.model with ${project.*} and ${pom.*} prefixes
-        PrefixedValueSourceWrapper modelWrapper = new PrefixedValueSourceWrapper(new ObjectBasedValueSource(project.getModel()), "project.", true);
-        interpolator.addValueSource(modelWrapper);
-        interpolator.addValueSource(new PropertiesBasedValueSource(project.getModel().getProperties()));
-        return interpolator.interpolate(textContent);
     }
 
     /**
@@ -148,5 +114,33 @@ public abstract class AbstractProjectChecker implements QSChecker {
     }
 
     public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;
+
+    /**
+     * @return the dependencyProvider
+     */
+    protected DependencyProvider getDependencyProvider() {
+        return dependencyProvider;
+    }
+
+    /**
+     * @return the xPath
+     */
+    protected XPath getxPath() {
+        return xPath;
+    }
+
+    /**
+     * @return the log
+     */
+    protected Log getLog() {
+        return log;
+    }
+
+    /**
+     * @return the mavenSession
+     */
+    protected MavenSession getMavenSession() {
+        return mavenSession;
+    }
 
 }

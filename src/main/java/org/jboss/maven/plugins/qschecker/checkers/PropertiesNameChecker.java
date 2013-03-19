@@ -62,11 +62,11 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
             recommendedPropertiesNames = new Properties();
             recommendedPropertiesNames.load(this.getClass().getResourceAsStream("/properties_names.properties"));
         }
-        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
+        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
-            MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
+            MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             String groupId = mavenDependency.getGroupId();
             String artifactId = mavenDependency.getArtifactId();
             String version = mavenDependency.getDeclaredVersion() == null ? null : mavenDependency.getDeclaredVersion().replaceAll("[${}]", "");

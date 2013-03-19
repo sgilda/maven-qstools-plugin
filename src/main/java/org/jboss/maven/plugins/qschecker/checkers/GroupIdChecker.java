@@ -32,15 +32,15 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  *
  */
-@Component(role = QSChecker.class, hint = "LicenseChecker")
-public class LicenseChecker extends AbstractProjectChecker {
+@Component(role=QSChecker.class, hint="GroupIdChecker")
+public class GroupIdChecker extends AbstractProjectChecker {
 
     /* (non-Javadoc)
      * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if a POM.xml contains Apache License";
+        return "Check if the groupdId is 'org.jboss.as.quickstarts'";
     }
 
     /* (non-Javadoc)
@@ -48,9 +48,10 @@ public class LicenseChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        Node licenseURL = (Node) getxPath().evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
-        if (licenseURL == null || !licenseURL.getTextContent().contains("apache")){ 
-            addViolation(project.getFile(), results, 0, "File doesn't the 'Apache License, Version 2.0' license");
+        Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
+        if (!project.getGroupId().equals("org.jboss.as.quickstarts")){
+            int lineNumber = getLineNumberFromNode(node);
+            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId 'org.jboss.as.quickstarts'");
         }
 
     }

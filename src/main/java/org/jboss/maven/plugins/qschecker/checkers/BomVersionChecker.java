@@ -16,7 +16,6 @@
  */
 package org.jboss.maven.plugins.qschecker.checkers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +25,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qschecker.QSChecker;
@@ -44,12 +41,10 @@ import org.w3c.dom.NodeList;
 @Component(role = QSChecker.class, hint = "bomVersionChecker")
 public class BomVersionChecker extends AbstractProjectChecker {
 
-    public static final String CONTEXT_BOMVERSION = "recommendedBomVersion";
+    public static final String STACKS = "stacks";
 
     @Requirement
     private Context context;
-
-    private Stacks stacks = new StacksClient().getStacks();
 
     /*
      * (non-Javadoc)
@@ -59,15 +54,15 @@ public class BomVersionChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
-        List<MavenDependency> managedDependencies = new ArrayList<MavenDependency>();
+
+        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Managed Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
-            MavenDependency mavenDependency = getDependencyFromNode(project, dependency);
-            managedDependencies.add(mavenDependency);
+            MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             // use stacks to find if the project is using a jdf bom
             Bom bomUsed = null;
+            Stacks stacks = (Stacks) context.get(STACKS);
             for (Bom bom : stacks.getAvailableBoms()) {
                 if (bom.getGroupId().equals(mavenDependency.getGroupId()) && bom.getArtifactId().equals(mavenDependency.getArtifactId())) {
                     bomUsed = bom;
@@ -75,18 +70,11 @@ public class BomVersionChecker extends AbstractProjectChecker {
             }
             int lineNumber = getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
-                    && !mavenDependency.getGroupId().startsWith("org.jboss")) { // Escape jboss boms 
+                && !mavenDependency.getGroupId().startsWith("org.jboss")) { // Escape jboss boms
                 addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {
-                // find the recommended BOM version from Context or from Stacks
-                String recommendedBomVersion;
-                try {
-                    recommendedBomVersion = (String) context.get(CONTEXT_BOMVERSION);
-                } catch (ContextException e) { // if no context value, it throws a exception
-                    recommendedBomVersion = bomUsed.getRecommendedVersion();
-                }
-                if (!mavenDependency.getInterpoledVersion().equals(recommendedBomVersion)) {
-                    String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency, recommendedBomVersion);
+                if (!mavenDependency.getInterpoledVersion().equals(bomUsed.getRecommendedVersion())) {
+                    String violationMsg = String.format("BOM %s isn't using the recommended version %s", mavenDependency, bomUsed.getRecommendedVersion());
                     addViolation(project.getFile(), results, lineNumber, violationMsg);
                 }
             }

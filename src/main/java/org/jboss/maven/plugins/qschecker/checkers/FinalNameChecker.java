@@ -60,12 +60,12 @@ public class FinalNameChecker extends AbstractProjectChecker {
     @Override
     @SuppressWarnings("unchecked")
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList plugins = (NodeList) xPath.evaluate("//plugin/artifactId", doc, XPathConstants.NODESET);
+        NodeList plugins = (NodeList) getxPath().evaluate("//plugin/artifactId", doc, XPathConstants.NODESET);
         List<String> pluginsList = Arrays.asList(projectPlugins);
         for (int x = 0; x < plugins.getLength(); x++) {
             Node pluginArtifact = plugins.item(x);
             if (pluginsList.contains(pluginArtifact.getTextContent())){
-                Node finalNameNode = (Node) xPath.evaluate("//finalName", doc, XPathConstants.NODE);
+                Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
                 if (finalNameNode == null || !finalNameNode.getTextContent().equals("${project.artifactId}")) {
                     int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
                     addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName>");
