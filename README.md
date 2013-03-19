@@ -19,7 +19,7 @@ All you need is Maven 3.0+ and a working internet connection.
 Checking the quickstarts
 ------------------------
 
-Select a Maven project an run:
+Select a Maven project and run:
 
     mvn org.jboss.maven.plugins:qstools:check
 

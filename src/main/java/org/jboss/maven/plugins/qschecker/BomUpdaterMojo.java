@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -86,8 +87,15 @@ public class BomUpdaterMojo extends AbstractMojo {
                 stacksClient.getActualConfiguration().setUrl(stacksUrl);
             }
             getLog().info("Using the following Stacks YML file: " + stacksClient.getActualConfiguration().getUrl());
-            for (MavenProject project : reactorProjects) {
-                processProject(project);
+            getLog().warn("Running this plugin CAN MODIFY your pom.xml files. Make sure to have your changes commited before running this plugin");
+            getLog().info("Do you want to continue[yes/no]");
+            String answer = new Scanner(System.in).nextLine();
+            if (answer.equalsIgnoreCase("yes")) {
+                for (MavenProject project : reactorProjects) {
+                    processProject(project);
+                }
+            } else {
+                getLog().info("Aborted");
             }
         } catch (Exception e) {
             throw new MojoExecutionException(e.getMessage(), e);
@@ -116,16 +124,26 @@ public class BomUpdaterMojo extends AbstractMojo {
             }
             if (bomUsed != null && // It used a Managed JDF Bom
                 !(mavenDependency.getInterpoledVersion().equals(bomUsed.getRecommendedVersion()))) {
-                String msg = String.format("Project [%s] - Dependency [%s:%s:%s] isnt'using the recommended version [%s]", project.getArtifactId(), mavenDependency.getGroupId(),
-                    mavenDependency.getArtifactId(), mavenDependency.getInterpoledVersion(), bomUsed.getRecommendedVersion());
-                getLog().debug(msg);
+
+                getLog().debug(String.format("Project [%s] - Dependency [%s:%s:%s] isnt'using the recommended version [%s]",
+                    project.getArtifactId(),
+                    mavenDependency.getGroupId(),
+                    mavenDependency.getArtifactId(),
+                    mavenDependency.getInterpoledVersion(),
+                    bomUsed.getRecommendedVersion()));
                 // Parse the versions to int so we can discover the precedence
                 DefaultArtifactVersion recommendedVersion = new DefaultArtifactVersion(bomUsed.getRecommendedVersion());
                 DefaultArtifactVersion usedVersion = new DefaultArtifactVersion(mavenDependency.getInterpoledVersion());
                 if (recommendedVersion.compareTo(usedVersion) > 0) {
                     updateVersion(project.getFile(), mavenDependency.getInterpoledVersion(), bomUsed.getRecommendedVersion());
                 } else {
-                    getLog().warn(String.format("This project [%s] will not be updated because it uses a newer BOM version than the recommended", project.getArtifactId()));
+                    getLog().warn(
+                        String.format("Project [%s] will not be updated because it uses a newer BOM [%s:%s:%s] version than the recommended [%s]",
+                            project.getArtifactId(),
+                            mavenDependency.getGroupId(),
+                            mavenDependency.getArtifactId(),
+                            mavenDependency.getInterpoledVersion(),
+                            bomUsed.getRecommendedVersion()));
                 }
             }
         }
