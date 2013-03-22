@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +23,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.Violation;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -43,7 +43,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
@@ -54,7 +54,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      * (non-Javadoc)
      * 
      * @see
-     * org.jboss.maven.plugins.qschecker.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
+     * org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override

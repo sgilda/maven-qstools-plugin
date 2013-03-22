@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,9 @@ import org.apache.maven.plugin.checkstyle.DefaultCheckstyleExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.QSCheckerException;
-import org.jboss.maven.plugins.qschecker.Violation;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSCheckerException;
+import org.jboss.maven.plugins.qstools.Violation;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
@@ -42,7 +42,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getViolatonsQtd()
      */
     @Override
     public int getViolatonsQtd() {
@@ -52,7 +52,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#resetViolationsQtd()
      */
     @Override
     public void resetViolationsQtd() {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -25,8 +25,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.Violation;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -42,7 +42,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
@@ -52,7 +52,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * @see org.jboss.maven.plugins.qstools.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override

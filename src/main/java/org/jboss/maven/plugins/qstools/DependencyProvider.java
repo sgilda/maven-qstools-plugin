@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker;
+package org.jboss.maven.plugins.qstools;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
@@ -23,7 +23,7 @@ import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixedValueSourceWrapper;
 import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
-import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.w3c.dom.Node;
 
 /**

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.QSCheckerException;
-import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSCheckerException;
+import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,7 +60,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getViolatonsQtd()
      */
     @Override
     public int getViolatonsQtd() {
@@ -70,7 +70,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#resetViolationsQtd()
      */
     @Override
     public void resetViolationsQtd() {
@@ -80,7 +80,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
@@ -90,7 +90,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#check(org.apache.maven.project.MavenProject,
+     * @see org.jboss.maven.plugins.qstools.QSChecker#check(org.apache.maven.project.MavenProject,
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override

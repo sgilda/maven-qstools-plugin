@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
+import org.jboss.maven.plugins.qstools.QSChecker;
 
 @Component(role = QSChecker.class, hint = "TabSpaceChecker")
 public class TabSpaceChecker extends AbstractCheckstyleChecker {
 
 
     /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {

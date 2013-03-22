@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.io.FileReader;
 import java.util.HashMap;
@@ -37,9 +37,9 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Bom;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -129,7 +129,7 @@ public class DependencyChecker extends AbstractProjectChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
@@ -139,7 +139,7 @@ public class DependencyChecker extends AbstractProjectChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
+     * @see org.jboss.maven.plugins.qstools.checkers.AbstractPomChecker#processProject(org.apache.maven.project.MavenProject,
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override

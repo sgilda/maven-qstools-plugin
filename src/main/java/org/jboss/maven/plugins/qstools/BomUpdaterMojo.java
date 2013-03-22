@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker;
+package org.jboss.maven.plugins.qstools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +42,8 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
-import org.jboss.maven.plugins.qschecker.maven.MavenDependency;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

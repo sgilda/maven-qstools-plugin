@@ -14,31 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools;
 
-import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
+public class QSCheckerException extends Exception {
 
-@Component(role = QSChecker.class, hint = "IndentationChecker")
-public class IndentationChecker extends AbstractCheckstyleChecker {
+    private static final long serialVersionUID = 1L;
 
-
-    /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
-     */
-    @Override
-    public String getCheckerDescription() {
-        return "Verifies if project sources (*.java) are using proper indentation";
-    }
-
-    @Override
-    String getIncludes() {
-        return "**/*.java";
-    }
-
-    @Override
-    String getCheckstyleConfig() {
-       return "checkstyle-indentation.xml";
+    public QSCheckerException(Throwable cause) {
+        super(cause);
     }
 
 }

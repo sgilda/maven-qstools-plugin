@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.util.List;
 import java.util.Map;
@@ -23,8 +23,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.Violation;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -32,25 +32,26 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  *
  */
-@Component(role = QSChecker.class, hint = "LicenseChecker")
-public class LicenseChecker extends AbstractProjectChecker {
+@Component(role=QSChecker.class, hint="GroupIdChecker")
+public class GroupIdChecker extends AbstractProjectChecker {
 
     /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getCheckerDescription()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if a POM.xml contains Apache License";
+        return "Check if the groupdId is 'org.jboss.as.quickstarts'";
     }
 
     /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qschecker.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+     * @see org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        Node licenseURL = (Node) getxPath().evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
-        if (licenseURL == null || !licenseURL.getTextContent().contains("apache")){ 
-            addViolation(project.getFile(), results, 0, "File doesn't the 'Apache License, Version 2.0' license");
+        Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
+        if (!project.getGroupId().equals("org.jboss.as.quickstarts")){
+            int lineNumber = getLineNumberFromNode(node);
+            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId 'org.jboss.as.quickstarts'");
         }
 
     }

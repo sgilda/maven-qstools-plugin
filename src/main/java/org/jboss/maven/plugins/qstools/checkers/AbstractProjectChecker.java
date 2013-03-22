@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qschecker.checkers;
+package org.jboss.maven.plugins.qstools.checkers;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,11 +31,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
-import org.jboss.maven.plugins.qschecker.DependencyProvider;
-import org.jboss.maven.plugins.qschecker.QSChecker;
-import org.jboss.maven.plugins.qschecker.QSCheckerException;
-import org.jboss.maven.plugins.qschecker.Violation;
-import org.jboss.maven.plugins.qschecker.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.DependencyProvider;
+import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSCheckerException;
+import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -58,7 +58,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#getViolatonsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#getViolatonsQtd()
      */
     @Override
     public int getViolatonsQtd() {
@@ -68,7 +68,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
     /*
      * (non-Javadoc)
      * 
-     * @see org.jboss.maven.plugins.qschecker.QSChecker#resetViolationsQtd()
+     * @see org.jboss.maven.plugins.qstools.QSChecker#resetViolationsQtd()
      */
     @Override
     public void resetViolationsQtd() {

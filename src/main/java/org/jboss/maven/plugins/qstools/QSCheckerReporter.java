@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.maven.plugins.qschecker;
+package org.jboss.maven.plugins.qstools;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
@@ -56,7 +56,7 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Stacks;
-import org.jboss.maven.plugins.qschecker.checkers.BomVersionChecker;
+import org.jboss.maven.plugins.qstools.checkers.BomVersionChecker;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
