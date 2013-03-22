@@ -19,15 +19,15 @@ package org.jboss.maven.plugins.qstools.checkers;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 
-@Component(role = QSChecker.class, hint = "fileHeaderChecker")
-public class IlegalCharacterChecker extends AbstractCheckstyleChecker {
+@Component(role = QSChecker.class, hint = "IllegalCharacterChecker")
+public class IllegalCharacterChecker extends AbstractCheckstyleChecker {
 
     /* (non-Javadoc)
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project files contains illegalCharacter";
+        return "Verifies if project files contains illegal character";
     }
 
     @Override
@@ -37,7 +37,7 @@ public class IlegalCharacterChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-       return "checkstyle-header.xml";
+       return "checkstyle-illegalchar.xml";
     }
 
 }

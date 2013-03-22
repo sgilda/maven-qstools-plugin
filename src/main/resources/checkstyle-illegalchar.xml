@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE module PUBLIC
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
+    "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+
+
+    <module name="RegexpMultiline">
+        <property name="format" value="[^\x00-\x7F]" />
+        <property name="message" value="Illegal character (non US-ASCII) used. Use unicode instead." />
+        <property name="fileExtensions" value="xml, xsd, java, properties, html, xhtml, sql, css"/>
+    </module>
+
+</module>
