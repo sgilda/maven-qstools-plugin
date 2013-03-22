@@ -39,7 +39,7 @@ import org.w3c.dom.Document;
 @Component(role = QSChecker.class, hint = "readmeChecker")
 public class ReadmeChecker extends AbstractProjectChecker {
 
-    private static final String[] README_METADATA = new String[] { "Author:", "Level:", "Technologies:", "Summary:", "Target Product:" };
+    private static final String[] README_METADATA = new String[] { "Author:", "Level:", "Technologies:", "Summary:", "Target Product:", "Source:" };
 
     private String regexPattern;
     
