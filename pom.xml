@@ -7,8 +7,12 @@
     <version>0.0.2-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
-    <name>quickstart-checker Maven Plugin</name>
-    <description>JDF Quickstarts tools (plugins and reporters)</description>
+    <name>QSTools Maven Plugin</name>
+    <description>
+      This a Maven Plugin that helps JDF quickstarts maintenance.
+
+      You can use it to verify if your project/quickstart follow the JDF Guidelines. It will run all JDF Guideline checkers and generate a report that provides information about any violations that your project/quickstarts has.
+    </description>
 
     <url>http://www.jboss.org/jdf</url>
 
