@@ -131,7 +131,6 @@ public class BomUpdaterMojo extends AbstractMojo {
                     mavenDependency.getArtifactId(),
                     mavenDependency.getInterpoledVersion(),
                     bomUsed.getRecommendedVersion()));
-                // Parse the versions to int so we can discover the precedence
                 DefaultArtifactVersion recommendedVersion = new DefaultArtifactVersion(bomUsed.getRecommendedVersion());
                 DefaultArtifactVersion usedVersion = new DefaultArtifactVersion(mavenDependency.getInterpoledVersion());
                 if (recommendedVersion.compareTo(usedVersion) > 0) {
