@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jboss.maven.plugins</groupId>
-    <artifactId>qstools</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <artifactId>maven-qstools-plugin</artifactId>
+    <version>1.0.0.CR1</version>
     <packaging>maven-plugin</packaging>
 
     <name>QSTools Maven Plugin</name>
