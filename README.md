@@ -22,7 +22,7 @@ Checking the quickstarts made easy
 
 Select a Maven project and run:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR1:check
 
 This will check your project and all modules to seek for potential violations.
 
@@ -40,7 +40,7 @@ If the recommended BOM is newer it will replace the version, otherwise it will o
 
 To run the plugin:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms  
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR1:updateBoms  
 
 
 Using a custom stacks.yaml definition
@@ -48,11 +48,11 @@ Using a custom stacks.yaml definition
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml     
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR1:(check|updateBoms) -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml     
 
 or
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR1:(check|updateBoms) -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
 
 
 Plugin Documentation
@@ -66,6 +66,6 @@ Troubleshooting
 
 You can turn on debugging messages:   
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check -X
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR1:check -X
 
 
