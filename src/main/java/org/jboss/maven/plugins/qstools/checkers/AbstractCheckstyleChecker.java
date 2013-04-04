@@ -29,6 +29,7 @@ import org.apache.maven.plugin.checkstyle.DefaultCheckstyleExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
@@ -36,6 +37,11 @@ import org.jboss.maven.plugins.qstools.Violation;
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
 public abstract class AbstractCheckstyleChecker implements QSChecker {
+
+    public static final String EXCLUDES = "excludes";
+
+    @Requirement
+    private Context context;
 
     private int violationsQtd;
 
@@ -68,20 +74,20 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
 
-        executorRequest
-            .setReactorProjects(reactorProjects)
-            .setSourceDirectory(project.getBasedir())
-            .setTestSourceDirectory(project.getBasedir())
-            .setFailsOnError(false)
-            .setProject(project)
-            .setConfigLocation(getCheckstyleConfig())
-            .setLog(log)
-            .setEncoding("UTF-8")
-            .setHeaderLocation("header.txt")
-            .setIncludes(getIncludes())
-            .setExcludes("**/target/**, **/.*/*.*, .*");
-
         try {
+            executorRequest
+                .setReactorProjects(reactorProjects)
+                .setSourceDirectory(project.getBasedir())
+                .setTestSourceDirectory(project.getBasedir())
+                .setFailsOnError(false)
+                .setProject(project)
+                .setConfigLocation(getCheckstyleConfig())
+                .setLog(log)
+                .setEncoding("UTF-8")
+                .setHeaderLocation("header.txt")
+                .setIncludes(getIncludes())
+                .setExcludes("**/target/**, **/.*/*.*, .*, **/README.html, " + context.get(EXCLUDES));
+
             CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
             Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
             for (String file : files.keySet()) {

@@ -23,6 +23,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
@@ -30,28 +32,43 @@ import org.w3c.dom.Node;
 
 /**
  * @author Rafael Benevides
- *
+ * 
  */
-@Component(role=QSChecker.class, hint="GroupIdChecker")
+@Component(role = QSChecker.class, hint = "GroupIdChecker")
 public class GroupIdChecker extends AbstractProjectChecker {
 
-    /* (non-Javadoc)
+    public static final String GROUPID = "qstools.groupId";
+
+    @Requirement
+    private Context context;
+
+    private String groupId;
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if the groupdId is 'org.jboss.as.quickstarts'";
+        return "Check if the groupdId is '" + groupId + "'";
     }
 
-    /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
+     * org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        groupId = (String) context.get(GROUPID);
+
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
-        if (!project.getGroupId().equals("org.jboss.as.quickstarts")){
+        if (node != null && !project.getGroupId().equals(groupId)) {
             int lineNumber = getLineNumberFromNode(node);
-            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId 'org.jboss.as.quickstarts'");
+            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId '" + groupId + "'");
         }
 
     }

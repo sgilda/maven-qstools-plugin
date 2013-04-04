@@ -31,7 +31,10 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -56,7 +59,13 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Stacks;
+import org.jboss.maven.plugins.qstools.checkers.AbstractCheckstyleChecker;
 import org.jboss.maven.plugins.qstools.checkers.BomVersionChecker;
+import org.jboss.maven.plugins.qstools.checkers.FileHeaderChecker;
+import org.jboss.maven.plugins.qstools.checkers.GroupIdChecker;
+import org.jboss.maven.plugins.qstools.checkers.IllegalCharacterChecker;
+import org.jboss.maven.plugins.qstools.checkers.IndentationChecker;
+import org.jboss.maven.plugins.qstools.checkers.TabSpaceChecker;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -93,6 +102,25 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     @Parameter(property = "qstools.stacks.url")
     private URL stacksUrl;
+
+    /**
+     * Overwrite the groupId for {@link GroupIdChecker}
+     */
+    @Parameter(property = GroupIdChecker.GROUPID, defaultValue = "org.jboss.as.quickstarts")
+    private String groupId;
+
+    /**
+     * Add the file contents as excluded checking
+     */
+    @Parameter(property = "qstools.excludes.file")
+    private File excludesFile;
+
+    /**
+     * Excludes some files from being verified by {@link FileHeaderChecker}, {@link IllegalCharacterChecker},
+     * {@link IndentationChecker} and {@link TabSpaceChecker}
+     */
+    @Parameter(property = "qstools.excludes")
+    private String excludesExpression;
 
     /*
      * (non-Javadoc)
@@ -162,6 +190,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         try {
+            configureParameters();
             configureStacks();
             executeJXRAndSitePlugins();
 
@@ -192,6 +221,37 @@ public class QSCheckerReporter extends AbstractMavenReport {
         }
         endReport();
 
+    }
+
+    /**
+     * @throws IOException if excludesFile doesn't exists
+     * 
+     */
+    private void configureParameters() throws IOException {
+        container.getContext().put(GroupIdChecker.GROUPID, groupId);
+        String excludes = excludesExpression == null ? "" : excludesExpression;
+        if (excludesFile != null) {
+            excludes = readExcludesFromFile() + ", " + excludes;
+        }
+        container.getContext().put(AbstractCheckstyleChecker.EXCLUDES, excludes);
+    }
+
+    /**
+     * @return file content split with ', '
+     * @throws IOException if excludesFile doesn't exists
+     */
+    private String readExcludesFromFile() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(excludesFile));
+        StringBuilder sb = new StringBuilder();
+        try {
+            while (br.ready()) {
+                sb.append(br.readLine());
+                sb.append(", ");
+            }
+        } catch (Exception e) {
+            br.close();
+        }
+        return sb.toString();
     }
 
     /**
