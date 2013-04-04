@@ -32,6 +32,14 @@ The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 If you need to ignore some files
 --------------------------------
 
+`Note:` Some files are already excluded by default: 
+ - hidden files
+ - files inside the `target` folder
+ - README.html files
+ - jquery*.js javascript files
+ - cordova*.js javascript files
+ - angular*.js javascript files
+
 If you need for any reason remove some files from the the Checker, you can add the excludes expression to 'qstools.excludes' parameter:
 
     mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
@@ -43,7 +51,7 @@ You can also use a file with the ignored files list using the `qstools.excudes.f
     mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
        -Dqstools.excludes.file=somefile.txt
     
-
+`Note:` The file format uses individual patterns on each line
 
 If you need to update quickstarts BOMs
 --------------------------------------

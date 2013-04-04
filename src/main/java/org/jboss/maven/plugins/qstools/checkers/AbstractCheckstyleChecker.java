@@ -86,7 +86,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                 .setEncoding("UTF-8")
                 .setHeaderLocation("header.txt")
                 .setIncludes(getIncludes())
-                .setExcludes("**/target/**, **/.*/*.*, .*, **/README.html, " + context.get(EXCLUDES));
+                .setExcludes("**/target/**, **/.*/*.*, .*, **/jquery*.js, **/cordova*.js, **/angular*.js, **/README.html, " + context.get(EXCLUDES));
 
             CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
             Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
