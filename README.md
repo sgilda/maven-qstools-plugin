@@ -34,12 +34,14 @@ If you need to ignore some files
 
 If you need for any reason remove some files from the the Checker, you can add the excludes expression to 'qstools.excludes' parameter:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms -Dqstools.excludes="**/somefile.txt, *.bkp"
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
+       -Dqstools.excludes="**/somefile.txt, *.bkp"
     
 
 You can also use a file with the ignored files list using the `qstools.excudes.file` property: 
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms -Dqstools.excludes.file=somefile.txt
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
+       -Dqstools.excludes.file=somefile.txt
     
 
 
@@ -50,7 +52,7 @@ This goal will check the [Stacks file](https://github.com/jboss-jdf/jdf-stack/bl
 
 If the recommended BOM is newer it will replace the version, otherwise it will only warn you that your quickstarts is using a newer version than the recommended one and won't  update the BOM.
 
-`NOTE: It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.`
+`NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
 
 To run the plugin:
 
@@ -63,12 +65,14 @@ Using a custom stacks.yaml definition
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml     
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) 
+       -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml 
     
 
 or
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) 
+       -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
     
 
 
