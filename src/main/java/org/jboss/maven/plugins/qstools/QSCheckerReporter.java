@@ -215,7 +215,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
             startReport(checkers, locale);
             doFileSummary(globalFilesViolations);
             doFileReports(globalFilesViolations);
-            getLog().info("Your report is ready at " + mavenProject.getModel().getReporting().getOutputDirectory() + File.separator + getOutputName() + ".html");
+            // Print out the valid link, for example: 
+            //     Linux:  file:///home/username/quickstarts/helloworld/target/site/qschecker.html
+            //     Windows:  file:///C:/quickstarts/helloworld/target/site/qschecker.html
+            getLog().info("Your report is ready at file://" + mavenProject.getModel().getReporting().getOutputDirectory() + File.separator + getOutputName() + ".html");
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
