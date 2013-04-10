@@ -62,7 +62,7 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
             recommendedPropertiesNames = new Properties();
             recommendedPropertiesNames.load(this.getClass().getResourceAsStream("/properties_names.properties"));
         }
-        NodeList dependencies = (NodeList) getxPath().evaluate("//dependencies/dependency| /project //plugins/plugin ", doc, XPathConstants.NODESET);
+        NodeList dependencies = (NodeList) getxPath().evaluate("//dependencies/dependency| //plugins/plugin ", doc, XPathConstants.NODESET);
         // Iterate over all Declared Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
