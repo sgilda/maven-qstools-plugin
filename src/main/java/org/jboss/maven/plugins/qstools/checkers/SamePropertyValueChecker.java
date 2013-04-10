@@ -62,7 +62,7 @@ public class SamePropertyValueChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         try {
-            // iterate over all reactor projects to find what properties was declared and what was really used
+            // iterate over all reactor projects to iterate on all declared properties
             for (MavenProject mavenProject : reactorProjects) {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
@@ -71,9 +71,11 @@ public class SamePropertyValueChecker implements QSChecker {
                     Node property = propertiesNodes.item(x);
                     String propertyName = property.getNodeName();
                     String propertyValue = property.getTextContent();
+
                     if (projectProperties.get(propertyName) == null) {
                         projectProperties.put(propertyName, propertyValue);
                     } else if (projectProperties.get(propertyName) != null && !projectProperties.get(propertyName).equals(propertyValue)) {
+                        // The property was used but with an different value
                         int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
                         String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
                         if (results.get(fileAsString) == null) {
