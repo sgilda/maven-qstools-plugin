@@ -132,6 +132,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
             artifactExpression = multiModuleProject ? "rootArtifactId" : "artifactId";
             cloneOriginProject();
             generateArchetype();
+            getLog().info("Archetype synched with " + projectPath + " from " + branch + " branch. You can check what changed running git diff.");
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
         }
@@ -201,13 +202,6 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                         }
                         // default content interpolation
                         content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
-
-                        // add velocity data above (package or html/xhtml) declaration
-                        if ((file.getName().endsWith(".java") && line.trim().startsWith("package ")) ||
-                            (file.getName().endsWith("html") && line.trim().startsWith("<html>")
-                            )) {
-                            content = "#set( $symbol_pound = '#' )\n#set( $symbol_dollar = '$' )\n#set( $symbol_escape = '\\' )\n" + content;
-                        }
 
                         if (!ignoreMode) { // Don't write content to file while on Ignore mode
                             bw.write(content + "\n");

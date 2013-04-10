@@ -104,7 +104,7 @@ public class SamePropertyValueChecker implements QSChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if all declared properties uses the same version value";
+        return "Check if all declared properties uses the same version value across the projects/modules";
     }
 
     /*
