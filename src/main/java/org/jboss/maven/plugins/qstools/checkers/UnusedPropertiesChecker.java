@@ -128,7 +128,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                     !usedProperties.contains(declared)) {
                     PomInformation pomInformation = declaredProperties.get(declared);
                     // Get relative path based on maven work dir
-                    String rootDirectory = mavenSession.getExecutionRootDirectory().replaceAll("\\", "\\\\") + File.separator;
+                    String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replaceAll("\\", "\\\\");
                     String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replaceAll(rootDirectory, "");
                     if (results.get(fileAsString) == null) {
                         results.put(fileAsString, new ArrayList<Violation>());
