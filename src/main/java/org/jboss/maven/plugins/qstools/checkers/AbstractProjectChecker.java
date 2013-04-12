@@ -106,8 +106,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
      */
     protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
         // Get relative path based on maven work dir
-        String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replaceAll("\\", "\\\\");
-        String fileAsString = file.getAbsolutePath().replaceAll(rootDirectory, "");
+        String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
+        String fileAsString = file.getAbsolutePath().replace(rootDirectory, "");
         if (results.get(fileAsString) == null) {
             results.put(fileAsString, new ArrayList<Violation>());
         }
