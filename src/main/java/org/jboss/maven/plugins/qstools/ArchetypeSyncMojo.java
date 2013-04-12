@@ -149,7 +149,26 @@ public class ArchetypeSyncMojo extends AbstractMojo {
     private void generateArchetype() throws IOException, SAXException, XPathExpressionException {
         getLog().info("Generating archetype from " + exampleProjectPath);
         File archetypeOutputDir = new File(baseDir, "src/main/resources/archetype-resources");
+        getLog().info("Removing old files from " + archetypeOutputDir);
+        cleanOldArchetype(archetypeOutputDir);
+        getLog().info("Copying new files to " + archetypeOutputDir);
         copyFiles(exampleProjectPath, archetypeOutputDir);
+    }
+
+    /**
+     * Removes all old archetype files
+     * 
+     * @param archetypeOutputDir
+     */
+    private void cleanOldArchetype(File archetypeOutputDir) {
+        for (File file : archetypeOutputDir.listFiles()) {
+            if (file.isFile()) {
+                file.delete();
+            } else {
+                cleanOldArchetype(file);
+            }
+        }
+
     }
 
     /**
