@@ -16,6 +16,7 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +78,8 @@ public class SamePropertyValueChecker implements QSChecker {
                     } else if (projectProperties.get(propertyName) != null && !projectProperties.get(propertyName).equals(propertyValue)) {
                         // The property was used but with an different value
                         int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-                        String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll((mavenSession.getExecutionRootDirectory() + "/"), "");
+                        String rootDirectory = mavenSession.getExecutionRootDirectory().replaceAll("\\", "\\\\") + File.separator;
+                        String fileAsString = mavenProject.getFile().getAbsolutePath().replaceAll(rootDirectory, "");
                         if (results.get(fileAsString) == null) {
                             results.put(fileAsString, new ArrayList<Violation>());
                         }
