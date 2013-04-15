@@ -29,8 +29,8 @@ This will check your project and all modules to seek for potential violations.
 
 The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 
-If you need to ignore some files
---------------------------------
+If you need to ignore some files for being checked
+--------------------------------------------------
 
 `Note:` Some files are already excluded by default: 
  - hidden files
@@ -38,18 +38,27 @@ If you need to ignore some files
  - README.html files
  - files from the following libraries: jquery, cordova, angular, qunit, backbone, lodash, modernizr, yepnope.
 
-If you need for any reason remove some files from the the Checker, you can add the excludes expression to 'qstools.excludes' parameter:
+If you need for any reason remove some files from the the Checker, you can add the *excludes expression* to 'qstools.excludes' parameter:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check 
        -Dqstools.excludes="**/somefile.txt, *.bkp"
     
 
-You can also use a file with the ignored files list using the `qstools.excudes.file` property: 
+You can *also use a file with the ignored files list* using the `qstools.excudes.file` property: 
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms 
-       -Dqstools.excludes.file=somefile.txt
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check 
+       -Dqstools.excludes.file=<relative or absolute path to a file>
     
 `Note:` The file format uses individual patterns on each line
+
+File content example:
+        
+        src/main/resources/import.sql
+        src/main/webapp/js/somejs.js
+        **/*.css
+        **/somelibrary*.js
+        src/main/resources/**/*.xml
+
 
 If you need to update quickstarts BOMs
 --------------------------------------
