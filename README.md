@@ -44,7 +44,7 @@ If you need for any reason remove some files from the the Checker, you can add t
        -Dqstools.excludes="**/somefile.txt, *.bkp"
     
 
-You can *also use a file with the ignored files list* using the `qstools.excudes.file` property: 
+You can *also use a file that lists the files to be ignored* using the `qstools.excudes.file` property: 
 
     mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check 
        -Dqstools.excludes.file=<relative or absolute path to a file>
