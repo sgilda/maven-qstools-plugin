@@ -29,7 +29,7 @@ This will check your project and all modules to seek for potential violations.
 
 The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 
-If you need to ignore some files for being checked
+If you need to ignore some files from being checked
 --------------------------------------------------
 
 `Note:` Some files are already excluded by default: 
