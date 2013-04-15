@@ -79,6 +79,10 @@ import edu.emory.mathcs.backport.java.util.Collections;
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = true)
 public class QSCheckerReporter extends AbstractMavenReport {
 
+    // Default excludes = target, hidden files and directories and known libraries
+    private static final String DEFAULT_EXCLUDES = "**/target/**, **/.*/*.*, .*, " +
+        "**/jquery*, **/cordova*, **/angular*, **/qunit*, **/backbone*, **/lodash*, **/modernizr*, **/yepnope*, **/README.html, ";
+
     @Component
     private PlexusContainer container;
 
@@ -215,11 +219,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
             startReport(checkers, locale);
             doFileSummary(globalFilesViolations);
             doFileReports(globalFilesViolations);
-            // Display both the file name and a link for browser access 
+            // Display both the file name and a link for browser access
             String reportName = mavenProject.getModel().getReporting().getOutputDirectory() + File.separator + getOutputName() + ".html";
-            getLog().info("Your report is ready at " + reportName + System.getProperty("line.separator") + 
-                "       You can access the report using Chrome or Firefox at the following URL: " + 
-                System.getProperty("line.separator") + "            file://" + reportName);
+            String msg = "Your report is ready at %1$s \n       " +
+                "You can access the report using Chrome or Firefox at the following URL: \n" +
+                "            file://%1$s";
+            getLog().info(String.format(msg, reportName));
         } catch (Exception e) {
             throw new MavenReportException(e.getMessage(), e);
         }
@@ -233,11 +238,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     private void configureParameters() throws IOException {
         container.getContext().put(GroupIdChecker.GROUPID, groupId);
-        String excludes = excludesExpression == null ? "" : excludesExpression;
+        String excludes = DEFAULT_EXCLUDES + (excludesExpression == null ? "" : excludesExpression);
         if (excludesFile != null) {
             excludes = readExcludesFromFile() + ", " + excludes;
         }
         container.getContext().put(AbstractCheckstyleChecker.EXCLUDES, excludes);
+        getLog().info("The following files will be ignored: " + excludes);
     }
 
     /**

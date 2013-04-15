@@ -36,9 +36,7 @@ If you need to ignore some files
  - hidden files
  - files inside the `target` folder
  - README.html files
- - jquery*.js javascript files
- - cordova*.js javascript files
- - angular*.js javascript files
+ - files from the following libraries: jquery, cordova, angular, qunit, backbone, lodash, modernizr, yepnope.
 
 If you need for any reason remove some files from the the Checker, you can add the excludes expression to 'qstools.excludes' parameter:
 
