@@ -28,6 +28,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -62,62 +64,79 @@ public class ArchetypeSyncMojo extends AbstractMojo {
 
     private XPath xPath = XPathFactory.newInstance().newXPath();
 
+    // Files that will have their content parsed by the interpolation process
     private static final String[] TEXT_EXTENSIONS = { "java", "css", "html", "xhtml", "md", "xml", "properties", "sql" };
 
     /**
      * Git repository that holds the maven project
      */
-    @Parameter(property = "qstools.projectGitRepo", required = true, readonly = true)
+    @Parameter(required = true, readonly = true)
     private String projectGitRepo;
 
     /**
      * Branch/Tag of the git repository that holds the origin project
      */
-    @Parameter(property = "qstools.projectGitRepo.branch", defaultValue = "master")
+    @Parameter(defaultValue = "master")
     private String branch;
 
     /**
      * Relative path to project that originates the Archetype
      */
-    @Parameter(property = "qstools.projectPath", required = true, readonly = true)
+    @Parameter(required = true, readonly = true)
     private String projectPath;
 
     /**
      * Root package of the origin project
      */
-    @Parameter(property = "qstools.rootPackage", required = true, readonly = true)
+    @Parameter(required = true, readonly = true)
     private String rootPackage;
 
     /**
      * If a project is multi module, this flag should be enabled. This will use ${rootArtifactId} instead of ${artifactId}
      */
-    @Parameter(property = "qstools.multiModuleProject", defaultValue = "false", readonly = true)
+    @Parameter(defaultValue = "false", readonly = true)
     private boolean multiModuleProject;
 
     /**
-     * Extra string values that should be replaces by ${artifactId}, __artifactId__
+     * Extra string values that should be replaced by ${artifactId} in file content, or __artifactId__ in file name
      */
-    @Parameter(property = "qstools.extraReplaceValues", readonly = true)
-    private String[] extraReplaceValues;
+    @Parameter(readonly = true)
+    private String[] archetypeExpressionReplaceValues;
 
-    @Parameter(property = "project.build.directory")
+    /**
+     * Extra string values that should replaces the key for the ${value}. The value will be automatically transformed in a
+     * expression by adding ${} arround the value string.
+     * 
+     * Example: <html5mobi>tableSuffix</html5mobi> - html5mobi will be replaced by ${tableSuffix}
+     */
+    @Parameter(readonly = true)
+    private Map<String, String> replaceValueWithExpression = new HashMap<String, String>();
+
+    @Parameter(property = "project.build.directory", required = true)
     private String outputPath;
 
-    @Parameter(property = "basedir")
+    @Parameter(property = "basedir", required = true)
     private String baseDir;
 
+    // local reference to the origin project
     private File exampleProjectPath;
 
+    // stops the file writing while on ignoreMode
     private boolean ignoreMode = false;
 
+    // Extracted from original Pom Metadata
     private String originalGroupId = null;
 
+    // Extracted from original Pom Metadata
     private String originalArtifactId = null;
 
+    // Extracted from original Pom Metadata
     private String originalVersion = null;
 
+    // Extracted from original Pom Metadata
     private String originalBomVersion = null;
 
+    // artifactId or rootArtifactId base on multiModuleProject value
     private String artifactExpression;
 
     /*
@@ -192,7 +211,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                 String relativePath = file.getPath().replaceAll(rootPath, "");
                 String relativePathWithoutPackage = relativePath.replace(rootPackage.replaceAll("\\.", File.separator), "");
                 String pathInterpolated = relativePathWithoutPackage;
-                for (String value : extraReplaceValues) {
+                for (String value : archetypeExpressionReplaceValues) {
                     pathInterpolated = pathInterpolated.replaceAll(value, "__" + artifactExpression + "__");
                 }
                 // default interpolation
@@ -216,8 +235,12 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                             content = getPomLine(line);
                         }
 
-                        for (String value : extraReplaceValues) {
+                        for (String value : archetypeExpressionReplaceValues) {
                             content = content.replaceAll(value, "\\${" + artifactExpression + "}");
+                        }
+                        for (String key : replaceValueWithExpression.keySet()) {
+                            String value = "\\${" + replaceValueWithExpression.get(key) + "}";
+                            content = content.replaceAll(key, value);
                         }
                         // default content interpolation
                         content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
