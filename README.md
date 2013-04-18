@@ -22,7 +22,7 @@ Checking the quickstarts made easy
 
 Select a Maven project and run:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:check
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check
     
 
 This will check your project and all modules to seek for potential violations.
@@ -40,13 +40,13 @@ If you need to ignore some files from being checked
 
 If you need for any reason remove some files from the the Checker, you can add the *excludes expression* to 'qstools.excludes' parameter:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:check 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check 
        -Dqstools.excludes="**/somefile.txt, *.bkp"
     
 
 You can *also use a file that lists the files to be ignored* using the `qstools.excudes.file` property: 
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:check 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check 
        -Dqstools.excludes.file=<relative or absolute path to a file>
     
 `Note:` The file format uses individual patterns on each line
@@ -71,7 +71,7 @@ If the recommended BOM is newer it will replace the version, otherwise it will o
 
 To run the plugin:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:updateBoms  
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:updateBoms  
     
 
 
@@ -80,13 +80,13 @@ Using a custom stacks.yaml definition
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:(check|updateBoms) 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) 
        -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml 
     
 
 or
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:(check|updateBoms) 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:(check|updateBoms) 
        -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
     
 
@@ -102,7 +102,7 @@ Troubleshooting
 
 You can turn on debugging messages:   
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0.CR5:check -X
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.0-SNAPSHOT:check -X
     
 
 
