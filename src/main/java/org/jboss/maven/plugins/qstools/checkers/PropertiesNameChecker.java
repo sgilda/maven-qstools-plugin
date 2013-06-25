@@ -70,14 +70,28 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
             String groupId = mavenDependency.getGroupId();
             String artifactId = mavenDependency.getArtifactId();
             String version = mavenDependency.getDeclaredVersion() == null ? null : mavenDependency.getDeclaredVersion().replaceAll("[${}]", "");
+            String groupArtifactId = groupId + "|" + artifactId;
 
-            if (groupId != null && version != null// If it has a groupId and a version
-                    && recommendedPropertiesNames.containsKey(groupId) // that we manage
-                    && !recommendedPropertiesNames.get(groupId).equals(version)) { // and it has a different value
-                int lineNumber = getLineNumberFromNode(dependency);
-                String recommendedName = recommendedPropertiesNames.getProperty(groupId);
-                String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
-                addViolation(project.getFile(), results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));
+            if (groupId != null && artifactId != null && version != null // If the dependency has a GAV
+                // that we manage
+                && (recommendedPropertiesNames.containsKey(groupArtifactId) || recommendedPropertiesNames.containsKey(groupId))) {
+                String recommendedNameGA = (String) recommendedPropertiesNames.get(groupArtifactId);
+                String recommendedNameG = (String) recommendedPropertiesNames.get(groupId);
+                boolean wrongVersionName = false;
+                if (recommendedNameGA != null && !recommendedNameGA.equals(version)) {
+                    wrongVersionName = true;
+                }
+                //Just check GroupId only if don't find GroupId+ArtifactId
+                if (recommendedNameGA == null && recommendedNameG != null && !recommendedNameG.equals(version)) {
+                    wrongVersionName = true;
+                }
+                if (wrongVersionName) {
+                    int lineNumber = getLineNumberFromNode(dependency);
+                    String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
+                    // GroupId + ArtifacIt has precedence
+                    String recommendedName = recommendedNameGA != null ? recommendedNameGA : recommendedNameG;
+                    addViolation(project.getFile(), results, lineNumber, String.format(msg, groupId, artifactId, mavenDependency.getDeclaredVersion(), recommendedName));
+                }
             }
         }
     }
