@@ -26,6 +26,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSCheckerReporter;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -37,7 +38,6 @@ import org.w3c.dom.Node;
 @Component(role = QSChecker.class, hint = "GroupIdChecker")
 public class GroupIdChecker extends AbstractProjectChecker {
 
-    public static final String GROUPID = "qstools.groupId";
 
     @Requirement
     private Context context;
@@ -63,7 +63,7 @@ public class GroupIdChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        groupId = (String) context.get(GROUPID);
+        groupId = (String) context.get(QSCheckerReporter.GROUPID);
 
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
         if (node != null && !project.getGroupId().equals(groupId)) {

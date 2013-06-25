@@ -28,6 +28,7 @@ import org.codehaus.plexus.context.Context;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSCheckerReporter;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.w3c.dom.Document;
@@ -46,6 +47,8 @@ public class BomVersionChecker extends AbstractProjectChecker {
     @Requirement
     private Context context;
 
+    private String groupId;
+
     /*
      * (non-Javadoc)
      * 
@@ -54,7 +57,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-
+        groupId = (String) context.get(QSCheckerReporter.GROUPID);
         NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Managed Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
@@ -70,7 +73,9 @@ public class BomVersionChecker extends AbstractProjectChecker {
             }
             int lineNumber = getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
-                && !mavenDependency.getGroupId().startsWith("org.jboss")) { // Escape jboss boms
+                && !mavenDependency.getGroupId().startsWith("org.jboss") // Escape jboss boms
+                && !mavenDependency.getGroupId().startsWith(groupId) // Escape projects with same groupId (subprojects)
+            ) {
                 addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {
                 if (!mavenDependency.getInterpoledVersion().equals(bomUsed.getRecommendedVersion())) {

@@ -97,6 +97,9 @@ public abstract class AbstractProjectChecker implements QSChecker {
     }
 
     protected int getLineNumberFromNode(Node node) {
+        if (node == null){
+            return 0; 
+        }
         return Integer.parseInt((String) node.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
     }
 

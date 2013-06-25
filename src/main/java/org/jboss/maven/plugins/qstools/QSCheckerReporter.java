@@ -83,6 +83,8 @@ public class QSCheckerReporter extends AbstractMavenReport {
     private static final String DEFAULT_EXCLUDES = "**/target/**, **/.*/*.*, .*, " +
         "**/jquery*, **/cordova*, **/angular*, **/qunit*, **/backbone*, **/lodash*, **/modernizr*, **/yepnope*, **/README.html, ";
 
+    public static final String GROUPID = "qstools.groupId";
+
     @Component
     private PlexusContainer container;
 
@@ -110,7 +112,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     /**
      * Overwrite the groupId for {@link GroupIdChecker}
      */
-    @Parameter(property = GroupIdChecker.GROUPID, defaultValue = "org.jboss.as.quickstarts")
+    @Parameter(property = GROUPID, defaultValue = "org.jboss.as.quickstarts")
     private String groupId;
 
     /**
@@ -237,7 +239,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
      * 
      */
     private void configureParameters() throws IOException {
-        container.getContext().put(GroupIdChecker.GROUPID, groupId);
+        container.getContext().put(GROUPID, groupId);
         String excludes = DEFAULT_EXCLUDES + (excludesExpression == null ? "" : excludesExpression);
         if (excludesFile != null) {
             excludes = readExcludesFromFile() + ", " + excludes;
