@@ -37,8 +37,8 @@ import edu.emory.mathcs.backport.java.util.Arrays;
  */
 @Component(role = QSChecker.class, hint = "finalNameChecker")
 public class FinalNameChecker extends AbstractProjectChecker {
-    
-    private String[] projectPlugins = new String[]{"maven-ear-plugin", "maven-war-plugin", "maven-ejb-plugin", "maven-jar-plugin", "maven-rar-plugin"};
+
+    private String[] projectPlugins = new String[] { "maven-ear-plugin", "maven-war-plugin", "maven-ejb-plugin", "maven-jar-plugin", "maven-rar-plugin" };
 
     /*
      * (non-Javadoc)
@@ -47,7 +47,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Checks if the pom.xml for (EAR, WAR, JAR, EJB) contains <finalName>${project.artifactId}</finalName>";
+        return "Checks if the EAR, WAR, JAR, EJB pom.xml contains <finalName>${project.artifactId} | ${project.parent.artifactId}</finalName>";
     }
 
     /*
@@ -64,11 +64,17 @@ public class FinalNameChecker extends AbstractProjectChecker {
         List<String> pluginsList = Arrays.asList(projectPlugins);
         for (int x = 0; x < plugins.getLength(); x++) {
             Node pluginArtifact = plugins.item(x);
-            if (pluginsList.contains(pluginArtifact.getTextContent())){
+            if (pluginsList.contains(pluginArtifact.getTextContent())) {
                 Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
-                if (finalNameNode == null || !finalNameNode.getTextContent().equals("${project.artifactId}")) {
+                if (finalNameNode == null || (
+                        !finalNameNode.getTextContent().equals("${project.artifactId}") && ( //General final name
+                            project.getPackaging().equals("ear") &&
+                            !finalNameNode.getTextContent().equals("${project.parent.artifactId}") //Allowed only for EAR
+                        )
+                    
+                    )) {
                     int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
-                    addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName>");
+                    addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName> or <finalName>${project.parent.artifactId}</finalName> (allowed for EAR only)");
                 }
             }
         }
