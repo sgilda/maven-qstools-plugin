@@ -4,7 +4,7 @@
 
     <groupId>org.jboss.maven.plugins</groupId>
     <artifactId>maven-qstools-plugin</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1.CR1</version>
     <packaging>maven-plugin</packaging>
 
     <name>QSTools Maven Plugin</name>
