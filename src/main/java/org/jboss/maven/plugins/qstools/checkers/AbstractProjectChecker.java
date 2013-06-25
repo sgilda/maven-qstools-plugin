@@ -86,9 +86,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                 processProject(mavenProject, doc, results);
             }
-            if (results.size() > 0) {
-                violationsQtd = results.size();
-                log.info("There are " + results.size() + " checkers errors");
+            if (violationsQtd > 0) {
+                log.info("There are " + violationsQtd + " checkers errors");
             }
         } catch (Exception e) {
             throw new QSCheckerException(e);
@@ -97,8 +96,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
     }
 
     protected int getLineNumberFromNode(Node node) {
-        if (node == null){
-            return 0; 
+        if (node == null) {
+            return 0;
         }
         return Integer.parseInt((String) node.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
     }
@@ -115,6 +114,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
             results.put(fileAsString, new ArrayList<Violation>());
         }
         results.get(fileAsString).add(new Violation(getClass(), lineNumber, violationMessage));
+        violationsQtd++;
     }
 
     public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;

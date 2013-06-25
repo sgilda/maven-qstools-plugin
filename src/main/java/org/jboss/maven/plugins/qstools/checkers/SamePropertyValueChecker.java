@@ -89,9 +89,8 @@ public class SamePropertyValueChecker implements QSChecker {
                     }
                 }
             }
-            if (results.size() > 0) {
-                violationsQtd = results.size();
-                log.info("There are " + results.size() + " checkers errors");
+            if (violationsQtd > 0) {
+                log.info("There are " + violationsQtd + " checkers errors");
             }
         } catch (Exception e) {
             throw new QSCheckerException(e);
