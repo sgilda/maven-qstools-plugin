@@ -27,6 +27,7 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.config.Rules;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -34,13 +35,11 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "GroupIdChecker")
-public class GroupIdChecker extends AbstractProjectChecker {
+@Component(role = QSChecker.class, hint = "artifactIdPrefixChecker")
+public class ArtifactIdPrefixChecker extends AbstractProjectChecker {
 
     @Requirement
     private ConfigurationProvider configurationProvider;
-
-    private String groupId;
 
     /*
      * (non-Javadoc)
@@ -49,7 +48,7 @@ public class GroupIdChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Check if project uses a valid Maven GroupId";
+        return "Check if the Maven ArtifactId uses a valid prefix";
     }
 
     /*
@@ -61,12 +60,13 @@ public class GroupIdChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        groupId = configurationProvider.getQuickstartsRules(project.getGroupId()).getGroupId();
-
-        Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
-        if (node != null && !project.getGroupId().equals(groupId)) {
-            int lineNumber = getLineNumberFromNode(node);
-            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId '" + groupId + "'");
+        Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
+        String artifarIdPrefix = rules.getArtifactIdPrefix();
+        if (!project.getArtifactId().startsWith(artifarIdPrefix)) {
+            Node artifacId = (Node) getxPath().evaluate("/project/artifactId", doc, XPathConstants.NODE);
+            int lineNumber = artifacId == null ? 0 : getLineNumberFromNode(artifacId);
+            String msg = "Project with the following artifactId [%s] isn't doesn't start with [%s]";
+            addViolation(project.getFile(), results, lineNumber, String.format(msg, project.getArtifactId(), artifarIdPrefix));
         }
 
     }

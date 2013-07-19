@@ -29,19 +29,18 @@ import org.apache.maven.plugin.checkstyle.DefaultCheckstyleExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.config.Rules;
 
 import com.puppycrawl.tools.checkstyle.api.AuditEvent;
 
 public abstract class AbstractCheckstyleChecker implements QSChecker {
 
-    public static final String EXCLUDES = "excludes";
-
     @Requirement
-    private Context context;
+    private ConfigurationProvider configurationProvider;
 
     private int violationsQtd;
 
@@ -73,7 +72,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
         List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
-
+        Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         try {
             executorRequest
                 .setReactorProjects(reactorProjects)
@@ -84,9 +83,9 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                 .setConfigLocation(getCheckstyleConfig())
                 .setLog(log)
                 .setEncoding("UTF-8")
-                .setHeaderLocation("header.txt")
+                .setHeaderLocation(rules.getHeaderLocation())
                 .setIncludes(getIncludes())
-                .setExcludes((String) context.get(EXCLUDES));
+                .setExcludes(rules.getExcludes());
 
             CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
             Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();

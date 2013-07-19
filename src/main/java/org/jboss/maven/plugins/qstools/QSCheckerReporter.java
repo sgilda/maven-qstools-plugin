@@ -31,10 +31,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -59,13 +56,6 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Stacks;
-import org.jboss.maven.plugins.qstools.checkers.AbstractCheckstyleChecker;
-import org.jboss.maven.plugins.qstools.checkers.BomVersionChecker;
-import org.jboss.maven.plugins.qstools.checkers.FileHeaderChecker;
-import org.jboss.maven.plugins.qstools.checkers.GroupIdChecker;
-import org.jboss.maven.plugins.qstools.checkers.IllegalCharacterChecker;
-import org.jboss.maven.plugins.qstools.checkers.IndentationChecker;
-import org.jboss.maven.plugins.qstools.checkers.TabSpaceChecker;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
@@ -78,12 +68,6 @@ import edu.emory.mathcs.backport.java.util.Collections;
  */
 @Mojo(name = "check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = true)
 public class QSCheckerReporter extends AbstractMavenReport {
-
-    // Default excludes = target, hidden files and directories and known libraries
-    private static final String DEFAULT_EXCLUDES = "**/target/**, **/.*/*.*, .*, " +
-        "**/jquery*, **/cordova*, **/angular*, **/qunit*, **/backbone*, **/lodash*, **/modernizr*, **/yepnope*, **/README.html, ";
-
-    public static final String GROUPID = "qstools.groupId";
 
     @Component
     private PlexusContainer container;
@@ -100,6 +84,9 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Component
     private MavenSession mavenSession;
 
+    @Parameter(property = Constants.CONFIG_FILE, defaultValue = "file:///Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
+    private URL configFileURL;
+
     @Parameter(property = "reactorProjects", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
 
@@ -108,25 +95,6 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     @Parameter(property = "qstools.stacks.url")
     private URL stacksUrl;
-
-    /**
-     * Overwrite the groupId for {@link GroupIdChecker}
-     */
-    @Parameter(property = GROUPID, defaultValue = "org.jboss.as.quickstarts")
-    private String groupId;
-
-    /**
-     * Add the file contents as excluded checking
-     */
-    @Parameter(property = "qstools.excludes.file")
-    private File excludesFile;
-
-    /**
-     * Excludes some files from being verified by {@link FileHeaderChecker}, {@link IllegalCharacterChecker},
-     * {@link IndentationChecker} and {@link TabSpaceChecker}
-     */
-    @Parameter(property = "qstools.excludes")
-    private String excludesExpression;
 
     /*
      * (non-Javadoc)
@@ -196,8 +164,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
         try {
-            configureParameters();
-            configureStacks();
+            configurePlugin();
             executeJXRAndSitePlugins();
 
             List<QSChecker> checkersFound = container.lookupList(QSChecker.class);
@@ -235,49 +202,23 @@ public class QSCheckerReporter extends AbstractMavenReport {
     }
 
     /**
-     * @throws IOException if excludesFile doesn't exists
-     * 
-     */
-    private void configureParameters() throws IOException {
-        container.getContext().put(GROUPID, groupId);
-        String excludes = DEFAULT_EXCLUDES + (excludesExpression == null ? "" : excludesExpression);
-        if (excludesFile != null) {
-            excludes = readExcludesFromFile() + ", " + excludes;
-        }
-        container.getContext().put(AbstractCheckstyleChecker.EXCLUDES, excludes);
-        getLog().info("The following files will be ignored: " + excludes);
-    }
-
-    /**
-     * @return file content split with ', '
-     * @throws IOException if excludesFile doesn't exists
-     */
-    private String readExcludesFromFile() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(excludesFile));
-        StringBuilder sb = new StringBuilder();
-        try {
-            while (br.ready()) {
-                sb.append(br.readLine());
-                sb.append(", ");
-            }
-        } catch (Exception e) {
-            br.close();
-        }
-        return sb.toString();
-    }
-
-    /**
      * Check if a Custom Stacks URL was informed and configure Stacks client
      * 
      */
-    private void configureStacks() {
+    private void configurePlugin() {
+        getLog().info("Using the following QSTools config file: " + configFileURL);
+        container.getContext().put(Constants.CONFIG_FILE, configFileURL);
+        
         StacksClient stacksClient = new StacksClient();
         if (stacksUrl != null) {
             stacksClient.getActualConfiguration().setUrl(stacksUrl);
         }
         getLog().info("Using the following Stacks YML file: " + stacksClient.getActualConfiguration().getUrl());
         Stacks stacks = stacksClient.getStacks();
-        container.getContext().put(BomVersionChecker.STACKS, stacks);
+        container.getContext().put(Constants.STACKS, stacks);
+        
+        container.getContext().put(Constants.LOG, getLog());
+        container.getContext().put(Constants.MAVEN_SESSION, mavenSession);
     }
 
     /**

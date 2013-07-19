@@ -27,8 +27,8 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
+import org.jboss.maven.plugins.qstools.Constants;
 import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerReporter;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.w3c.dom.Document;
@@ -42,12 +42,8 @@ import org.w3c.dom.NodeList;
 @Component(role = QSChecker.class, hint = "bomVersionChecker")
 public class BomVersionChecker extends AbstractProjectChecker {
 
-    public static final String STACKS = "stacks";
-
     @Requirement
     private Context context;
-
-    private String groupId;
 
     /*
      * (non-Javadoc)
@@ -57,7 +53,6 @@ public class BomVersionChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        groupId = (String) context.get(QSCheckerReporter.GROUPID);
         NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Managed Dependencies
         for (int x = 0; x < dependencies.getLength(); x++) {
@@ -65,7 +60,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             // use stacks to find if the project is using a jdf bom
             Bom bomUsed = null;
-            Stacks stacks = (Stacks) context.get(STACKS);
+            Stacks stacks = (Stacks) context.get(Constants.STACKS);
             for (Bom bom : stacks.getAvailableBoms()) {
                 if (bom.getGroupId().equals(mavenDependency.getGroupId()) && bom.getArtifactId().equals(mavenDependency.getArtifactId())) {
                     bomUsed = bom;
@@ -74,7 +69,8 @@ public class BomVersionChecker extends AbstractProjectChecker {
             int lineNumber = getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
                 && !mavenDependency.getGroupId().startsWith("org.jboss") // Escape jboss boms
-                && !mavenDependency.getGroupId().startsWith(groupId) // Escape projects with same groupId (subprojects)
+                && !mavenDependency.getGroupId().startsWith(project.getGroupId()) // Escape projects with same groupId
+                                                                                  // (subprojects)
             ) {
                 addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
             } else if (bomUsed != null) {

@@ -4,7 +4,7 @@
 
     <groupId>org.jboss.maven.plugins</groupId>
     <artifactId>maven-qstools-plugin</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>QSTools Maven Plugin</name>
@@ -45,6 +45,10 @@
 		<!-- maven-compiler-plugin -->
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
+
+        <httpclient.version>4.0.1</httpclient.version>
+        <yaml.version>1.11</yaml.version>
+        <junit.version>4.10</junit.version>
         
         <!-- Repository Deployment URLs -->
 
@@ -93,6 +97,16 @@
             <version>2.0</version>
         </dependency>
         <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
             <version>2.3.1.201302201838-r</version>
@@ -100,7 +114,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.2</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
 

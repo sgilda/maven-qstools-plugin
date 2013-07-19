@@ -153,7 +153,10 @@ public class DependencyChecker extends AbstractProjectChecker {
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             int lineNumber = getLineNumberFromNode(dependency);
             MavenGA ga = new MavenGA(mavenDependency.getGroupId(), mavenDependency.getArtifactId());
-            if (mavenDependency.getDeclaredVersion() != null) {
+            //IF declares a version
+            if (mavenDependency.getDeclaredVersion() != null &&
+                //skip multi modules projects (ejb, ear, war)
+                !mavenDependency.getDeclaredVersion().equals("${project.version}")) {
                 StringBuilder sb = new StringBuilder(String.format("You should NOT declare a version for %s:%s:%s. Consider using a BOM. ", mavenDependency.getGroupId(),
                     mavenDependency.getArtifactId(), mavenDependency.getDeclaredVersion()));
                 // If has a BOM for it
