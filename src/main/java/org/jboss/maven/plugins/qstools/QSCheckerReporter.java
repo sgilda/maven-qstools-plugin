@@ -84,11 +84,14 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Component
     private MavenSession mavenSession;
 
-    @Parameter(property = Constants.CONFIG_FILE, defaultValue = "file:///Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
-    private URL configFileURL;
-
     @Parameter(property = "reactorProjects", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
+
+    /**
+     * Overwrite the config file
+     */
+    @Parameter(property="qstools.configFileURL", defaultValue="file:///Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
+    private URL configFileURL;
 
     /**
      * Overwrite the stacks file
@@ -207,18 +210,18 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     private void configurePlugin() {
         getLog().info("Using the following QSTools config file: " + configFileURL);
-        container.getContext().put(Constants.CONFIG_FILE, configFileURL);
-        
+        container.getContext().put(Constants.CONFIG_FILE_CONTEXT, configFileURL);
+
         StacksClient stacksClient = new StacksClient();
         if (stacksUrl != null) {
             stacksClient.getActualConfiguration().setUrl(stacksUrl);
         }
         getLog().info("Using the following Stacks YML file: " + stacksClient.getActualConfiguration().getUrl());
         Stacks stacks = stacksClient.getStacks();
-        container.getContext().put(Constants.STACKS, stacks);
-        
-        container.getContext().put(Constants.LOG, getLog());
-        container.getContext().put(Constants.MAVEN_SESSION, mavenSession);
+        container.getContext().put(Constants.STACKS_CONTEXT, stacks);
+
+        container.getContext().put(Constants.LOG_CONTEXT, getLog());
+        container.getContext().put(Constants.MAVEN_SESSION_CONTEXT, mavenSession);
     }
 
     /**

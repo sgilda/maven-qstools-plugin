@@ -28,8 +28,10 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.w3c.dom.Document;
 
 /**
@@ -39,10 +41,11 @@ import org.w3c.dom.Document;
 @Component(role = QSChecker.class, hint = "readmeChecker")
 public class ReadmeChecker extends AbstractProjectChecker {
 
-    private static final String[] README_METADATA = new String[] { "Author:", "Level:", "Technologies:", "Summary:", "Target Product:", "Source:" };
+    @Requirement
+    private ConfigurationProvider configurationProvider;
 
     private String regexPattern;
-    
+
     private String folderName;
 
     /*
@@ -65,10 +68,10 @@ public class ReadmeChecker extends AbstractProjectChecker {
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         folderName = project.getBasedir().getName() + ":";
-        setupRegexPattern();
+        setupRegexPattern(project.getGroupId());
         File readme = new File(project.getBasedir(), "README.md");
         if (readme.exists()) {
-           checkReadmeFile(readme, results);
+            checkReadmeFile(project.getGroupId(), readme, results);
         }
     }
 
@@ -78,11 +81,13 @@ public class ReadmeChecker extends AbstractProjectChecker {
      * Format: metadata1:|metadata2:|metadata3:
      * 
      * @param string
+     * 
+     * @param string
      */
-    private void setupRegexPattern() {
+    private void setupRegexPattern(String groupid) {
+        List<String> metadatas = configurationProvider.getQuickstartsRules(groupid).getReadmeMetadatas();
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < README_METADATA.length; i++) {
-            String metadata = README_METADATA[i];
+        for (String metadata : metadatas) {
             sb.append(metadata + "|");
         }
         sb.append(folderName);
@@ -92,7 +97,8 @@ public class ReadmeChecker extends AbstractProjectChecker {
     /**
      * Check if the file contains all defined metadata
      */
-    private void checkReadmeFile(File readme, Map<String, List<Violation>> results) throws IOException {
+    private void checkReadmeFile(String groupId, File readme, Map<String, List<Violation>> results) throws IOException {
+        List<String> metadatas = configurationProvider.getQuickstartsRules(groupId).getReadmeMetadatas();
         BufferedReader br = new BufferedReader(new FileReader(readme));
         try {
             Pattern p = Pattern.compile(regexPattern);
@@ -104,14 +110,14 @@ public class ReadmeChecker extends AbstractProjectChecker {
                     usedPatterns.add(m.group());
                 }
             }
-            for (String metadata: README_METADATA){
-                if (!usedPatterns.contains(metadata)){
+            for (String metadata : metadatas) {
+                if (!usedPatterns.contains(metadata)) {
                     String msg = "File doesn't containt [%s] metadata";
                     addViolation(readme, results, 3, String.format(msg, metadata));
                 }
             }
-            if (!usedPatterns.contains(folderName)){
-                String msg = "Readme title doesn't match the folder name: "  + folderName;
+            if (!usedPatterns.contains(folderName)) {
+                String msg = "Readme title doesn't match the folder name: " + folderName;
                 addViolation(readme, results, 1, msg);
             }
         } finally {

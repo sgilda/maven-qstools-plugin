@@ -22,13 +22,13 @@ package org.jboss.maven.plugins.qstools;
  */
 public class Constants {
     
-    public static final String STACKS = "qstools.stacks";
+    public static final String STACKS_CONTEXT = "qstools.stacks";
 
-    public static final String CONFIG_FILE = "qstools.configFileURL";
+    public static final String CONFIG_FILE_CONTEXT = "qstools.configFileURL";
+    
+    public static final String LOG_CONTEXT = "qstools.log";
 
-    public static final String LOG = "qstools.log";
+    public static final String MAVEN_SESSION_CONTEXT = "qstools.mavenSession";
 
-    public static final String MAVEN_SESSION = "qstools.mavenSession";
-
-    public static final int CACHE_EXPIRES_SECONDS = 1; // 1 hour;
+    public static final int CACHE_EXPIRES_SECONDS = 60; // 1 minute;
 }

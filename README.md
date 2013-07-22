@@ -22,43 +22,22 @@ Checking the quickstarts made easy
 
 Select a Maven project and run:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:check
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.2.0-SNAPSHOT:check
     
 
 This will check your project and all modules to seek for potential violations.
 
 The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 
-If you need to ignore some files from being checked
---------------------------------------------------
+Configuring QSTools
+-------------------
 
-`Note:` Some files are already excluded by default: 
- - hidden files
- - files inside the `target` folder
- - README.html files
- - files from the following libraries: jquery, cordova, angular, qunit, backbone, lodash, modernizr, yepnope.
+QSTools configuration is made by editing the online file https://github.com/jboss-jdf/qstools/blob/master/config/qstools_config.yaml
 
-If you need for any reason remove some files from the the Checker, you can add the *excludes expression* to 'qstools.excludes' parameter:
+You can use a local config file by overwriting qstools property:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:check 
-       -Dqstools.excludes="**/somefile.txt, *.bkp"
-    
-
-You can *also use a file that lists the files to be ignored* using the `qstools.excudes.file` property: 
-
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:check 
-       -Dqstools.excludes.file=<relative or absolute path to a file>
-    
-`Note:` The file format uses individual patterns on each line
-
-File content example:
-        
-        src/main/resources/import.sql
-        src/main/webapp/js/somejs.js
-        **/*.css
-        **/somelibrary*.js
-        src/main/resources/**/*.xml
-
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.2.0-SNAPSHOT:check 
+         -Dqstools.configFileURL=file:///Users/rafaelbenevides/path/qstools_config.yaml
 
 If you need to update quickstarts BOMs
 --------------------------------------
@@ -71,7 +50,7 @@ If the recommended BOM is newer it will replace the version, otherwise it will o
 
 To run the plugin:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:updateBoms  
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.2.0-SNAPSHOT:updateBoms  
     
 
 
@@ -80,13 +59,13 @@ Using a custom stacks.yaml definition
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:(check|updateBoms) 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.2.0-SNAPSHOT:(check|updateBoms) 
        -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml 
     
 
 or
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:(check|updateBoms) 
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.2.0-SNAPSHOT:(check|updateBoms) 
        -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml 
     
 

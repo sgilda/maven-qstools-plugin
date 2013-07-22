@@ -65,9 +65,9 @@ public class ConfigurationProvider {
     private Map<String, Rules> configRules = new HashMap<String, Rules>();
 
     private void configure() throws ContextException {
-        configFileURL = (URL) context.get(Constants.CONFIG_FILE);
-        log = (Log) context.get(Constants.LOG);
-        mavenSession = (MavenSession) context.get(Constants.MAVEN_SESSION);
+        configFileURL = (URL) context.get(Constants.CONFIG_FILE_CONTEXT);
+        log = (Log) context.get(Constants.LOG_CONTEXT);
+        mavenSession = (MavenSession) context.get(Constants.MAVEN_SESSION_CONTEXT);
     }
 
     /**

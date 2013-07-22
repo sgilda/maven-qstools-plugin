@@ -16,7 +16,6 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +24,10 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -37,7 +38,8 @@ import org.w3c.dom.Node;
 @Component(role = QSChecker.class, hint = "pomElementOrderChecker")
 public class PomElementOrderChecker extends AbstractProjectChecker {
 
-    private static final String[] pomElements = new String[] { "parent", "modules", "properties", "dependencyManagement", "dependencies", "build", "profiles" };
+    @Requirement
+    private ConfigurationProvider configurationProvider;
 
     /*
      * (non-Javadoc)
@@ -57,6 +59,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+        List<String> pomElements = configurationProvider.getQuickstartsRules(project.getGroupId()).getPomOrder();
         Map<String, Integer> elementsFound = new LinkedHashMap<String, Integer>();
         // Find all elements position
         for (String element : pomElements) {
@@ -74,7 +77,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
             if (previousElement != null) {
                 int previousElementLineNumber = elementsFound.get(previousElement);
                 if (lineNumber < previousElementLineNumber) {
-                    String msg = "Element [%s] is not in the correct order: " + Arrays.toString(pomElements) + ". It shoud come after [%s] on line %s";
+                    String msg = "Element [%s] is not in the correct order: " + pomElements + ". It shoud come after [%s] on line %s";
                     addViolation(project.getFile(), results, lineNumber, String.format(msg, element, previousElement, previousElementLineNumber));
                 }
             }
