@@ -16,8 +16,11 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,11 +83,15 @@ public abstract class AbstractProjectChecker implements QSChecker {
         this.mavenSession = mavenSession;
         this.log = log;
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-
         try {
+            List<String> ignoredQuickstarts = readIgnoredFile();
             for (MavenProject mavenProject : reactorProjects) {
-                Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                processProject(mavenProject, doc, results);
+                if (!ignoredQuickstarts.contains(mavenProject.getBasedir().getName())) {
+                    Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
+                    processProject(mavenProject, doc, results);
+                } else {
+                    log.debug("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
+                }
             }
             if (violationsQtd > 0) {
                 log.info("There are " + violationsQtd + " checkers errors");
@@ -93,6 +100,26 @@ public abstract class AbstractProjectChecker implements QSChecker {
             throw new QSCheckerException(e);
         }
         return results;
+    }
+
+    /**
+     * @return
+     * @throws IOException
+     */
+    private List<String> readIgnoredFile() throws IOException {
+        List<String> result = new ArrayList<String>();
+        BufferedReader br = new BufferedReader(new FileReader(".quickstarts_ignore"));
+        try {
+            while (br.ready()) {
+                String line = br.readLine();
+                result.add(line);
+            }
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+        return result;
     }
 
     protected int getLineNumberFromNode(Node node) {

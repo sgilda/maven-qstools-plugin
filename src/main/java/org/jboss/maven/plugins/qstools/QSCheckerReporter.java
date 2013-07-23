@@ -24,16 +24,19 @@ package org.jboss.maven.plugins.qstools;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.name;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -56,8 +59,6 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Stacks;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * 
@@ -90,7 +91,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
     /**
      * Overwrite the config file
      */
-    @Parameter(property="qstools.configFileURL", defaultValue="https://raw.github.com/jboss-jdf/qstools/master/config/qstools_config.yaml")
+    @Parameter(property = "qstools.configFileURL",
+        defaultValue = "https://raw.github.com/jboss-jdf/qstools/master/config/qstools_config.yaml")
+    // @Parameter(property = "qstools.configFileURL", defaultValue =
+    // "file:/Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
     private URL configFileURL;
 
     /**
@@ -247,16 +251,49 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     private void executeJXRAndSitePlugins() throws MojoExecutionException {
         // Execute JXR Plugin
-        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("aggregate"), configuration(),
-            executionEnvironment(mavenProject, mavenSession, pluginManager));
+        executeMojo(
+            plugin(
+                groupId("org.apache.maven.plugins"),
+                artifactId("maven-jxr-plugin"),
+                version("2.3")
+            ),
+            goal("aggregate"),
+            configuration(),
+            executionEnvironment(
+                mavenProject,
+                mavenSession,
+                pluginManager));
 
         // Execute JXR Plugin for test sources
-        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-jxr-plugin"), version("2.3")), goal("test-aggregate"), configuration(),
-            executionEnvironment(mavenProject, mavenSession, pluginManager));
+        executeMojo(
+            plugin(
+                groupId("org.apache.maven.plugins"),
+                artifactId("maven-jxr-plugin"),
+                version("2.3")
+            ),
+            goal("test-aggregate"),
+            configuration(),
+            executionEnvironment(
+                mavenProject,
+                mavenSession,
+                pluginManager));
 
         // Execute Site Plugin
-        executeMojo(plugin(groupId("org.apache.maven.plugins"), artifactId("maven-site-plugin"), version("3.2")), goal("site"), configuration(),
-            executionEnvironment(mavenProject, mavenSession, pluginManager));
+        executeMojo(
+            plugin(
+                groupId("org.apache.maven.plugins"),
+                artifactId("maven-site-plugin"),
+                version("2.2")
+            ),
+            goal("site"),
+            configuration(
+                element(name("generateReports"), "false"),
+                element(name("generateSitemap"), "false")
+            ),
+            executionEnvironment(
+                mavenProject,
+                mavenSession,
+                pluginManager));
     }
 
     /**

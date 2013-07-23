@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -85,9 +86,9 @@ public class ReadmeChecker extends AbstractProjectChecker {
      * @param string
      */
     private void setupRegexPattern(String groupid) {
-        List<String> metadatas = configurationProvider.getQuickstartsRules(groupid).getReadmeMetadatas();
+        Map<String, String> metadatas = configurationProvider.getQuickstartsRules(groupid).getReadmeMetadatas();
         StringBuilder sb = new StringBuilder();
-        for (String metadata : metadatas) {
+        for (String metadata : metadatas.keySet()) {
             sb.append(metadata + "|");
         }
         sb.append(folderName);
@@ -98,22 +99,32 @@ public class ReadmeChecker extends AbstractProjectChecker {
      * Check if the file contains all defined metadata
      */
     private void checkReadmeFile(String groupId, File readme, Map<String, List<Violation>> results) throws IOException {
-        List<String> metadatas = configurationProvider.getQuickstartsRules(groupId).getReadmeMetadatas();
+        Map<String, String> metadatas = configurationProvider.getQuickstartsRules(groupId).getReadmeMetadatas();
         BufferedReader br = new BufferedReader(new FileReader(readme));
         try {
             Pattern p = Pattern.compile(regexPattern);
             List<String> usedPatterns = new ArrayList<String>();
+            Map<String, String> usedValues = new HashMap<String, String>();
             while (br.ready()) {
                 String line = br.readLine();
                 Matcher m = p.matcher(line);
                 if (m.find()) {
                     usedPatterns.add(m.group());
+                    usedValues.put(m.group(), line.substring(m.group().length(), line.length()).trim());
                 }
             }
-            for (String metadata : metadatas) {
-                if (!usedPatterns.contains(metadata)) {
-                    String msg = "File doesn't containt [%s] metadata";
+            for (String metadata : metadatas.keySet()) {
+                if (usedPatterns.contains(metadata)) {
+                    String value = usedValues.get(metadata);
+                    String expected = metadatas.get(metadata);
+                    if (!value.matches(expected)) {
+                        String msg = "Content for metadata [%s = %s] should follow the [%s] pattern";
+                        addViolation(readme, results, 0, String.format(msg, metadata, value, expected));
+                    }
+                } else {
+                    String msg = "File doesn't contain [%s] metadata";
                     addViolation(readme, results, 3, String.format(msg, metadata));
+
                 }
             }
             if (!usedPatterns.contains(folderName)) {

@@ -16,6 +16,7 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,6 @@ import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 /**
  * @author Rafael Benevides
@@ -58,7 +57,6 @@ public class FinalNameChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    @SuppressWarnings("unchecked")
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         NodeList plugins = (NodeList) getxPath().evaluate("//plugin/artifactId", doc, XPathConstants.NODESET);
         List<String> pluginsList = Arrays.asList(projectPlugins);

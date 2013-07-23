@@ -33,6 +33,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -45,6 +46,9 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
 
     @Requirement
     private RepositorySystem repositorySystem;
+
+    @Requirement
+    private ConfigurationProvider configurationProvider;
 
     /*
      * (non-Javadoc)
@@ -65,22 +69,23 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        for (Dependency dependency : project.getDependencies()) {
-            Artifact dependencyArtifact = repositorySystem.createProjectArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
-            ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
+        if (!configurationProvider.getQuickstartsRules(project.getGroupId()).isSkipMavenCentralRepositoryChecker()) {
+            for (Dependency dependency : project.getDependencies()) {
+                Artifact dependencyArtifact = repositorySystem.createProjectArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
+                ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
 
-            List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
-            remoteRepositories.add(repositorySystem.createDefaultRemoteRepository());
+                List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
+                remoteRepositories.add(repositorySystem.createDefaultRemoteRepository());
 
-            arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
-            ArtifactResolutionResult result = repositorySystem.resolve(arr);
-            Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
-            int lineNumber = getLineNumberFromNode(dependencyNode);
-            if (!result.isSuccess()){
-                addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
+                arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
+                ArtifactResolutionResult result = repositorySystem.resolve(arr);
+                Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
+                int lineNumber = getLineNumberFromNode(dependencyNode);
+                if (!result.isSuccess()) {
+                    addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
+                }
             }
         }
     }
-
 
 }

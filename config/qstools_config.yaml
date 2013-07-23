@@ -17,26 +17,33 @@
 rules:
    #Default rule
    - &default
-     
+
+       #Enable or Disalbe MavenCentralRepositoryChecker - It can be disabled for Product Based Repositories
+       skipMavenCentralRepositoryChecker: false
+
        #Expected JDF BOM Version
-       expected-bom-versions: 
+       expected-bom-versions:
          - org.jboss.bom: 1.0.7.CR8
          - org.jboss.spec: 3.0.2.Final
-       
+
        #Default Maven groupId
        groupid: org.jboss.as.quickstarts
 
        #Maven ArtifactId prefix
        artifactid-prefix: "jboss-as-"
 
-       #Metadatas that should be present on Readme files
+       #Pom name pattern
+       pom-name-pattern: "JBoss <target-product> Quickstart: <project-folder>"
+       pom-name-pattern-submodule: "JBoss <target-product> Quickstart: <project-folder> - <submodule-folder>"
+
+       #Metadatas that should be present on Readme files and its pattern
        readme-metadatas:
-         - "Author:"
-         - "Level:"
-         - "Technologies:"
-         - "Summary:"
-         - "Target Product:"
-         - "Source:"
+         - "Author:": "\\w.*"
+         - "Level:": "Beginner|Intermediate|Advanced"
+         - "Technologies:": "\\w.*"
+         - "Summary:": "\\w.*"
+         - "Target Product:": "EAP|WFK|JPP|JDG"
+         - "Source:": "<(http|https)://\\w.*>"
 
        #element order in pom.xml
        pom-order:
@@ -87,6 +94,11 @@ rules:
    #Specific rules
    - &jdg
        groupid: com.jboss.datagrid.quickstart
+   - &jpp
+       groupid: org.gatein.portal.quickstarts
+       skipMavenCentralRepositoryChecker: true
+       expected-bom-versions:
+         - org.jboss.bom: 1.0.1.Final-redhat-1
 
 #Quickstarts
 quickstarts:
@@ -95,3 +107,6 @@ quickstarts:
    com.jboss.datagrid.quickstart:
      - *default
      - *jdg
+   org.gatein.portal.quickstarts:
+     - *default
+     - *jpp

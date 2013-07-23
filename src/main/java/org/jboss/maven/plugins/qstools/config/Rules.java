@@ -17,6 +17,7 @@
 package org.jboss.maven.plugins.qstools.config;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -33,70 +34,82 @@ public class Rules {
         this.configurations = configurations;
     }
 
+    public boolean isSkipMavenCentralRepositoryChecker() {
+        return (Boolean) getConfig("skipMavenCentralRepositoryChecker");
+    }
+
     public String getExcludes() {
         Object excludes = getConfig("excludes");
         return excludes.toString().replace('[', ' ').replace(']', ' ');
     }
-    
-    public String getHeaderLocation(){
+
+    public String getHeaderLocation() {
         return (String) getConfig("header-file");
     }
-    
-    public String getGroupId(){
+
+    public String getGroupId() {
         return (String) getConfig("groupid");
     }
-    
-    public String getArtifactIdPrefix(){
+
+    public String getArtifactIdPrefix() {
         return (String) getConfig("artifactid-prefix");
     }
-    
+
+    public String getPomNamePattern() {
+        return (String) getConfig("pom-name-pattern");
+    }
+
+    public String getPomNamePatternForSubmodule() {
+        return (String) getConfig("pom-name-pattern-submodule");
+    }
+
     @SuppressWarnings("unchecked")
-    public Properties getExpectedBomVersion(){
+    public Properties getExpectedBomVersion() {
         List<Object> propertiesAsList = (List<Object>) getConfig("expected-bom-versions");
         Properties p = new Properties();
-        for (Object o: propertiesAsList){
-           p.putAll((Map<? extends Object, ? extends Object>) o);
-        }
-        return p;
-    }
-    
-    @SuppressWarnings("unchecked")
-    public Properties getPropertiesNames(){
-        List<Object> propertiesAsList = (List<Object>) getConfig("property-names");
-        Properties p = new Properties();
-        for (Object o: propertiesAsList){
-           p.putAll((Map<? extends Object, ? extends Object>) o);
+        for (Object o : propertiesAsList) {
+            p.putAll((Map<? extends Object, ? extends Object>) o);
         }
         return p;
     }
 
-    public List<String> getPomOrder(){
+    @SuppressWarnings("unchecked")
+    public Properties getPropertiesNames() {
+        List<Object> propertiesAsList = (List<Object>) getConfig("property-names");
+        Properties p = new Properties();
+        for (Object o : propertiesAsList) {
+            p.putAll((Map<? extends Object, ? extends Object>) o);
+        }
+        return p;
+    }
+
+    public List<String> getPomOrder() {
         @SuppressWarnings("unchecked")
         List<Object> metadatas = (List<Object>) getConfig("pom-order");
         List<String> list = new ArrayList<String>();
-        for (Object o: metadatas){
-           list.add((String) o);
+        for (Object o : metadatas) {
+            list.add((String) o);
         }
         return list;
     }
 
-    public List<String> getReadmeMetadatas(){
-        @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getReadmeMetadatas() {
         List<Object> metadatas = (List<Object>) getConfig("readme-metadatas");
-        List<String> list = new ArrayList<String>();
-        for (Object o: metadatas){
-           list.add((String) o);
+        Map<String, String> map = new HashMap<String, String>();
+        for (Object o : metadatas) {
+            map.putAll((Map<? extends String, ? extends String>) o);
         }
-        return list;
+        return map;
     }
-    
+
     @SuppressWarnings("unchecked")
     public Object getConfig(String configValue) {
         Object value = null;
         // Get the overwritten non-null value
         for (Object config : configurations) {
             Object foundValue = ((Map<String, Object>) config).get(configValue);
-            if (foundValue != null){
+            if (foundValue != null) {
                 value = foundValue;
             }
         }

@@ -30,5 +30,5 @@ public class Constants {
 
     public static final String MAVEN_SESSION_CONTEXT = "qstools.mavenSession";
 
-    public static final int CACHE_EXPIRES_SECONDS = 60; // 1 minute;
+    public static final int CACHE_EXPIRES_SECONDS = 6; // 1 minute;
 }

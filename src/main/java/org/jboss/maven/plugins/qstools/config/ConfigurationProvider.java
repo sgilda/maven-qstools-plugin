@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,8 +44,6 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.jboss.maven.plugins.qstools.Constants;
 import org.yaml.snakeyaml.Yaml;
-
-import edu.emory.mathcs.backport.java.util.LinkedList;
 
 /**
  * @author Rafael Benevides
@@ -105,7 +104,7 @@ public class ConfigurationProvider {
             List<Object> configs = (List<Object>) quickstartsGroupIds.get(groupId);
             if (configs == null) {
                 Map<String, Object> defaultRulesSection = (Map<String, Object>) ((List<Object>) configFile.get("rules")).get(0);
-                List<Object> defaultRules = new LinkedList();
+                List<Object> defaultRules = new LinkedList<Object>();
                 defaultRules.add(defaultRulesSection);
                 configs  = defaultRules;
             }
