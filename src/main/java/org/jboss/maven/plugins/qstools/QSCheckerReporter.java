@@ -93,8 +93,8 @@ public class QSCheckerReporter extends AbstractMavenReport {
      */
     @Parameter(property = "qstools.configFileURL",
         defaultValue = "https://raw.github.com/jboss-jdf/qstools/master/config/qstools_config.yaml")
-    // @Parameter(property = "qstools.configFileURL", defaultValue =
-    // "file:/Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
+//     @Parameter(property = "qstools.configFileURL", defaultValue =
+//     "file:/Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
     private URL configFileURL;
 
     /**
