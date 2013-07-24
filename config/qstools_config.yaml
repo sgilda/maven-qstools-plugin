@@ -36,6 +36,11 @@ rules:
        pom-name-pattern: "JBoss <target-product> Quickstart: <project-folder>"
        pom-name-pattern-submodule: "JBoss <target-product> Quickstart: <project-folder> - <submodule-folder>"
 
+       #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
+       ignored-modules:
+         - "dist"
+         - "template"
+
        #Metadatas that should be present on Readme files and its pattern
        readme-metadatas:
          - "Author:": "\\w.*"
