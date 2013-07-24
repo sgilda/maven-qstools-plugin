@@ -96,11 +96,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
             if (violationsQtd > 0) {
                 log.info("There are " + violationsQtd + " checkers errors");
             }
-        } catch (IOException ioe) {
-               // Log it and continue. If there's no file, there's nothing to ignore.
-               log.info("No .quickstarts_ignore file found. Proceeding without one.");
         } catch (Exception e) {
-               // Any other exception is a problem. 
+            // Any other exception is a problem.
             throw new QSCheckerException(e);
         }
         return results;
@@ -110,17 +107,25 @@ public abstract class AbstractProjectChecker implements QSChecker {
      * @return
      * @throws IOException
      */
-    private List<String> readIgnoredFile() throws IOException {
+    private List<String> readIgnoredFile() {
         List<String> result = new ArrayList<String>();
-        BufferedReader br = new BufferedReader(new FileReader(".quickstarts_ignore"));
+        BufferedReader br = null;
         try {
+            br = new BufferedReader(new FileReader(".quickstarts_ignore"));
             while (br.ready()) {
                 String line = br.readLine();
                 result.add(line);
             }
+        } catch (IOException e) {
+            // Log it and continue. If there's no file, there's nothing to ignore.
+            log.warn("No .quickstarts_ignore file found. Proceeding without one.");
         } finally {
             if (br != null) {
-                br.close();
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    log.error("Exception when closing BufferedReader", e);
+                }
             }
         }
         return result;
