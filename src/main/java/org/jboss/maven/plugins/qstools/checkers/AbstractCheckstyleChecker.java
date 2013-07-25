@@ -68,42 +68,46 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     private DefaultCheckstyleExecutor checkstyleExecutor;
 
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-        CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
-        Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
-        try {
-            executorRequest
-                .setReactorProjects(reactorProjects)
-                .setSourceDirectory(project.getBasedir())
-                .setTestSourceDirectory(project.getBasedir())
-                .setFailsOnError(false)
-                .setProject(project)
-                .setConfigLocation(getCheckstyleConfig())
-                .setLog(log)
-                .setEncoding("UTF-8")
-                .setHeaderLocation(rules.getHeaderLocation())
-                .setIncludes(getIncludes())
-                .setExcludes(rules.getExcludes());
+        if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+            String msg = "Skiping %s for %s:%s";
+            log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+        } else {
+            CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
+            Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
+            try {
+                executorRequest
+                    .setReactorProjects(reactorProjects)
+                    .setSourceDirectory(project.getBasedir())
+                    .setTestSourceDirectory(project.getBasedir())
+                    .setFailsOnError(false)
+                    .setProject(project)
+                    .setConfigLocation(getCheckstyleConfig())
+                    .setLog(log)
+                    .setEncoding("UTF-8")
+                    .setHeaderLocation(rules.getHeaderLocation())
+                    .setIncludes(getIncludes())
+                    .setExcludes(rules.getExcludes());
 
-            CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
-            Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
-            for (String file : files.keySet()) {
-                List<AuditEvent> events = files.get(file);
-                // If file has events/violations
-                if (events.size() > 0) {
-                    List<Violation> violations = new ArrayList<Violation>();
-                    for (AuditEvent event : events) {
-                        // Add each checktyle AuditEvent as a new Violation
-                        violations.add(new Violation(this.getClass(), event.getLine(), event.getMessage()));
-                        violationsQtd++;
+                CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
+                Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
+                for (String file : files.keySet()) {
+                    List<AuditEvent> events = files.get(file);
+                    // If file has events/violations
+                    if (events.size() > 0) {
+                        List<Violation> violations = new ArrayList<Violation>();
+                        for (AuditEvent event : events) {
+                            // Add each checktyle AuditEvent as a new Violation
+                            violations.add(new Violation(this.getClass(), event.getLine(), event.getMessage()));
+                            violationsQtd++;
+                        }
+                        results.put(file, violations);
                     }
-                    results.put(file, violations);
                 }
+            } catch (Exception e) {
+                throw new QSCheckerException(e);
             }
-        } catch (Exception e) {
-            throw new QSCheckerException(e);
         }
         return results;
     }

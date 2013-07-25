@@ -65,21 +65,19 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        if (!getConfigurationProvider().getQuickstartsRules(project.getGroupId()).isSkipMavenCentralRepositoryChecker()) {
-            for (Dependency dependency : project.getDependencies()) {
-                Artifact dependencyArtifact = repositorySystem.createProjectArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
-                ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
+        for (Dependency dependency : project.getDependencies()) {
+            Artifact dependencyArtifact = repositorySystem.createProjectArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
+            ArtifactResolutionRequest arr = new ArtifactResolutionRequest();
 
-                List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
-                remoteRepositories.add(repositorySystem.createDefaultRemoteRepository());
+            List<ArtifactRepository> remoteRepositories = new ArrayList<ArtifactRepository>();
+            remoteRepositories.add(repositorySystem.createDefaultRemoteRepository());
 
-                arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
-                ArtifactResolutionResult result = repositorySystem.resolve(arr);
-                Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
-                int lineNumber = getLineNumberFromNode(dependencyNode);
-                if (!result.isSuccess()) {
-                    addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
-                }
+            arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
+            ArtifactResolutionResult result = repositorySystem.resolve(arr);
+            Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
+            int lineNumber = getLineNumberFromNode(dependencyNode);
+            if (!result.isSuccess()) {
+                addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
             }
         }
     }

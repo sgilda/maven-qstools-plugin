@@ -35,9 +35,11 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -57,6 +59,9 @@ public class UnusedPropertiesChecker implements QSChecker {
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
     private int violationsQtd;
+
+    @Requirement
+    private ConfigurationProvider configurationProvider;
 
     /*
      * (non-Javadoc)
@@ -97,52 +102,57 @@ public class UnusedPropertiesChecker implements QSChecker {
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-        try {
-            // iterate over all reactor projects to find what properties was declared and what was really used
-            for (MavenProject mavenProject : reactorProjects) {
-                Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
-                NodeList allNodes = (NodeList) xPath.evaluate("//*", doc, XPathConstants.NODESET);
-                // find all declared properties
-                for (int x = 0; x < propertiesNodes.getLength(); x++) {
-                    Node property = propertiesNodes.item(x);
-                    String propertyName = property.getNodeName();
-                    int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
-                    PomInformation pi = new PomInformation(mavenProject, lineNumber);
-                    declaredProperties.put(propertyName, pi);
-                }
-                // find all uses for properties expression
-                Pattern p = Pattern.compile("\\$\\{\\w+(.\\w+)*(-\\w+)*\\}");
-                for (int x = 0; x < allNodes.getLength(); x++) {
-                    Node node = allNodes.item(x);
-                    String nodeContent = node.getTextContent();
-                    if (p.matcher(nodeContent).matches()) {
-                        String usedProperty = node.getTextContent().replaceAll("[${}]", "");
-                        usedProperties.add(usedProperty);
+        if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+            String msg = "Skiping %s for %s:%s";
+            log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+        } else {
+            try {
+                // iterate over all reactor projects to find what properties was declared and what was really used
+                for (MavenProject mavenProject : reactorProjects) {
+                    Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
+                    NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
+                    NodeList allNodes = (NodeList) xPath.evaluate("//*", doc, XPathConstants.NODESET);
+                    // find all declared properties
+                    for (int x = 0; x < propertiesNodes.getLength(); x++) {
+                        Node property = propertiesNodes.item(x);
+                        String propertyName = property.getNodeName();
+                        int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                        PomInformation pi = new PomInformation(mavenProject, lineNumber);
+                        declaredProperties.put(propertyName, pi);
+                    }
+                    // find all uses for properties expression
+                    Pattern p = Pattern.compile("\\$\\{\\w+(.\\w+)*(-\\w+)*\\}");
+                    for (int x = 0; x < allNodes.getLength(); x++) {
+                        Node node = allNodes.item(x);
+                        String nodeContent = node.getTextContent();
+                        if (p.matcher(nodeContent).matches()) {
+                            String usedProperty = node.getTextContent().replaceAll("[${}]", "");
+                            usedProperties.add(usedProperty);
+                        }
                     }
                 }
-            }
-            // search if all declared properties have been used
-            for (String declared : declaredProperties.keySet()) {
-                if (!declared.startsWith("project") && // Escape project configuration
-                    !usedProperties.contains(declared)) {
-                    PomInformation pomInformation = declaredProperties.get(declared);
-                    // Get relative path based on maven work dir
-                    String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
-                    String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
-                    if (results.get(fileAsString) == null) {
-                        results.put(fileAsString, new ArrayList<Violation>());
+                // search if all declared properties have been used
+                for (String declared : declaredProperties.keySet()) {
+                    if (!declared.startsWith("project") && // Escape project configuration
+                        !usedProperties.contains(declared)) {
+                        PomInformation pomInformation = declaredProperties.get(declared);
+                        // Get relative path based on maven work dir
+                        String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
+                        String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
+                        if (results.get(fileAsString) == null) {
+                            results.put(fileAsString, new ArrayList<Violation>());
+                        }
+                        String msg = "Property [%s] was declared but was never used";
+                        results.get(fileAsString).add(new Violation(getClass(), pomInformation.getLine(), String.format(msg, declared)));
+                        violationsQtd++;
                     }
-                    String msg = "Property [%s] was declared but was never used";
-                    results.get(fileAsString).add(new Violation(getClass(), pomInformation.getLine(), String.format(msg, declared)));
-                    violationsQtd++;
                 }
+                if (violationsQtd > 0) {
+                    log.info("There are " + violationsQtd + " checkers errors");
+                }
+            } catch (Exception e) {
+                throw new QSCheckerException(e);
             }
-            if (violationsQtd > 0) {
-                log.info("There are " + violationsQtd + " checkers errors");
-            }
-        } catch (Exception e) {
-            throw new QSCheckerException(e);
         }
         return results;
     }

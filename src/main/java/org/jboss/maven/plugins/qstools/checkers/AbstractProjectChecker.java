@@ -48,7 +48,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
 
     @Requirement
     private DependencyProvider dependencyProvider;
-    
+
     @Requirement
     private ConfigurationProvider configurationProvider;
 
@@ -91,7 +91,12 @@ public abstract class AbstractProjectChecker implements QSChecker {
             for (MavenProject mavenProject : reactorProjects) {
                 if (!ignoredQuickstarts.contains(mavenProject.getBasedir().getName())) {
                     Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                    processProject(mavenProject, doc, results);
+                    if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+                        String msg = "Skiping %s for %s:%s";
+                        log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+                    }else{
+                        processProject(mavenProject, doc, results);
+                    }
                 } else {
                     log.debug("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
                 }
@@ -105,8 +110,6 @@ public abstract class AbstractProjectChecker implements QSChecker {
         }
         return results;
     }
-
-    
 
     protected int getLineNumberFromNode(Node node) {
         if (node == null) {
@@ -159,14 +162,14 @@ public abstract class AbstractProjectChecker implements QSChecker {
     protected MavenSession getMavenSession() {
         return mavenSession;
     }
-    
+
     /**
      * @return the context
      */
     public Context getContext() {
         return context;
     }
-    
+
     /**
      * @return the configurationProvider
      */

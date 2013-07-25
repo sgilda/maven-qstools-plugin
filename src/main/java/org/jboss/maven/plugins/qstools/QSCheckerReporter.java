@@ -189,6 +189,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             });
 
             Map<String, List<Violation>> globalFilesViolations = new TreeMap<String, List<Violation>>();
+            getLog().info("Running Checkers: Somes checkers could be ignored for some projects.");
             for (QSChecker checker : checkers) {
                 getLog().info("Running Checker: " + checker.getClass().getSimpleName());
                 checker.resetViolationsQtd();

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jboss.maven.plugins.qstools.QSChecker;
+
 /**
  * @author Rafael Benevides
  * 
@@ -34,8 +36,10 @@ public class Rules {
         this.configurations = configurations;
     }
 
-    public boolean isSkipMavenCentralRepositoryChecker() {
-        return (Boolean) getConfig("skipMavenCentralRepositoryChecker");
+    @SuppressWarnings("unchecked")
+    public boolean isCheckerIgnored(QSChecker checker) {
+        List<String> ignoredCheckers = (List<String>) getConfig("ignored-checkers");
+        return ignoredCheckers.contains(checker.getClass().getSimpleName());
     }
 
     public String getExcludes() {
@@ -83,22 +87,22 @@ public class Rules {
         return p;
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getPomOrder() {
-        @SuppressWarnings("unchecked")
-        List<Object> metadatas = (List<Object>) getConfig("pom-order");
+        List<String> pomOrder = (List<String>) getConfig("pom-order");
         List<String> list = new ArrayList<String>();
-        for (Object o : metadatas) {
-            list.add((String) o);
+        for (String o : pomOrder) {
+            list.add(o);
         }
         return list;
     }
-    
-    public List<String> getIgnoredModules(){
-        @SuppressWarnings("unchecked")
-        List<Object> modules = (List<Object>) getConfig("ignored-modules");
+
+    @SuppressWarnings("unchecked")
+    public List<String> getIgnoredModules() {
+        List<String> modules = (List<String>) getConfig("ignored-modules");
         List<String> list = new ArrayList<String>();
-        for (Object o : modules) {
-            list.add((String) o);
+        for (String o : modules) {
+            list.add(o);
         }
         return list;
     }
