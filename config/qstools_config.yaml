@@ -47,7 +47,7 @@ rules:
          - "Level:": "Beginner|Intermediate|Advanced"
          - "Technologies:": "\\w.*"
          - "Summary:": "\\w.*"
-         - "Target Product:": "EAP|WFK|JPP|JDG|Fuse"
+         - "Target Product:": "EAP|WFK|JPP|JDG|Fuse|BRMS"
          - "Source:": "<(http|https)://\\w.*>"
 
        #element order in pom.xml
