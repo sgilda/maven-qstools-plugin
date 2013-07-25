@@ -18,7 +18,7 @@ rules:
    #Default rule
    - &default
 
-       #Enable or Disalbe MavenCentralRepositoryChecker - It can be disabled for Product Based Repositories
+       #DEPRECATED - use ignored-checkers
        skipMavenCentralRepositoryChecker: false
 
        #Expected JDF BOM Version
@@ -40,6 +40,10 @@ rules:
        ignored-modules:
          - "dist"
          - "template"
+
+       #List of Checkers that should be ignored. Use Class name as value
+       ignored-checkers:
+         - ClassNameChecker #non-existent checker just as example
 
        #Metadatas that should be present on Readme files and its pattern
        readme-metadatas:
@@ -101,14 +105,23 @@ rules:
        groupid: com.jboss.datagrid.quickstart
    - &jpp
        groupid: org.gatein.portal.quickstarts
-       skipMavenCentralRepositoryChecker: true
        expected-bom-versions:
          - org.jboss.bom: 1.0.1.Final-redhat-1
+       ignored-checkers:
+         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
    - &fuse
        groupid: org.jboss.quickstarts.fuse
-       skipMavenCentralRepositoryChecker: true
        artifactid-prefix: ""
-         
+       #DEPRECATED - use ignored-checkers
+       skipMavenCentralRepositoryChecker: true
+       ignored-checkers:
+         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
+   - &brms
+       groupid: org.jboss.quickstarts.brms
+       artifactid-prefix: "brms-"
+       ignored-checkers:
+         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
+         - DependencyChecker #BRMS doesn't use BOMs
 
 #Quickstarts
 quickstarts:
@@ -123,3 +136,6 @@ quickstarts:
    org.jboss.quickstarts.fuse:
      - *default
      - *fuse
+   org.jboss.quickstarts.brms:
+     - *default
+     - *brms
