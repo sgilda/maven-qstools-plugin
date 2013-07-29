@@ -68,6 +68,16 @@ public class Rules {
     }
 
     @SuppressWarnings("unchecked")
+    public Map<String, String> getFinalNamePatterns() {
+        List<Object> packagingAsList = (List<Object>) getConfig("final-name-patterns");
+        Map<String, String> p = new HashMap<String, String>();
+        for (Object o : packagingAsList) {
+            p.putAll( (Map<? extends String, ? extends String>) o);
+        }
+        return p;
+    }
+
+    @SuppressWarnings("unchecked")
     public Properties getExpectedBomVersion() {
         List<Object> propertiesAsList = (List<Object>) getConfig("expected-bom-versions");
         Properties p = new Properties();

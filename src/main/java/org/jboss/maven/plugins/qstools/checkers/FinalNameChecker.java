@@ -16,7 +16,6 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * @author Rafael Benevides
@@ -37,8 +35,6 @@ import org.w3c.dom.NodeList;
 @Component(role = QSChecker.class, hint = "finalNameChecker")
 public class FinalNameChecker extends AbstractProjectChecker {
 
-    private String[] projectPlugins = new String[] { "maven-ear-plugin", "maven-war-plugin", "maven-ejb-plugin", "maven-jar-plugin", "maven-rar-plugin" };
-
     /*
      * (non-Javadoc)
      * 
@@ -46,7 +42,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Checks if the EAR, WAR, JAR, EJB pom.xml contains <finalName>${project.artifactId} | ${project.parent.artifactId}</finalName>";
+        return "Checks if ths <finalName/> element follow the expected patter";
     }
 
     /*
@@ -58,23 +54,14 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        NodeList plugins = (NodeList) getxPath().evaluate("//plugin/artifactId", doc, XPathConstants.NODESET);
-        List<String> pluginsList = Arrays.asList(projectPlugins);
-        for (int x = 0; x < plugins.getLength(); x++) {
-            Node pluginArtifact = plugins.item(x);
-            if (pluginsList.contains(pluginArtifact.getTextContent())) {
-                Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
-                if (finalNameNode == null || (
-                        !finalNameNode.getTextContent().equals("${project.artifactId}") && ( //General final name
-                            project.getPackaging().equals("ear") &&
-                            !finalNameNode.getTextContent().equals("${project.parent.artifactId}") //Allowed only for EAR
-                        )
-                    
-                    )) {
-                    int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
-                    addViolation(project.getFile(), results, lineNumber, "File doesn't contain <finalName>${project.artifactId}</finalName> or <finalName>${project.parent.artifactId}</finalName> (allowed for EAR only)");
-                }
-            }
+        String packaging = project.getPackaging();
+        String expectedFinalName = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getFinalNamePatterns().get(packaging);
+        Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
+        String declaredFinalName = finalNameNode == null?project.getBuild().getFinalName():finalNameNode.getTextContent();
+        if (expectedFinalName != null && !expectedFinalName.equals(declaredFinalName)) {
+            int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
+            addViolation(project.getFile(), results, lineNumber,
+                ("File doesn't contain <finalName>" + expectedFinalName + "</finalName>"));
         }
     }
 }

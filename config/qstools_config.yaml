@@ -26,6 +26,12 @@ rules:
          - org.jboss.bom: 1.0.7.CR8
          - org.jboss.spec: 3.0.2.Final
 
+       #Final name patterns
+       final-name-patterns:
+         - jar: "${project.artifactId}"
+         - war: "${project.artifactId}"
+         - ear: "${project.parent.artifactId}"
+
        #Default Maven groupId
        groupid: org.jboss.as.quickstarts
 
