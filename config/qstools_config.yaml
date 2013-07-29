@@ -18,9 +18,6 @@ rules:
    #Default rule
    - &default
 
-       #DEPRECATED - use ignored-checkers
-       skipMavenCentralRepositoryChecker: false
-
        #Expected JDF BOM Version
        expected-bom-versions:
          - org.jboss.bom: 1.0.7.CR8
@@ -42,6 +39,9 @@ rules:
        pom-name-pattern: "JBoss <target-product> Quickstart: <project-folder>"
        pom-name-pattern-submodule: "JBoss <target-product> Quickstart: <project-folder> - <submodule-folder>"
 
+       #Header file pattern
+       header-file: "https://raw.github.com/jboss-jdf/qstools/master/config/default/header.txt"
+
        #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
        ignored-modules:
          - "dist"
@@ -51,14 +51,14 @@ rules:
        ignored-checkers:
          - ClassNameChecker #non-existent checker just as example
 
-       #Metadatas that should be present on Readme files and its pattern
+       #Metadatas that should be present on Readme files and its Regex pattern
        readme-metadatas:
          - "Author:": "\\w.*"
          - "Level:": "Beginner|Intermediate|Advanced"
          - "Technologies:": "\\w.*"
          - "Summary:": "\\w.*"
          - "Target Product:": "EAP|WFK|JPP|JDG|Fuse|BRMS"
-         - "Source:": "<(http|https)://\\w.*>"
+         - "Source:": "<(http|https)://\\w.*>" #<http://www.etc...>
 
        #element order in pom.xml
        pom-order:
@@ -103,9 +103,6 @@ rules:
            - "**/yepnope*"
            - "**/README.html"
 
-       #Header file pattern
-       header-file: "https://raw.github.com/jboss-jdf/qstools/master/config/default/header.txt"
-
    #Specific rules
    - &jdg
        groupid: com.jboss.datagrid.quickstart
@@ -118,8 +115,6 @@ rules:
    - &fuse
        groupid: org.jboss.quickstarts.fuse
        artifactid-prefix: ""
-       #DEPRECATED - use ignored-checkers
-       skipMavenCentralRepositoryChecker: true
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
    - &brms
