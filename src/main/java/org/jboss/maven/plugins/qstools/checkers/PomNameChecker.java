@@ -121,7 +121,6 @@ public class PomNameChecker extends AbstractProjectChecker {
      * @return
      */
     private boolean isSubProjec(MavenProject project) {
-        return ((!new File(project.getBasedir(), "README.md").exists())
-        && (new File(project.getBasedir().getParent(), "README.md").exists()));
+        return ((!new File(project.getBasedir(), "README.md").exists()) && (new File(project.getBasedir().getParent(), "README.md").exists()));
     }
 }

@@ -22,8 +22,9 @@ import org.jboss.maven.plugins.qstools.QSChecker;
 @Component(role = QSChecker.class, hint = "IndentationChecker")
 public class IndentationChecker extends AbstractCheckstyleChecker {
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
@@ -38,7 +39,7 @@ public class IndentationChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-       return "checkstyle-indentation.xml";
+        return "checkstyle-indentation.xml";
     }
 
 }

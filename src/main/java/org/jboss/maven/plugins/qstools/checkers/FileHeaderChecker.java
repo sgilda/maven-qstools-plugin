@@ -22,7 +22,9 @@ import org.jboss.maven.plugins.qstools.QSChecker;
 @Component(role = QSChecker.class, hint = "fileHeaderChecker")
 public class FileHeaderChecker extends AbstractCheckstyleChecker {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
@@ -31,13 +33,13 @@ public class FileHeaderChecker extends AbstractCheckstyleChecker {
     }
 
     @Override
-    String getIncludes() {
-       return "**/*.*";
+    public String getIncludes() {
+        return "**/*.*";
     }
 
     @Override
-    String getCheckstyleConfig() {
-       return "checkstyle-header.xml";
+    public String getCheckstyleConfig() {
+        return "checkstyle-header.xml";
     }
 
 }
