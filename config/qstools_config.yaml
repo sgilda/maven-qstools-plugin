@@ -123,6 +123,14 @@ rules:
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
          - DependencyChecker #BRMS doesn't use BOMs
+       expected-bom-versions:
+         - org.jboss.bom: 1.0.4.Final-redhat-4
+   - &qstools
+       groupid: org.jboss.maven.plugins
+       artifactid-prefix: "maven-"
+       ignored-checkers:
+         - ReadmeChecker #QSTools is not a quickstart
+         - DependencyChecker #QStools doesn't use BOMs
 
 #Quickstarts
 quickstarts:
@@ -140,3 +148,6 @@ quickstarts:
    org.jboss.quickstarts.brms:
      - *default
      - *brms
+   org.jboss.maven.plugins:
+     - *default
+     - *qstools
