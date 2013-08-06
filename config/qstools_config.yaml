@@ -102,6 +102,8 @@ rules:
            - "**/modernizr*"
            - "**/yepnope*"
            - "**/README.html"
+           #BRMS support files
+           - "brms-quickstarts/**/support/**"
 
    #Specific rules
    - &jdg
