@@ -109,6 +109,9 @@ rules:
    - &sandbox
        groupid: org.jboss.quickstarts.sandbox
        artifactid-prefix: "sandbox-"
+   - &wfk
+       groupid: org.jboss.quickstarts.wfk
+       artifactid-prefix: "jboss-"
    - &jdg
        groupid: com.jboss.datagrid.quickstart
    - &jpp
@@ -141,6 +144,9 @@ rules:
 quickstarts:
    org.jboss.as.quickstarts:
      - *default
+   org.jboss.quickstarts.wfk:
+     - *default
+     - *wfk
    org.jboss.quickstarts.sandbox:
      - *default
      - *sandbox
