@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -57,27 +58,27 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         // Check Managed Dependencies
-        Set<String> declaredManagedDependencies = new HashSet<String>();
-        NodeList managedDependency = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        Set<MavenDependency> declaredManagedDependencies = new HashSet<MavenDependency>();
+        NodeList managedDependency = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         for (int x = 0; x < managedDependency.getLength(); x++) {
-            Node artifact = managedDependency.item(x);
-            String artifactName = artifact.getTextContent();
-            int lineNumber = getLineNumberFromNode(artifact);
-            if (!declaredManagedDependencies.add(artifactName)) { // return false if already exists
+            Node dependency = managedDependency.item(x);
+            MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
+            int lineNumber = getLineNumberFromNode(dependency);
+            if (!declaredManagedDependencies.add(mavenDependency)) { // return false if already exists
                 String msg = "Managed Dependency [%s] is declared more than once";
-                addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, mavenDependency.getArtifactId()));
             }
         }
         // Check Dependencies
-        Set<String> declaredDependencies = new HashSet<String>();
-        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencies/dependency/artifactId", doc, XPathConstants.NODESET);
+        Set<MavenDependency> declaredDependencies = new HashSet<MavenDependency>();
+        NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencies/dependency", doc, XPathConstants.NODESET);
         for (int x = 0; x < dependencies.getLength(); x++) {
-            Node artifact = dependencies.item(x);
-            String artifactName = artifact.getTextContent();
-            int lineNumber = getLineNumberFromNode(artifact);
-            if (!declaredDependencies.add(artifactName)) { // return false if already exists
+            Node dependency = dependencies.item(x);
+            MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
+            int lineNumber = getLineNumberFromNode(dependency);
+            if (!declaredDependencies.add(mavenDependency)) { // return false if already exists
                 String msg = "Dependency [%s] is declared more than once";
-                addViolation(project.getFile(), results, lineNumber, String.format(msg, artifactName));
+                addViolation(project.getFile(), results, lineNumber, String.format(msg, mavenDependency.getArtifactId()));
             }
         }
 
