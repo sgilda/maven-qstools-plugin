@@ -40,7 +40,7 @@ rules:
        pom-name-pattern-submodule: "JBoss <target-product> Quickstart: <project-folder> - <submodule-folder>"
 
        #Header file pattern
-       header-file: "https://raw.github.com/jboss-jdf/qstools/master/config/default/header.txt"
+       header-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/header.txt"
 
        #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
        ignored-modules:

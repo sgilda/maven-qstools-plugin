@@ -32,7 +32,7 @@ The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 Configuring QSTools
 -------------------
 
-QSTools configuration is made by editing the online file https://github.com/jboss-jdf/qstools/blob/master/config/qstools_config.yaml
+QSTools configuration is made by editing the online file https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml
 
 You can use a local config file by overwriting qstools property:
 
@@ -42,7 +42,7 @@ You can use a local config file by overwriting qstools property:
 If you need to update quickstarts BOMs
 --------------------------------------
 
-This goal will check the [Stacks file](https://github.com/jboss-jdf/jdf-stack/blob/1.0.1-SNAPSHOT/stacks.yaml)  and look for the recommended Version for each BOM.
+This goal will check the [Stacks file](https://github.com/jboss-jdf/jdf-stack/blob/1.0.0.Final/stacks.yaml)  and look for the recommended Version for each BOM.
 
 If the recommended BOM is newer it will replace the version, otherwise it will only warn you that your quickstarts is using a newer version than the recommended one and won't  update the BOM.
 
@@ -81,7 +81,7 @@ Troubleshooting
 
 You can turn on debugging messages:   
 
-    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.1-SNAPSHOT:check -X
+    mvn org.jboss.maven.plugins:maven-qstools-plugin:1.0.2-SNAPSHOT:check -X
     
 
 
