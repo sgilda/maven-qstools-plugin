@@ -139,6 +139,15 @@ rules:
        ignored-checkers:
          - ReadmeChecker #QSTools is not a quickstart
          - DependencyChecker #QStools doesn't use BOMs
+         - FinalNameChecker #QStools isn't an application
+   - &stacks
+       groupid: org.jboss.jdf #It should be changed to org.jboss.stacks
+       artifactid-prefix: "stacks-" #It should be changed/removed to "jboss-" on 1.2
+       ignored-checkers:
+         - ReadmeChecker #Stacks-client is not a quickstart
+         - DependencyChecker #Stacks-client doesn't use BOMs
+         - UnusedPropertiesChecker #Stacks-client has a known property (stacks.branch) used outside pom.xml
+         - FinalNameChecker #Stacks-client is a library, not an application
 
 #Quickstarts
 quickstarts:
@@ -165,3 +174,6 @@ quickstarts:
    org.jboss.maven.plugins:
      - *default
      - *qstools
+   org.jboss.jdf:
+     - *default
+     - *stacks
