@@ -14,7 +14,7 @@ You can use it to verify if your project/quickstart follow the JDF Guidelines. I
 System requirements
 -------------------
 
-All you need is [Apache Maven](http://maven.apache.org/) and a working internet connection.
+All you need is [Apache Maven 3.0.X](http://maven.apache.org/) and a working internet connection.
 
 
 Checking the quickstarts made easy
