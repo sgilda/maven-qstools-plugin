@@ -47,6 +47,11 @@ public class Rules {
         return excludes.toString().replace('[', ' ').replace(']', ' ');
     }
 
+    public String getCheckerSpecificExcludes(QSChecker module) {
+        Object moduleExclude = getConfig("excludes-" + module.getClass().getSimpleName());
+        return moduleExclude == null ? "" : moduleExclude.toString().replace('[', ' ').replace(']', ' ');
+    }
+
     public String getHeaderLocation() {
         return (String) getConfig("header-file");
     }
@@ -72,7 +77,7 @@ public class Rules {
         List<Object> packagingAsList = (List<Object>) getConfig("final-name-patterns");
         Map<String, String> p = new HashMap<String, String>();
         for (Object o : packagingAsList) {
-            p.putAll( (Map<? extends String, ? extends String>) o);
+            p.putAll((Map<? extends String, ? extends String>) o);
         }
         return p;
     }

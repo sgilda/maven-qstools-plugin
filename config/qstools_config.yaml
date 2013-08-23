@@ -100,10 +100,15 @@ rules:
            - "**/backbone*"
            - "**/lodash*"
            - "**/modernizr*"
+           - "**/mobile-nav*"
            - "**/yepnope*"
+           - "**/underscore*"
            - "**/README.html"
            #BRMS support files
            - "brms-quickstarts/**/support/**"
+
+       excludes-FileHeaderChecker:
+           - "**/petclinic-spring/**"
 
    #Specific rules
    - &sandbox

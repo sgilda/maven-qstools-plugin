@@ -88,8 +88,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                     .setEncoding("UTF-8")
                     .setHeaderLocation(rules.getHeaderLocation())
                     .setIncludes(getIncludes())
-                    .setExcludes(rules.getExcludes());
-
+                    .setExcludes(rules.getExcludes() + ", " + rules.getCheckerSpecificExcludes(this));
                 CheckstyleResults checkstyleResults = checkstyleExecutor.executeCheckstyle(executorRequest);
                 Map<String, List<AuditEvent>> files = checkstyleResults.getFiles();
                 for (String file : files.keySet()) {
