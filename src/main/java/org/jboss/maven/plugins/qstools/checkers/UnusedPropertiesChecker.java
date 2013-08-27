@@ -40,6 +40,7 @@ import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -102,7 +103,8 @@ public class UnusedPropertiesChecker implements QSChecker {
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-        if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+        Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
+        if (rules.isCheckerIgnored(this)) {
             String msg = "Skiping %s for %s:%s";
             log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
         } else {
@@ -134,6 +136,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                 // search if all declared properties have been used
                 for (String declared : declaredProperties.keySet()) {
                     if (!declared.startsWith("project") && // Escape project configuration
+                        !rules.getIgnoredUnusedProperties().contains(declared) && //Escape ignored properties
                         !usedProperties.contains(declared)) {
                         PomInformation pomInformation = declaredProperties.get(declared);
                         // Get relative path based on maven work dir

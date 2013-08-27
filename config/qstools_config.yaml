@@ -51,6 +51,11 @@ rules:
        ignored-checkers:
          - ClassNameChecker #non-existent checker just as example
 
+       ignored-unused-properties:
+         - stacks.branch
+         - maven.compiler.source
+         - maven.compiler.target
+
        #Metadatas that should be present on Readme files and its Regex pattern
        readme-metadatas:
          - "Author:": "\\w.*"
@@ -151,7 +156,6 @@ rules:
        ignored-checkers:
          - ReadmeChecker #Stacks-client is not a quickstart
          - DependencyChecker #Stacks-client doesn't use BOMs
-         - UnusedPropertiesChecker #Stacks-client has a known property (stacks.branch) used outside pom.xml
          - FinalNameChecker #Stacks-client is a library, not an application
 
 #Quickstarts

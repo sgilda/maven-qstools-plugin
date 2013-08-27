@@ -41,6 +41,11 @@ public class Rules {
         List<String> ignoredCheckers = (List<String>) getConfig("ignored-checkers");
         return ignoredCheckers.contains(checker.getClass().getSimpleName());
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<String> getIgnoredUnusedProperties(){
+        return (List<String>) getConfig("ignored-unused-properties");
+    }
 
     public String getExcludes() {
         Object excludes = getConfig("excludes");
