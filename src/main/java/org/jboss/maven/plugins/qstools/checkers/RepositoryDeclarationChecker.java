@@ -32,8 +32,8 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "finalNameChecker")
-public class FinalNameChecker extends AbstractProjectChecker {
+@Component(role = QSChecker.class, hint = "repositoryDeclarationChecker")
+public class RepositoryDeclarationChecker extends AbstractProjectChecker {
 
     /*
      * (non-Javadoc)
@@ -42,7 +42,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Checks if ths <finalName/> element follow the expected patter";
+        return "Checks if a repository was declared on pom.xml";
     }
 
     /*
@@ -54,13 +54,11 @@ public class FinalNameChecker extends AbstractProjectChecker {
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        String packaging = project.getPackaging();
-        String expectedFinalName = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getFinalNamePatterns().get(packaging);
-        Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
-        String declaredFinalName = finalNameNode == null ? project.getBuild().getFinalName() : finalNameNode.getTextContent();
-        if (expectedFinalName != null && !expectedFinalName.equals(declaredFinalName)) {
-            int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
-            addViolation(project.getFile(), results, lineNumber, ("File doesn't contain <finalName>" + expectedFinalName + "</finalName>"));
+        Node repositoriesNode = (Node) getxPath().evaluate("//project/repositories", doc, XPathConstants.NODE);
+        if (repositoriesNode != null) {
+            int lineNumber = getLineNumberFromNode(repositoriesNode);
+            addViolation(project.getFile(), results, lineNumber, ("You should NOT declare <repositories/> on your pom.xml"));
         }
     }
+
 }
