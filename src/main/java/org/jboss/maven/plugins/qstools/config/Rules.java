@@ -41,9 +41,9 @@ public class Rules {
         List<String> ignoredCheckers = (List<String>) getConfig("ignored-checkers");
         return ignoredCheckers.contains(checker.getClass().getSimpleName());
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<String> getIgnoredUnusedProperties(){
+    public List<String> getIgnoredUnusedProperties() {
         return (List<String>) getConfig("ignored-unused-properties");
     }
 
@@ -55,6 +55,10 @@ public class Rules {
     public String getCheckerSpecificExcludes(QSChecker module) {
         Object moduleExclude = getConfig("excludes-" + module.getClass().getSimpleName());
         return moduleExclude == null ? "" : moduleExclude.toString().replace('[', ' ').replace(']', ' ');
+    }
+
+    public String getExpectedCompilerSource() {
+        return (String) getConfig("expected-compiler-source");
     }
 
     public String getHeaderLocation() {

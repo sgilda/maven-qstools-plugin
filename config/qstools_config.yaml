@@ -17,6 +17,8 @@
 rules:
    #Default rule
    - &default
+       #Expected source code
+       expected-compiler-source: "1.6"
 
        #Expected JDF BOM Version
        expected-bom-versions:
