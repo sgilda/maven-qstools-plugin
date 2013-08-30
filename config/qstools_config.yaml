@@ -22,7 +22,7 @@ rules:
 
        #Expected JDF BOM Version
        expected-bom-versions:
-         - org.jboss.bom: 1.0.7.CR8
+         - org.jboss.bom: 1.0.7.Final
          - org.jboss.spec: 3.0.2.Final
 
        #Final name patterns
