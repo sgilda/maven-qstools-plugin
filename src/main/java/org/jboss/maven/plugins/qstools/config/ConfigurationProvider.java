@@ -81,7 +81,7 @@ public class ConfigurationProvider {
             try {
                 configure();
             } catch (ContextException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 return null;
             }
         }

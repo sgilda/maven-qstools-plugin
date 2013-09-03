@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
@@ -74,7 +75,17 @@ public class ModuleDefinedChecker extends AbstractProjectChecker {
         }
         submodules.removeAll(getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getIgnoredModules());
         for (String dir : submodules) {
-            if (!project.getModules().contains(dir)) {
+            boolean contains = project.getModules().contains(dir);
+            if (!contains){
+                //If doesn't contains, look in other profiles
+                for(Profile profile: project.getModel().getProfiles()){
+                    contains = profile.getModules().contains(dir);
+                    if (contains){
+                        break;
+                    }
+                }
+            }
+            if (!contains) {
                 String msg = "The following dir [%s] is not listed as one of project submodules";
                 addViolation(project.getFile(), results, 0, String.format(msg, dir));
             }
