@@ -29,6 +29,7 @@ rules:
        final-name-patterns:
          - jar: "${project.artifactId}"
          - war: "${project.artifactId}"
+         - ejb: "${project.artifactId}"
          - ear: "${project.parent.artifactId}"
 
        #Default Maven groupId
