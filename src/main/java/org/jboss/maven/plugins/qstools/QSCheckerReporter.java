@@ -100,6 +100,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Parameter(property = "qstools.stacks.url")
     private URL stacksUrl;
 
+    /**
+     * Force Stacks reload
+     */
+    @Parameter(property = "qstools.stacks.reload")
+    private boolean forceStacksReload;
+
     /*
      * (non-Javadoc)
      * 
@@ -217,6 +223,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
         StacksClient stacksClient = new StacksClient();
         if (stacksUrl != null) {
             stacksClient.getActualConfiguration().setUrl(stacksUrl);
+        }
+        if (forceStacksReload) {
+            getLog().info("FORCE STACKS RELOAD: Local 24 hours cache erased! (stacks.yaml will be downloaded again)");
+            stacksClient.getLocalCacheFile().delete();
         }
         getLog().info("Using the following Stacks YML file: " + stacksClient.getActualConfiguration().getUrl());
         Stacks stacks = stacksClient.getStacks();
