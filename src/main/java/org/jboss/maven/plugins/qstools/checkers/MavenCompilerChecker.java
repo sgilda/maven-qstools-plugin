@@ -21,23 +21,24 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
 
-import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Rafael Benevides
- *
+ * 
  */
 @Component(role = QSChecker.class, hint = "mavenCompilerChecker")
 public class MavenCompilerChecker extends AbstractProjectChecker {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
      */
     @Override
@@ -45,49 +46,38 @@ public class MavenCompilerChecker extends AbstractProjectChecker {
         return "Check for the right usage of maven-compile-plugin";
     }
 
-    /* (non-Javadoc)
-     * @see org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject,
+     * org.w3c.dom.Document, java.util.Map)
      */
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         String compilerSource = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getExpectedCompilerSource();
         String target = project.getProperties().getProperty("maven.compiler.target");
         String compiler = project.getProperties().getProperty("maven.compiler.source");
-        if (target == null || compiler == null){
+        if (target == null || compiler == null) {
             addViolation(project.getFile(), results, 1, "pom.xml should define <maven.compiler.source/> and <maven.compiler.target/> properties");
-        }else if (!target.equals(compilerSource) || !compiler.equals(compilerSource)){
+        } else if (!target.equals(compilerSource) || !compiler.equals(compilerSource)) {
             addViolation(project.getFile(), results, 1, "<maven.compiler.source/> and <maven.compiler.target/> should be set to " + compilerSource);
         }
-        List<Plugin> plugins = project.getModel().getBuild().getPlugins();
-        boolean containsSourceDefinition = false;
-        for (Plugin plugin: plugins){
-            if (plugin.getArtifactId().equals("maven-compiler-plugin")){
-                Xpp3Dom pluginConfig = (Xpp3Dom) plugin.getConfiguration();
-                if (pluginConfig == null || pluginConfig.getChildren().length == 0){
-                    Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']", doc, XPathConstants.NODE);
-                    int lineNumber = compilerNode == null ? -1 : getLineNumberFromNode(compilerNode);
-                    //Plugin exist on model but it isn't on XML
-                    if (lineNumber != -1){
-                        addViolation(project.getFile(), results, lineNumber, "You should NOT declare 'maven-compile-plugin'");
-                    }
-                }else{
-                    Xpp3Dom[] configurations = pluginConfig.getChildren();
-                    for (Xpp3Dom config: configurations){
-                        if (config.getName().equals("source") || config.getName().equals("target")){
-                            containsSourceDefinition = true;
-                        }
-                    }
+        Node compilerConfigNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
+        int lineNumber = compilerConfigNode == null ? -1 : getLineNumberFromNode(compilerConfigNode);
+        // Plugin has config
+        if (compilerConfigNode == null) {
+            addViolation(project.getFile(), results, lineNumber, "You should NOT declare 'maven-compile-plugin' without any configuration");
+        } else {
+            NodeList configs = compilerConfigNode.getChildNodes();
+            for (int i = 0; i < configs.getLength(); i++) {
+                Node config = configs.item(i);
+                if (config.getNodeName().equals("source") || config.getNodeName().equals("target")) {
+                    lineNumber = compilerConfigNode == null ? -1 : getLineNumberFromNode(config);
+                    addViolation(project.getFile(), results, lineNumber, "You should not define 'source' or 'target' for 'maven-compiler-plugin'");
                 }
             }
         }
-        if (containsSourceDefinition){
-            Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/configuration", doc, XPathConstants.NODE);
-            int lineNumber = compilerNode == null ? -1 : getLineNumberFromNode(compilerNode);
-            if (lineNumber != -1){
-                addViolation(project.getFile(), results, lineNumber, "You should not define 'source' or 'target' for 'maven-compiler-plugin'");
-            }
-        }
-
     }
 
 }
