@@ -110,7 +110,7 @@ rules:
            - ".*"
            #known libraries
            - "**/jquery*"
-           - "**/cordova*"
+           - "**/*cordova*/**"
            - "**/angular*"
            - "**/qunit*"
            - "**/backbone*"

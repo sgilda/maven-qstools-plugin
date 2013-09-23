@@ -63,12 +63,12 @@ public class MavenCompilerChecker extends AbstractProjectChecker {
         } else if (!target.equals(compilerSource) || !compiler.equals(compilerSource)) {
             addViolation(project.getFile(), results, 1, "<maven.compiler.source/> and <maven.compiler.target/> should be set to " + compilerSource);
         }
+        Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']", doc, XPathConstants.NODE);
         Node compilerConfigNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
         int lineNumber = compilerConfigNode == null ? -1 : getLineNumberFromNode(compilerConfigNode);
-        // Plugin has config
-        if (compilerConfigNode == null) {
+        if (compilerNode !=null && compilerConfigNode == null) {
             addViolation(project.getFile(), results, lineNumber, "You should NOT declare 'maven-compile-plugin' without any configuration");
-        } else {
+        } else if (compilerConfigNode != null){
             NodeList configs = compilerConfigNode.getChildNodes();
             for (int i = 0; i < configs.getLength(); i++) {
                 Node config = configs.item(i);
