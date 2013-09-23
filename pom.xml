@@ -60,8 +60,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <httpclient.version>4.0.1</httpclient.version>
+        <version.shrinkwrap.resolvers>2.0.0</version.shrinkwrap.resolvers>
         <yaml.version>1.11</yaml.version>
         <junit.version>4.10</junit.version>
+        <aether.version>1.13.1</aether.version>
+        <stacks-client.version>1.0.2.Final</stacks-client.version>
+        <mojo-executor.version>2.1.0</mojo-executor.version>
         
         <!-- Repository Deployment URLs -->
 
@@ -73,7 +77,6 @@
         </jboss.snapshots.repo.url>
         
         <!-- maven-compiler-plugin -->
-        <version.compiler.plugin>2.3.1</version.compiler.plugin>
         <maven.compiler.target>1.6</maven.compiler.target>
         <maven.compiler.source>1.6</maven.compiler.source>
     </properties>
@@ -95,7 +98,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -112,7 +115,7 @@
         <dependency>
             <groupId>org.twdata.maven</groupId>
             <artifactId>mojo-executor</artifactId>
-            <version>2.1.0</version>
+            <version>${mojo-executor.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -129,13 +132,38 @@
             <artifactId>org.eclipse.jgit</artifactId>
             <version>2.3.1.201302201838-r</version>
         </dependency>
+
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
+            <groupId>org.jboss.jdf</groupId>
+            <artifactId>stacks-client</artifactId>
+            <version>${stacks-client.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <!-- Shrinkwrap resolver -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-depchain</artifactId>
+            <version>${version.shrinkwrap.resolvers}</version>
+            <type>pom</type>
+        </dependency>
+
+        <!-- Aether -->
+        <dependency>
+            <groupId>org.sonatype.aether </groupId>
+            <artifactId>aether-api</artifactId>
+            <version>${aether.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.aether </groupId>
+            <artifactId>aether-util</artifactId>
+            <version>${aether.version}</version>
+        </dependency>
 
         <!-- Other Plugins -->
         <dependency>
@@ -164,34 +192,16 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <version>2.2</version>
+            <version>3.3</version>
             <type>maven-plugin</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.jdf</groupId>
-            <artifactId>stacks-client</artifactId>
-            <version>1.0.1.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
     </dependencies>
+
 
     <build>
         <!-- Define plugin versions required for Deployment and Testing Tools -->
         <plugins>
-               <!-- Compiler plugin enforces Java 1.6 compatibility and activates annotation processors -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${version.compiler.plugin}</version>
-                <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
-                </configuration>
-            </plugin>
             <!-- Plugin to generate Plexus Component Metadata -->
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
@@ -242,7 +252,7 @@
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.4</version>
+                            <version>2.7</version>
                              <!--   simpler configuration without reportSets available for usual cases -->
                             <reports>
                                 <report>index</report>
