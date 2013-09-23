@@ -82,8 +82,10 @@ public class MavenCompilerChecker extends AbstractProjectChecker {
         }
         if (containsSourceDefinition){
             Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/configuration", doc, XPathConstants.NODE);
-            int lineNumber = compilerNode == null ? 0 : getLineNumberFromNode(compilerNode);
-            addViolation(project.getFile(), results, lineNumber, "You should not define 'source' or 'target' for 'maven-compiler-plugin'");
+            int lineNumber = compilerNode == null ? -1 : getLineNumberFromNode(compilerNode);
+            if (lineNumber != -1){
+                addViolation(project.getFile(), results, lineNumber, "You should not define 'source' or 'target' for 'maven-compiler-plugin'");
+            }
         }
 
     }
