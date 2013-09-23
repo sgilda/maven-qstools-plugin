@@ -53,7 +53,11 @@ public class SameVersionChecker extends AbstractProjectChecker {
         try {
             Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
             Node versionNode = (Node) getxPath().evaluate("/project/version", doc, XPathConstants.NODE);
-            rootVersion = versionNode.getTextContent();
+            if (versionNode == null) {
+                rootVersion = project.getVersion();
+            } else {
+                rootVersion = versionNode.getTextContent();
+            }
         } catch (Exception e) {
             throw new QSCheckerException(e);
         }
@@ -80,7 +84,7 @@ public class SameVersionChecker extends AbstractProjectChecker {
     @Override
     public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node versionNode = (Node) getxPath().evaluate("/project/version", doc, XPathConstants.NODE);
-        if (versionNode != null && !versionNode.getTextContent().equals(rootVersion)){
+        if (versionNode != null && !versionNode.getTextContent().equals(rootVersion)) {
             int lineNumber = getLineNumberFromNode(versionNode);
             String msg = "This project uses a version [%s] different from the root version [%s]";
             addViolation(project.getFile(), results, lineNumber, String.format(msg, versionNode.getTextContent(), rootVersion));
