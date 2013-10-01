@@ -134,6 +134,7 @@ rules:
        groupid: org.jboss.quickstarts.wfk
        property-names:
          - org.jboss.bom: version.jboss.bom.eap
+         - org.jboss.bom|jboss-javaee-6.0-with-tools: version.jboss.bom.wfk
    - &jdg
        groupid: org.jboss.quickstarts.jdg
    - &jpp
