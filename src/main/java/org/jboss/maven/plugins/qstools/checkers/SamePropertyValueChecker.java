@@ -77,7 +77,7 @@ public class SamePropertyValueChecker implements QSChecker {
                         projectProperties.put(propertyName, propertyValue);
                     } else if (projectProperties.get(propertyName) != null && !projectProperties.get(propertyName).equals(propertyValue)) {
                         // The property was used but with an different value
-                        int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                        int lineNumber = (Integer) property.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
                         String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
                         String fileAsString = mavenProject.getFile().getAbsolutePath().replace(rootDirectory, "");
                         if (results.get(fileAsString) == null) {

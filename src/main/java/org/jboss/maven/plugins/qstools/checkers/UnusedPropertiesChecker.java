@@ -101,7 +101,8 @@ public class UnusedPropertiesChecker implements QSChecker {
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
+        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         if (rules.isCheckerIgnored(this)) {
@@ -118,7 +119,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                     for (int x = 0; x < propertiesNodes.getLength(); x++) {
                         Node property = propertiesNodes.item(x);
                         String propertyName = property.getNodeName();
-                        int lineNumber = Integer.parseInt((String) property.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+                        int lineNumber = (Integer) property.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
                         PomInformation pi = new PomInformation(mavenProject, lineNumber);
                         declaredProperties.put(propertyName, pi);
                     }
@@ -136,7 +137,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                 // search if all declared properties have been used
                 for (String declared : declaredProperties.keySet()) {
                     if (!declared.startsWith("project") && // Escape project configuration
-                        !rules.getIgnoredUnusedProperties().contains(declared) && //Escape ignored properties
+                        !rules.getIgnoredUnusedProperties().contains(declared) && // Escape ignored properties
                         !usedProperties.contains(declared)) {
                         PomInformation pomInformation = declaredProperties.get(declared);
                         // Get relative path based on maven work dir

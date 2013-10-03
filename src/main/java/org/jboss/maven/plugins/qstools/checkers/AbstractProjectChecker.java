@@ -94,7 +94,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
                     if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
                         String msg = "Skiping %s for %s:%s";
                         log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
-                    }else{
+                    } else {
                         processProject(mavenProject, doc, results);
                     }
                 } else {
@@ -115,14 +115,15 @@ public abstract class AbstractProjectChecker implements QSChecker {
         if (node == null) {
             return 0;
         }
-        return Integer.parseInt((String) node.getUserData(PositionalXMLReader.LINE_NUMBER_KEY_NAME));
+        return (Integer) node.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
     }
 
     /**
      * Adds violation referencing the pom.xml file as the violated file
      * 
      */
-    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
+    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber,
+        String violationMessage) {
         // Get relative path based on maven work dir
         String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
         String fileAsString = file.getAbsolutePath().replace(rootDirectory, "");
@@ -133,7 +134,8 @@ public abstract class AbstractProjectChecker implements QSChecker {
         violationsQtd++;
     }
 
-    public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;
+    public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results)
+        throws Exception;
 
     /**
      * @return the dependencyProvider

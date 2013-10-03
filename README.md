@@ -39,13 +39,27 @@ You can use a local config file by overwriting qstools property:
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
          -Dqstools.configFileURL=file:///Users/rafaelbenevides/path/qstools_config.yaml
 
+Using a custom stacks.yaml definition
+-------------------------------------
+
+If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
+
+   mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
+      -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
+
+
+or
+
+   mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check)
+      -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
+
 
 If you need to update quickstarts BOMs
 --------------------------------------
 
-This goal will check the [Stacks file](https://github.com/jboss-jdf/jdf-stack/blob/1.0.0.Final/stacks.yaml)  and look for the recommended Version for each BOM.
+This goal will check the [Expected BOM Version](https://github.com/jboss-developer/maven-qstools-plugin/blob/master/config/qstools_config.yaml#L24)  and update the BOM versions to the expected version.
 
-If the recommended BOM is newer it will replace the version, otherwise it will only warn you that your quickstarts is using a newer version than the recommended one and won't  update the BOM.
+It will also replace any community BOMs by the Product BOMs if it is specified under `project-boms-migration` sections of [QSTools configuration file](https://github.com/jboss-developer/maven-qstools-plugin/blob/master/config/qstools_config.yaml)
 
 `NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
 
@@ -54,21 +68,6 @@ To run the plugin:
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:updateBoms
     
 
-
-Using a custom stacks.yaml definition
--------------------------------------
-
-If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
-
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check|updateBoms)
-       -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
-    
-
-or
-
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check|updateBoms)
-       -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
-    
 
 Checking the BOM dependencies
 -----------------------------

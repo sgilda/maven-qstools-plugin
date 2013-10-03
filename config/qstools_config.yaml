@@ -28,6 +28,9 @@ rules:
          - org.jboss.bom.wfk: 2.4.0-build-5
          - org.jboss.spec: 3.0.2.Final-redhat-4
          - org.jboss.as: 7.2.1.Final-redhat-10
+         
+       #Community to Product BOMs - Used only on 'updateBoms' Goal
+       project-boms-migration:
 
        #Final name patterns
        final-name-patterns:
@@ -92,7 +95,7 @@ rules:
          - org.jboss.arquillian.protocol: version.jboss.arquillian
          - org.jboss.as: version.jboss.as
          - org.jboss.as.plugins: version.jboss.maven.plugin
-         - org.jboss.bom: version.jboss.bom
+         - org.jboss.bom: version.jboss.bom.eap
          - org.jboss.bom.eap: version.jboss.bom.eap
          - org.jboss.bom.wfk: version.jboss.bom.wfk
          - org.jboss.bom.jdg: version.jboss.bom.jdg
@@ -132,9 +135,11 @@ rules:
        artifactid-prefix: "sandbox-"
    - &wfk
        groupid: org.jboss.quickstarts.wfk
-       property-names:
-         - org.jboss.bom: version.jboss.bom.eap
-         - org.jboss.bom|jboss-javaee-6.0-with-tools: version.jboss.bom.wfk
+       #Community to Product BOMs - Used only on 'updateBoms' Goal
+       project-boms-migration:
+         - org.jboss.bom|jboss-javaee-6.0-with-tools: org.jboss.bom.wfk|jboss-javaee-6.0-with-tools|version.jboss.bom.wfk
+         - org.richfaces|richfaces-bom: org.jboss.bom.wfk|jboss-javaee-6.0-with-richfaces|version.jboss.bom.wfk
+         
    - &jdg
        groupid: org.jboss.quickstarts.jdg
    - &jpp
