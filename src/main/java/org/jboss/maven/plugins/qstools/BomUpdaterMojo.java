@@ -58,6 +58,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.puppycrawl.tools.checkstyle.checks.UpperEllCheck;
+
 /**
  * Update all BOMs to use the recommended versions. Note that the update only will be made from previous version to newer
  * recommended versions. It doesn't downgrade the versions;
@@ -82,6 +84,10 @@ public class BomUpdaterMojo extends AbstractMojo {
 
     @Component
     private PlexusContainer container;
+
+    private boolean pomModified = false;
+
+    private int updatedProjects = 0;
 
     /**
      * Overwrite the config file
@@ -108,6 +114,10 @@ public class BomUpdaterMojo extends AbstractMojo {
                 for (MavenProject project : reactorProjects) {
                     processProject(project);
                 }
+                getLog().info(" ***** All projects were processed! Total Processed: " + reactorProjects.size() + " - Total Updates: " + updatedProjects +
+                    "\nRun [mvn clean compile] to get sure that everything is working" +
+                    "\nRun [git diff] to see the changes made." +
+                    "\n");
             } else {
                 getLog().info("Aborted");
             }
@@ -129,13 +139,18 @@ public class BomUpdaterMojo extends AbstractMojo {
      * @throws Exception
      */
     private void processProject(MavenProject project) throws Exception {
+        pomModified = false;
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         getLog().debug("Processing " + project.getArtifactId());
         Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
         NodeList dependencies = (NodeList) xPath.evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         replaceBOMsIfNeeded(project, dependencies, rules);
         updateBomsVersionIfNeeded(project, dependencies, rules, doc);
-        write(doc, new FileOutputStream(project.getFile()));
+        if (pomModified) {
+            getLog().info("*** Saving changes to " + project.getFile() + "\n");
+            updatedProjects++;
+            write(doc, new FileOutputStream(project.getFile()));
+        }
     }
 
     private void updateBomsVersionIfNeeded(MavenProject project, NodeList dependencies, Rules rules, Document doc) throws InterpolationException, XPathExpressionException {
@@ -153,16 +168,22 @@ public class BomUpdaterMojo extends AbstractMojo {
                     // Alter ir
                     Node propertyNode = (Node) xPath.evaluate("/project/properties/" + declaredVersion, doc, XPathConstants.NODE);
                     if (propertyNode != null) { // It can be null for inherited property
+                        getLog().info("Updating property [" + declaredVersion + "] from " + version + " to " + expectedBomVersion);
+                        pomModified = true;
                         propertyNode.setTextContent(expectedBomVersion);
                     }
                 } else {
                     // Create the property if it doesn't exist
                     Node propertiesNode = (Node) xPath.evaluate("/project/properties", doc, XPathConstants.NODE);
-                    Comment comment = doc.createComment("Automatically declared BOM property");
+                    String comment = String.format("Automatically created property by QSTools for"
+                        + "\n        %s:%s BOM", mavenDependency.getGroupId(), mavenDependency.getArtifactId());
+                    Comment commentNode = doc.createComment(comment);
+                    getLog().info("* CREATING property [" + declaredVersion + "] with value " + expectedBomVersion);
+                    pomModified = true;
                     Element propertyNode = doc.createElement(declaredVersion);
                     propertyNode.setTextContent(expectedBomVersion);
                     propertiesNode.appendChild(doc.createTextNode("\n        ")); // LF + 8 spaces
-                    propertiesNode.appendChild(comment);
+                    propertiesNode.appendChild(commentNode);
                     propertiesNode.appendChild(doc.createTextNode("\n        ")); // LF + 8 spaces
                     propertiesNode.appendChild(propertyNode);
                 }
@@ -180,6 +201,8 @@ public class BomUpdaterMojo extends AbstractMojo {
             String newBomGAV = bomsMigration.getProperty(oldBomGA);
 
             if (newBomGAV != null) {
+                getLog().info("Replacing " + oldBomGA + " BOM by " + newBomGAV);
+                pomModified = true;
                 String[] newBomGavSplited = newBomGAV.split("[|]");
                 updateBomNode(dependency, newBomGavSplited[0], newBomGavSplited[1], newBomGavSplited[2]);
             }
