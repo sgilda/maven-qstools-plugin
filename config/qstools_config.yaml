@@ -124,7 +124,10 @@ rules:
            - "**/mobile-nav*"
            - "**/yepnope*"
            - "**/underscore*"
+           #Some well known files
            - "**/README.html"
+           - "RELEASE_PROCEDURE.html"
+           - "CONTRIBUTING.html"
            #BRMS support files
            - "brms-quickstarts/**/support/**"
 

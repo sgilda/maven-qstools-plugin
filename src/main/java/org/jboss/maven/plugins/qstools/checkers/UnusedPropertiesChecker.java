@@ -53,7 +53,7 @@ import org.w3c.dom.NodeList;
 @Component(role = QSChecker.class, hint = "unusedPropertiesChecker")
 public class UnusedPropertiesChecker implements QSChecker {
 
-    private Map<String, PomInformation> declaredProperties = new HashMap<String, PomInformation>();
+    private Map<String, List<PomInformation>> declaredProperties = new HashMap<String, List<PomInformation>>();
 
     private Set<String> usedProperties = new HashSet<String>();
 
@@ -101,8 +101,7 @@ public class UnusedPropertiesChecker implements QSChecker {
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         if (rules.isCheckerIgnored(this)) {
@@ -121,7 +120,10 @@ public class UnusedPropertiesChecker implements QSChecker {
                         String propertyName = property.getNodeName();
                         int lineNumber = (Integer) property.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
                         PomInformation pi = new PomInformation(mavenProject, lineNumber);
-                        declaredProperties.put(propertyName, pi);
+                        if (declaredProperties.get(propertyName) == null) {
+                            declaredProperties.put(propertyName, new ArrayList<UnusedPropertiesChecker.PomInformation>());
+                        }
+                        declaredProperties.get(propertyName).add(pi);
                     }
                     // find all uses for properties expression
                     Pattern p = Pattern.compile("\\$\\{\\w+(.\\w+)*(-\\w+)*\\}");
@@ -139,16 +141,18 @@ public class UnusedPropertiesChecker implements QSChecker {
                     if (!declared.startsWith("project") && // Escape project configuration
                         !rules.getIgnoredUnusedProperties().contains(declared) && // Escape ignored properties
                         !usedProperties.contains(declared)) {
-                        PomInformation pomInformation = declaredProperties.get(declared);
-                        // Get relative path based on maven work dir
-                        String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
-                        String fileAsString = pomInformation.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
-                        if (results.get(fileAsString) == null) {
-                            results.put(fileAsString, new ArrayList<Violation>());
+                        List<PomInformation> pomInformations = declaredProperties.get(declared);
+                        for (PomInformation pi : pomInformations) {
+                            // Get relative path based on maven work dir
+                            String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
+                            String fileAsString = pi.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
+                            if (results.get(fileAsString) == null) {
+                                results.put(fileAsString, new ArrayList<Violation>());
+                            }
+                            String msg = "Property [%s] was declared but was never used";
+                            results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, declared)));
+                            violationsQtd++;
                         }
-                        String msg = "Property [%s] was declared but was never used";
-                        results.get(fileAsString).add(new Violation(getClass(), pomInformation.getLine(), String.format(msg, declared)));
-                        violationsQtd++;
                     }
                 }
                 if (violationsQtd > 0) {
