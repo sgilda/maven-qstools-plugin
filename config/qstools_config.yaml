@@ -57,6 +57,7 @@ rules:
        ignored-modules:
          - "dist"
          - "template"
+         - "functional-tests"
 
        #List of Checkers that should be ignored. Use Class name as value
        ignored-checkers:

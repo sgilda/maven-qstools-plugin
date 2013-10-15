@@ -115,7 +115,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
     @Parameter(property = "project.build.directory", required = true)
     private String outputPath;
 
-    @Parameter(property = "basedir", required = true)
+    @Parameter(property = "basedir", required = true, readonly = true)
     private String baseDir;
 
     // local reference to the origin project
