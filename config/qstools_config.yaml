@@ -102,6 +102,7 @@ rules:
          - org.jboss.bom.eap: version.jboss.bom.eap
          - org.jboss.bom.wfk: version.jboss.bom.wfk
          - org.jboss.bom.jdg: version.jboss.bom.jdg
+         - org.jboss.bom.sandbox: version.jboss.bom.sandbox
          - org.jboss.bom|gatein-3.6-bom: version.jboss.gatein.bom #consider the artifactId for GateIn
          - org.jboss.spec: version.jboss.spec.javaee.6.0
          - org.jboss.weld.se: version.jboss.weld
