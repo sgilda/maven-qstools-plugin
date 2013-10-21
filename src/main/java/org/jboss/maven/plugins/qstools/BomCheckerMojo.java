@@ -31,8 +31,7 @@ import org.apache.maven.project.MavenProject;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 /**
- * This Mojo is used to check if all Dependencies declared in a </dependencyManagement> section of
- * a BOM is resolvable.
+ * This Mojo is used to check if all Dependencies declared in a </dependencyManagement> section of a BOM is resolvable.
  * 
  * @author Rafael Benevides
  * 
@@ -55,8 +54,10 @@ public class BomCheckerMojo extends AbstractMojo {
         if (depmgmt != null) {
             List<Dependency> dependencies = depmgmt.getDependencies();
             for (Dependency dep : dependencies) {
-                if (dep.getScope() != null && dep.getScope().equals("runtime")) { // ignore runtime dependencies
-                    getLog().debug("Ignoring runtime category " + dep);
+                if (dep.getScope() != null
+                    // ignore runtime/system dependencies
+                    && (dep.getScope().equals("runtime") && dep.getScope().equals("system"))) {
+                    getLog().debug("Ignoring runtime/system dependency " + dep);
                 } else {
                     String pkg = dep.getType() == null ? "jar" : dep.getType();
                     String gav = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + pkg + ":" + dep.getVersion();
