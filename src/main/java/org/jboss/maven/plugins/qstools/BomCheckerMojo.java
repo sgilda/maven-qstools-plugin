@@ -56,7 +56,7 @@ public class BomCheckerMojo extends AbstractMojo {
             for (Dependency dep : dependencies) {
                 if (dep.getScope() != null
                     // ignore runtime/system dependencies
-                    && (dep.getScope().equals("runtime") && dep.getScope().equals("system"))) {
+                    && (dep.getScope().equals("runtime") || dep.getScope().equals("system"))) {
                     getLog().debug("Ignoring runtime/system dependency " + dep);
                 } else {
                     String pkg = dep.getType() == null ? "jar" : dep.getType();
