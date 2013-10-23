@@ -37,7 +37,7 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "pomDescriptionChecker")
+@Component(role = QSChecker.class, hint = "pomNameChecker")
 public class PomNameChecker extends AbstractProjectChecker {
 
     private static final String TARGET_PRODUCT_TAG = "Target Product:";
@@ -73,7 +73,7 @@ public class PomNameChecker extends AbstractProjectChecker {
             String targetProject = getTargetProduct(parentReadme);
             pattern = pomNamePatternSubmodule.replace("<target-product>", targetProject).replace("<project-folder>", parentFolder).replace("<submodule-folder>", folderName);
         } else {
-            File readme = new File(folderName, "README.md");
+            File readme = new File(project.getBasedir(), "README.md");
             if (readme.exists()) {
                 String targetProject = getTargetProduct(readme);
                 pattern = pomNamePattern.replace("<target-product>", targetProject).replace("<project-folder>", folderName);
