@@ -62,7 +62,7 @@ public class BomCheckerMojo extends AbstractMojo {
                     String pkg = dep.getType() == null ? "jar" : dep.getType();
                     String gav = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + pkg + ":" + dep.getVersion();
                     getLog().debug("Trying to resolve " + gav);
-                    Maven.resolver().resolve(gav).withMavenCentralRepo(true).withTransitivity().asFile();
+                    Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
                 }
 
             }
