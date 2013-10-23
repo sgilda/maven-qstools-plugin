@@ -22,7 +22,7 @@ rules:
 
        #Expected JDF BOM Version
        expected-bom-versions:
-         - org.jboss.bom: 1.0.7.Final
+         - org.jboss.bom: 1.0.4.Final-redhat-9
          - org.jboss.bom.eap: 6.2.0-build-7
          - org.jboss.bom.jdg: 6.2.0-build-2
          - org.jboss.bom.wfk: 2.4.0-build-5
@@ -144,13 +144,10 @@ rules:
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
          - org.jboss.bom|jboss-javaee-6.0-with-tools: org.jboss.bom.wfk|jboss-javaee-6.0-with-tools|version.jboss.bom.wfk
-         
    - &jdg
        groupid: org.jboss.quickstarts.jdg
    - &jpp
        groupid: org.jboss.quickstarts.jpp
-       expected-bom-versions:
-         - org.jboss.bom: 1.0.1.Final-redhat-1
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
    - &fuse
@@ -164,8 +161,6 @@ rules:
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
          - DependencyChecker #BRMS doesn't use BOMs
-       expected-bom-versions:
-         - org.jboss.bom: 1.0.4.Final-redhat-4
    - &qstools
        groupid: org.jboss.maven.plugins
        artifactid-prefix: "maven-"
