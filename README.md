@@ -1,14 +1,18 @@
 Quickstarts tools Maven plugin
 ==============================
 Author: Rafael Benevides
-Summary: Maven plugin that helps JDF quickstarts maintenance
+Summary: Maven plugin that helps JBoss Developer materials maintenance
 
 What is it?
 -----------
 
-This a Maven Plugin that helps JDF quickstarts maintenance.
+This a Maven Plugin that helps JBoss Developer materials maintenance.
 
-You can use it to verify if your project/quickstart follow the JDF Guidelines. It will run all JDF Guideline checkers and generate a report that provides information about any violations that your project/quickstarts has.
+You can use it to verify if your project/quickstart follow the JBoss Developer Guidelines. It will run all JBoss Developer Guideline checkers and generate a report that provides information about any violations that your project/quickstarts has.
+
+For Maven BOMs,it can be used to verify if your Maven BOM has all dependencies being resolved.
+
+You can also use QSTools to synchronize an Maven Archetype with and existing project.
 
 
 System requirements
@@ -41,6 +45,8 @@ You can use a local config file by overwriting qstools property:
 
 Using a custom stacks.yaml definition
 -------------------------------------
+
+[Stacks](https://github.com/jboss-jdf/jdf-stack) is used to check the BOM versions used on you project.
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
@@ -92,7 +98,7 @@ This is an example of configuration:
             <plugin>
                 <groupId>org.jboss.maven.plugins</groupId>
                 <artifactId>maven-qstools-plugin</artifactId>
-                <version>1.0.0.Final</version>
+                <version>1.2.6-SNAPSHOT</version>
                 <configuration>
                     <projectGitRepo>git://github.com/jboss-developer/jboss-eap-quickstarts.git</projectGitRepo>
                     <projectPath>kitchensink-ear</projectPath>
