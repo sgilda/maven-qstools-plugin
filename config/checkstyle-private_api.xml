@@ -19,7 +19,9 @@
     "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
-    <module name="IllegalImport">
-        <property name="illegalPkgs" value="java.io, java.sql" />
+    <module name="TreeWalker">
+        <module name="IllegalImport">
+            <property name="illegalPkgs" value="java.io, java.sql" />
+        </module>
     </module>
 </module>
