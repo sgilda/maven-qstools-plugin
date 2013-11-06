@@ -39,7 +39,7 @@ public class IndentationChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-        return "checkstyle-indentation.xml";
+        return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-indentation.xml";
     }
 
 }

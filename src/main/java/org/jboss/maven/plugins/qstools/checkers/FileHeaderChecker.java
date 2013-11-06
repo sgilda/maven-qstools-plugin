@@ -33,13 +33,13 @@ public class FileHeaderChecker extends AbstractCheckstyleChecker {
     }
 
     @Override
-    public String getIncludes() {
+    String getIncludes() {
         return "**/*.*";
     }
 
     @Override
-    public String getCheckstyleConfig() {
-        return "checkstyle-header.xml";
+    String getCheckstyleConfig() {
+        return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-header.xml";
     }
 
 }

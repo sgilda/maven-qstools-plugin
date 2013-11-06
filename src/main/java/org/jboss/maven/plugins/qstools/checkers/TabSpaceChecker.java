@@ -39,7 +39,6 @@ public class TabSpaceChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-        return "checkstyle-tabspace.xml";
+        return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-tabspace.xml";
     }
-
 }

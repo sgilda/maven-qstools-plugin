@@ -136,6 +136,10 @@ rules:
        excludes-FileHeaderChecker:
            - "**/petclinic-spring/**"
 
+       #Doesn't check Private APIs on test folder
+       excludes-PrivateApiChecker:
+           - "**/test/**"
+
    #Specific rules
    - &sandbox
        groupid: org.jboss.quickstarts.sandbox

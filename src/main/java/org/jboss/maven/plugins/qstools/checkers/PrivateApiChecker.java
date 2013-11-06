@@ -19,8 +19,8 @@ package org.jboss.maven.plugins.qstools.checkers;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 
-@Component(role = QSChecker.class, hint = "IllegalCharacterChecker")
-public class IllegalCharacterChecker extends AbstractCheckstyleChecker {
+@Component(role = QSChecker.class, hint = "privateApiChecker")
+public class PrivateApiChecker extends AbstractCheckstyleChecker {
 
     /*
      * (non-Javadoc)
@@ -29,17 +29,17 @@ public class IllegalCharacterChecker extends AbstractCheckstyleChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project files contains illegal character";
+        return "Verifies if project files contains license header";
     }
 
     @Override
-    String getIncludes() {
-        return "**/*.*";
+    public String getIncludes() {
+        return "**/*.java";
     }
 
     @Override
     String getCheckstyleConfig() {
-        return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-illegalchar.xml";
+         return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-private_api.xml";
     }
 
 }
