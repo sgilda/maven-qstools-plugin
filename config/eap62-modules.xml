@@ -5430,8 +5430,8 @@
             <property name="jboss.api">private</property>
         </properties>
         <resources>
-            <jar file="system/layers/base/org/jboss/osgi/deployment/main/jbosgi-deployment-1.3.0.Final-redhat-1.jar">
-                <gav groupId="org.jboss.osgi.deployment" artifactId="jbosgi-deployment" version="1.3.0.Final-redhat-1"/>
+            <jar file="system/layers/base/org/jboss/osgi/deployment/main/jbosgi-deployment-1.3.1-SNAPSHOT-redhat-1.jar">
+                <gav groupId="org.jboss.osgi.deployment" artifactId="jbosgi-deployment" version="1.3.1-SNAPSHOT-redhat-1"/>
             </jar>
         </resources>
         <packages>
