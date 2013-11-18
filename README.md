@@ -87,7 +87,17 @@ To run the plugin:
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check
     
 
-By default, the project build will fail if some managed dependenciy is not resolvable. You can overwrite this behavior by using `qstools.bom-check.failbuild` property:
+If you need to ignore certain known dependencies from being checked, you can use the `qstools.bom-check.ignoredDependencies` property.
+
+Example:
+
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check -Dqstools.bom-check.ignoredDependencies=<groupId 1>:<artifactId 1>:jar:<version 1>,<groupId 2>:<artifactId 2>:jar:<version 2>
+    
+
+By default, the project build will fail if some managed dependenciy is not resolvable. You can overwrite this behavior by using `qstools.bom-check.failbuild` property.
+This will run on `REPORT ONLY` mode.
+
+Example:
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check -Dqstools.bom-check.failbuild=false
     

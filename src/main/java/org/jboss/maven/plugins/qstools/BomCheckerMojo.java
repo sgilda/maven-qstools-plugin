@@ -49,6 +49,9 @@ public class BomCheckerMojo extends AbstractMojo {
     
     @Parameter(property="qstools.bom-check.failbuild", defaultValue="true")
     private boolean failbuild;
+    
+    @Parameter(property="qstools.bom-check.ignoredDependencies")
+    private List<String> ignoredDependencies = new ArrayList<String>();
 
     /*
      * (non-Javadoc)
@@ -73,8 +76,12 @@ public class BomCheckerMojo extends AbstractMojo {
                     try {
                         String pkg = dep.getType() == null ? "jar" : dep.getType();
                         String gav = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + pkg + ":" + dep.getVersion();
-                        getLog().debug("Trying to resolve " + gav);
-                        Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
+                        if (ignoredDependencies.contains(gav)){
+                            getLog().warn(gav + " ignored. It won't be resolved") ;
+                        }else{
+                            getLog().debug("Trying to resolve " + gav);
+                            Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
+                        }
                     } catch (NoResolvedResultException e) {
                         //Collect all resolution failures
                         exceptions.add(e);
