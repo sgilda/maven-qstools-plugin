@@ -29,7 +29,7 @@ public class PrivateApiChecker extends AbstractCheckstyleChecker {
      */
     @Override
     public String getCheckerDescription() {
-        return "Verifies if project files contains license header";
+        return "Verifies if project is importing any private API";
     }
 
     @Override
