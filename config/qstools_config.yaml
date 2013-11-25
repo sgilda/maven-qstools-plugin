@@ -53,6 +53,10 @@ rules:
 
        #Header file pattern
        header-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/header.txt"
+       
+       #license file and header definition for FileHeaderFixer
+       license-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/license.txt"
+       header-definition: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/config/headerdefinition.xml"
 
        #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
        ignored-modules:
@@ -116,26 +120,32 @@ rules:
            - "**/.*/**"
            - ".*"
            #known libraries
-           - "**/jquery*"
-           - "**/*cordova*/**"
            - "**/angular*"
-           - "**/qunit*"
            - "**/backbone*"
+           - "**/*cordova*/**"
+           - **/*glyphicons*/**
+           - "**/jquery*"
            - "**/lodash*"
+           - "**/mobile-nav*"
            - "**/modernizr*"
            - "**/mobile-nav*"
-           - "**/yepnope*"
+           - "**/qunit*"
            - "**/underscore*"
+           - "**/yepnope*"
            #Some well known files
+           - "CONTRIBUTING.html"
+           - "**/LICENSE*"
            - "**/README.html"
            - "RELEASE_PROCEDURE.html"
-           - "CONTRIBUTING.html"
            #BRMS support files
            - "brms-quickstarts/**/support/**"
 
        excludes-FileHeaderChecker:
            - "**/petclinic-spring/**"
 
+       excludes-FileHeaderFixer:
+           - "**/petclinic-spring/**"
+           
        #Doesn't check Private APIs on test folder
        excludes-PrivateApiChecker:
            - "**/test/**"
