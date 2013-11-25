@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jboss.maven.plugins.qstools.QSChecker;
+import org.jboss.maven.plugins.qstools.QSFixer;
 
 /**
  * @author Rafael Benevides
@@ -52,9 +53,21 @@ public class Rules {
         return excludes.toString().replace('[', ' ').replace(']', ' ');
     }
 
+    @SuppressWarnings("unchecked")
+    public List<String> getExcludesArray() {
+        List<String> excludes = (List<String>) getConfig("excludes");
+        return excludes;
+    }
+
     public String getCheckerSpecificExcludes(QSChecker module) {
         Object moduleExclude = getConfig("excludes-" + module.getClass().getSimpleName());
         return moduleExclude == null ? "" : moduleExclude.toString().replace('[', ' ').replace(']', ' ');
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<String> getFixerSpecificExcludesArray(QSFixer fixer){
+        List<String> moduleExclude = (List<String>) getConfig("excludes-" + fixer.getClass().getSimpleName());
+        return moduleExclude == null ? new ArrayList<String>() : moduleExclude;
     }
 
     public String getExpectedCompilerSource() {
@@ -63,6 +76,14 @@ public class Rules {
 
     public String getHeaderLocation() {
         return (String) getConfig("header-file");
+    }
+    
+    public String getLicenseFileLocation() {
+        return (String) getConfig("license-file");
+    }
+    
+    public String getHeaderDefinitionLocation(){
+        return (String) getConfig("header-definition");
     }
 
     public String getGroupId() {

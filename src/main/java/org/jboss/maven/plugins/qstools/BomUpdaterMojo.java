@@ -58,8 +58,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.puppycrawl.tools.checkstyle.checks.UpperEllCheck;
-
 /**
  * Update all BOMs to use the recommended versions. Note that the update only will be made from previous version to newer
  * recommended versions. It doesn't downgrade the versions;
