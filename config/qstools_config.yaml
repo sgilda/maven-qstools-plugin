@@ -56,7 +56,7 @@ rules:
        
        #license file and header definition for FileHeaderFixer
        license-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/license.txt"
-       header-definition: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/config/headerdefinition.xml"
+       header-definition: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/headerdefinition.xml"
 
        #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
        ignored-modules:
