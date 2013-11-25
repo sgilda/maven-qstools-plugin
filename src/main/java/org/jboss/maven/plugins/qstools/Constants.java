@@ -33,4 +33,6 @@ public class Constants {
     public static final String IGNORED_QUICKSTARTS_CONTEXT = "qstools.ignored.quickstarts";
 
     public static final int CACHE_EXPIRES_SECONDS = 60; // 1 minute;
+
+    public static final String PLUGIN_MANAGER = "qstools.plugin_manager";
 }
