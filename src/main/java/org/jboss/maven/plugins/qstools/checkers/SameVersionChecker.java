@@ -38,7 +38,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "SameVersionChecker")
-public class SameVersionChecker extends AbstractProjectChecker {
+public class SameVersionChecker extends AbstractBaseCheckerAdapter {
 
     private String rootVersion;
 
@@ -82,7 +82,7 @@ public class SameVersionChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node versionNode = (Node) getxPath().evaluate("/project/version", doc, XPathConstants.NODE);
         if (versionNode != null && !versionNode.getTextContent().equals(rootVersion)) {
             int lineNumber = getLineNumberFromNode(versionNode);

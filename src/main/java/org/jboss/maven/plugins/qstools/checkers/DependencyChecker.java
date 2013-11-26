@@ -49,7 +49,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "dependencyChecker")
-public class DependencyChecker extends AbstractProjectChecker {
+public class DependencyChecker extends AbstractBaseCheckerAdapter {
 
     /**
      * List of all managed Dependencies and what BOMs it is present
@@ -143,7 +143,7 @@ public class DependencyChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         if (managedDependencies == null) {
             setupManagedDependencies(project);
         }

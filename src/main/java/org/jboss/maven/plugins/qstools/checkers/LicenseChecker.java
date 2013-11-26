@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  *
  */
 @Component(role = QSChecker.class, hint = "LicenseChecker")
-public class LicenseChecker extends AbstractProjectChecker {
+public class LicenseChecker extends AbstractBaseCheckerAdapter {
 
     /* (non-Javadoc)
      * @see org.jboss.maven.plugins.qstools.QSChecker#getCheckerDescription()
@@ -47,7 +47,7 @@ public class LicenseChecker extends AbstractProjectChecker {
      * @see org.jboss.maven.plugins.qstools.checkers.AbstractProjectChecker#processProject(org.apache.maven.project.MavenProject, org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node licenseURL = (Node) getxPath().evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
         if (licenseURL == null || !licenseURL.getTextContent().contains("apache")){ 
             addViolation(project.getFile(), results, 0, "File doesn't the 'Apache License, Version 2.0' license");

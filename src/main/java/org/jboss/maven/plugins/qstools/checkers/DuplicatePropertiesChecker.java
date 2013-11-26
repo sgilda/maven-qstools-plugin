@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "duplicatePropertiesChecker")
-public class DuplicatePropertiesChecker extends AbstractProjectChecker {
+public class DuplicatePropertiesChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -55,7 +55,7 @@ public class DuplicatePropertiesChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         NodeList properties = (NodeList) getxPath().evaluate("/project/properties/*", doc, XPathConstants.NODESET);
         Set<String> declaredProperties = new HashSet<String>();
         for (int x = 0; x < properties.getLength(); x++) {

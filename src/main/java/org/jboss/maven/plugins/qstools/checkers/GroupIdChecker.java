@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "GroupIdChecker")
-public class GroupIdChecker extends AbstractProjectChecker {
+public class GroupIdChecker extends AbstractBaseCheckerAdapter {
 
     private String groupId;
 
@@ -55,7 +55,7 @@ public class GroupIdChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         groupId = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getGroupId();
 
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);

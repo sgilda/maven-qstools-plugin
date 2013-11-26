@@ -37,7 +37,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "duplicateDependencyChecker")
-public class DuplicateDependencyChecker extends AbstractProjectChecker {
+public class DuplicateDependencyChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -56,7 +56,7 @@ public class DuplicateDependencyChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         // Check Managed Dependencies
         Set<MavenDependency> declaredManagedDependencies = new HashSet<MavenDependency>();
         NodeList managedDependency = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);

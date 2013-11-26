@@ -16,9 +16,6 @@
  */
 package org.jboss.maven.plugins.qstools;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,8 +62,6 @@ public class FixViolationsMojo extends AbstractMojo {
      */
     @Parameter(property = "qstools.configFileURL",
         defaultValue = "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml")
-    // @Parameter(property = "qstools.configFileURL", defaultValue =
-    // "file:/Users/rafaelbenevides/projetos/jdf/quickstarts-checker/config/qstools_config.yaml")
     private URL configFileURL;
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)
@@ -121,35 +116,9 @@ public class FixViolationsMojo extends AbstractMojo {
 
         container.getContext().put(Constants.LOG_CONTEXT, getLog());
         container.getContext().put(Constants.MAVEN_SESSION_CONTEXT, mavenSession);
-        container.getContext().put(Constants.IGNORED_QUICKSTARTS_CONTEXT, readIgnoredFile());
+        container.getContext().put(Constants.IGNORED_QUICKSTARTS_CONTEXT, Utils.readIgnoredFile());
         container.getContext().put(Constants.PLUGIN_MANAGER, pluginManager);
     }
 
-    /**
-     * @return
-     * @throws IOException
-     */
-    private List<String> readIgnoredFile() {
-        List<String> result = new ArrayList<String>();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(".quickstarts_ignore"));
-            while (br.ready()) {
-                String line = br.readLine();
-                result.add(line);
-            }
-        } catch (IOException e) {
-            // Log it and continue. If there's no file, there's nothing to ignore.
-            getLog().warn("No .quickstarts_ignore file found. Proceeding without one.");
-        } finally {
-            if (br != null) {
-                try {
-                    br.close();
-                } catch (IOException e) {
-                    getLog().error("Exception when closing BufferedReader", e);
-                }
-            }
-        }
-        return result;
-    }
+   
 }

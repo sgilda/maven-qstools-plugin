@@ -38,7 +38,7 @@ import org.w3c.dom.Document;
  * 
  */
 @Component(role = QSChecker.class, hint = "readmeChecker")
-public class ReadmeChecker extends AbstractProjectChecker {
+public class ReadmeChecker extends AbstractBaseCheckerAdapter {
 
     private String regexPattern;
 
@@ -62,7 +62,7 @@ public class ReadmeChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         folderName = project.getBasedir().getName() + ":";
         setupRegexPattern(project.getGroupId());
         File readme = new File(project.getBasedir(), "README.md");

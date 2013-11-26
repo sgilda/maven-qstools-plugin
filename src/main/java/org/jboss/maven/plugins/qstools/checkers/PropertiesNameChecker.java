@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "propertiesNameChecker")
-public class PropertiesNameChecker extends AbstractProjectChecker {
+public class PropertiesNameChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -55,7 +55,7 @@ public class PropertiesNameChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Properties recommendedPropertiesNames = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getPropertiesNames();
         NodeList dependencies = (NodeList) getxPath().evaluate("//dependencies/dependency| //plugins/plugin ", doc, XPathConstants.NODESET);
         // Iterate over all Declared Dependencies

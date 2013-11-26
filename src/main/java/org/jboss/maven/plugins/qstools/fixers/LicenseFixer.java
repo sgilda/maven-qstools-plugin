@@ -1,13 +1,12 @@
 package org.jboss.maven.plugins.qstools.fixers;
 
-import java.io.FileOutputStream;
-
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.LicenseChecker;
+import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,10 +18,10 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSFixer.class, hint = "LicenseFixer")
-public class LicenseFixer extends AbstractProjectFixer {
+public class LicenseFixer extends AbstractBaseFixerAdapter {
 
     @Override
-    public void processProject(MavenProject project, Document doc) throws Exception {
+    public void fixProject(MavenProject project, Document doc) throws Exception {
         Node licenseURL = (Node) getxPath().evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
         if (licenseURL == null || !licenseURL.getTextContent().contains("apache")) {
             Node licensesElement = (Node) getxPath().evaluate("/project/licenses", doc, XPathConstants.NODE);
@@ -52,7 +51,7 @@ public class LicenseFixer extends AbstractProjectFixer {
             licensesElement.appendChild(doc.createTextNode("\n        ")); // LF + 8 spaces
             licensesElement.appendChild(license);
         }
-        writeXML(doc, new FileOutputStream(project.getFile()));
+        XMLWriter.writeXML(doc, project.getFile());
     }
 
 }

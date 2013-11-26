@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "repositoryDeclarationChecker")
-public class RepositoryDeclarationChecker extends AbstractProjectChecker {
+public class RepositoryDeclarationChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -53,7 +53,7 @@ public class RepositoryDeclarationChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node repositoriesNode = (Node) getxPath().evaluate("//project/repositories", doc, XPathConstants.NODE);
         if (repositoriesNode != null) {
             int lineNumber = getLineNumberFromNode(repositoriesNode);

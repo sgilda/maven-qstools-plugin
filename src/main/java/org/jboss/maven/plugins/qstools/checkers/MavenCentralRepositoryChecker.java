@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
  */
 //@Component(role = QSChecker.class, hint = "mavenCentralRepositoryChecker")
 @Deprecated
-public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
+public class MavenCentralRepositoryChecker extends AbstractBaseCheckerAdapter {
 
     @Requirement
     private RepositorySystem repositorySystem;
@@ -63,7 +63,7 @@ public class MavenCentralRepositoryChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         for (Dependency dependency : project.getDependencies()) {
             Artifact dependencyArtifact = repositorySystem.createProjectArtifact(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
             ArtifactResolutionRequest arr = new ArtifactResolutionRequest();

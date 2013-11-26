@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "pomElementOrderChecker")
-public class PomElementOrderChecker extends AbstractProjectChecker {
+public class PomElementOrderChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -53,7 +53,7 @@ public class PomElementOrderChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         List<String> pomElements = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getPomOrder();
         Map<String, Integer> elementsFound = new LinkedHashMap<String, Integer>();
         // Find all elements position
