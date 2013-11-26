@@ -128,13 +128,13 @@ rules:
            - "**/lodash*"
            - "**/mobile-nav*"
            - "**/modernizr*"
-           - "**/mobile-nav*"
            - "**/qunit*"
            - "**/underscore*"
            - "**/yepnope*"
            #Some well known files
            - "CONTRIBUTING.html"
            - "**/LICENSE*"
+           - "**/license*"
            - "**/README.html"
            - "RELEASE_PROCEDURE.html"
            #BRMS support files
