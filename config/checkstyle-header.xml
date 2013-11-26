@@ -22,7 +22,7 @@
     <module name="RegexpHeader">
         <property name="headerFile" value="${checkstyle.header.file}" />
         <property name="charset" value="UTF-8" />
-        <property name="multiLines" value="1, 2, 3, 4, 5, 6" />
+        <property name="multiLines" value="1, 2, 3, 4, 5, 6, 7" />
         <property name="fileExtensions" value="xml, xsd, java, js, properties, html, xhtml, sql, css" />
     </module>
 </module>
