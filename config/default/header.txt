@@ -4,6 +4,7 @@
 ^.*<!--.*$
 ^#$
 ^--$
+^<!DOCTYPE .*$
 ^\W*JBoss, Home of Professional Open Source.*$
 ^\W*Copyright [0-9]+, Red Hat, Inc. and/or its affiliates, and individual.*$
 ^\W*contributors by the @authors tag\. See the copyright\.txt in the.*$
