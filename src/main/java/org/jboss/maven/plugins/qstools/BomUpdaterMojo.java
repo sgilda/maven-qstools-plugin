@@ -17,20 +17,11 @@
 package org.jboss.maven.plugins.qstools;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -52,6 +43,7 @@ import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -147,7 +139,7 @@ public class BomUpdaterMojo extends AbstractMojo {
         if (pomModified) {
             getLog().info("*** Saving changes to " + project.getFile() + "\n");
             updatedProjects++;
-            write(doc, new FileOutputStream(project.getFile()));
+            XMLWriter.writeXML(doc, project.getFile());
         }
     }
 
@@ -219,16 +211,6 @@ public class BomUpdaterMojo extends AbstractMojo {
                 node.setTextContent("${" + version + "}");
             }
         }
-    }
-
-    public void write(Document doc, OutputStream out) throws Exception {
-        Transformer t = TransformerFactory.newInstance().newTransformer();
-        t.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // NOI18N
-        t.setOutputProperty(OutputKeys.INDENT, "yes"); // NOI18N
-        t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); // NOI18N
-        Source source = new DOMSource(doc);
-        Result result = new StreamResult(out);
-        t.transform(source, result);
     }
 
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.maven.plugins.qstools.checkers;
+package org.jboss.maven.plugins.qstools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,17 +31,16 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
-import org.jboss.maven.plugins.qstools.Constants;
-import org.jboss.maven.plugins.qstools.DependencyProvider;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-public abstract class AbstractProjectChecker implements QSChecker {
+public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
+
+    private enum WalkType {
+        FIX, CHECK
+    };
 
     @Requirement
     private Context context;
@@ -81,11 +80,27 @@ public abstract class AbstractProjectChecker implements QSChecker {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         this.mavenSession = mavenSession;
         this.log = log;
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
+        walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
+        if (violationsQtd > 0) {
+            log.info("There are " + violationsQtd + " checkers errors");
+        }
+        return results;
+    }
+
+    @Override
+    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+        this.mavenSession = mavenSession;
+        this.log = log;
+        walk(WalkType.FIX, project, mavenSession, reactorProjects, log, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void walk(WalkType walkType, MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log, Map<String, List<Violation>> results)
+        throws QSCheckerException {
         try {
             List<String> ignoredQuickstarts = (List<String>) context.get(Constants.IGNORED_QUICKSTARTS_CONTEXT);
             for (MavenProject mavenProject : reactorProjects) {
@@ -95,20 +110,26 @@ public abstract class AbstractProjectChecker implements QSChecker {
                         String msg = "Skiping %s for %s:%s";
                         log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
                     } else {
-                        processProject(mavenProject, doc, results);
+                        switch (walkType) {
+                            case CHECK:
+                                checkProject(mavenProject, doc, results);
+                                break;
+                            case FIX:
+                                fixProject(mavenProject, doc);
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
                 } else {
                     log.debug("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
                 }
             }
-            if (violationsQtd > 0) {
-                log.info("There are " + violationsQtd + " checkers errors");
-            }
         } catch (Exception e) {
             // Any other exception is a problem.
             throw new QSCheckerException(e);
         }
-        return results;
     }
 
     protected int getLineNumberFromNode(Node node) {
@@ -122,8 +143,7 @@ public abstract class AbstractProjectChecker implements QSChecker {
      * Adds violation referencing the pom.xml file as the violated file
      * 
      */
-    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber,
-        String violationMessage) {
+    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
         // Get relative path based on maven work dir
         String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
         String fileAsString = file.getAbsolutePath().replace(rootDirectory, "");
@@ -134,8 +154,9 @@ public abstract class AbstractProjectChecker implements QSChecker {
         violationsQtd++;
     }
 
-    public abstract void processProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results)
-        throws Exception;
+    public abstract void checkProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;
+
+    public abstract void fixProject(final MavenProject project, Document doc) throws Exception;
 
     /**
      * @return the dependencyProvider

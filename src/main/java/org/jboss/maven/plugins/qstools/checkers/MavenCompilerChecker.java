@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "mavenCompilerChecker")
-public class MavenCompilerChecker extends AbstractProjectChecker {
+public class MavenCompilerChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -54,7 +54,7 @@ public class MavenCompilerChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         String compilerSource = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getExpectedCompilerSource();
         String target = project.getProperties().getProperty("maven.compiler.target");
         String compiler = project.getProperties().getProperty("maven.compiler.source");

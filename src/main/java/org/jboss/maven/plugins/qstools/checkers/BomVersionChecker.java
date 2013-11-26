@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
  * 
  */
 @Component(role = QSChecker.class, hint = "bomVersionChecker")
-public class BomVersionChecker extends AbstractProjectChecker {
+public class BomVersionChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -48,7 +48,7 @@ public class BomVersionChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Properties expectedBomVersions = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getExpectedBomVersion();
         NodeList dependencies = (NodeList) getxPath().evaluate("/project/dependencyManagement/dependencies/dependency", doc, XPathConstants.NODESET);
         // Iterate over all Declared Managed Dependencies

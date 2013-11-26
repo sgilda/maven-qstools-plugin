@@ -34,7 +34,7 @@ import org.w3c.dom.Document;
  * 
  */
 @Component(role = QSChecker.class, hint = "moduleDefinedChecker")
-public class ModuleDefinedChecker extends AbstractProjectChecker {
+public class ModuleDefinedChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -65,7 +65,7 @@ public class ModuleDefinedChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         File rootDir = project.getBasedir();
         List<String> submodules = new ArrayList<String>();
         for (File f : rootDir.listFiles()) {

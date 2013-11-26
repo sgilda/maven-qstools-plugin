@@ -33,7 +33,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "finalNameChecker")
-public class FinalNameChecker extends AbstractProjectChecker {
+public class FinalNameChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -53,7 +53,7 @@ public class FinalNameChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         String packaging = project.getPackaging();
         String expectedFinalName = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getFinalNamePatterns().get(packaging);
         Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);

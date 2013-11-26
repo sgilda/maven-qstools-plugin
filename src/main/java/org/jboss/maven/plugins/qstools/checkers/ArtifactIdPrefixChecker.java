@@ -34,7 +34,7 @@ import org.w3c.dom.Node;
  * 
  */
 @Component(role = QSChecker.class, hint = "artifactIdPrefixChecker")
-public class ArtifactIdPrefixChecker extends AbstractProjectChecker {
+public class ArtifactIdPrefixChecker extends AbstractBaseCheckerAdapter {
 
     /*
      * (non-Javadoc)
@@ -54,7 +54,7 @@ public class ArtifactIdPrefixChecker extends AbstractProjectChecker {
      * org.w3c.dom.Document, java.util.Map)
      */
     @Override
-    public void processProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
+    public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Rules rules = getConfigurationProvider().getQuickstartsRules(project.getGroupId());
         String artifarIdPrefix = rules.getArtifactIdPrefix();
         if (!project.getArtifactId().startsWith(artifarIdPrefix)) {
