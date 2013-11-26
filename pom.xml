@@ -26,9 +26,9 @@
 
     <name>QSTools Maven Plugin</name>
     <description>
-      This a Maven Plugin that helps JDF quickstarts maintenance.
+      This a Maven Plugin that helps JBoss Developer quickstarts maintenance.
 
-      You can use it to verify if your project/quickstart follow the JDF Guidelines. It will run all JDF Guideline checkers and generate a report that provides information about any violations that your project/quickstarts has.
+      You can use it to verify if your project/quickstart follow the JBoss Developer Guidelines. It will run all JBoss Developer Guideline checkers and generate a report that provides information about any violations that your project/quickstarts has.
     </description>
 
     <licenses>
@@ -42,9 +42,9 @@
     <url>http://www.jboss.org/jdf</url>
 
     <scm>
-        <connection>scm:git:git@github.com:rafabene/qstools.git</connection>
-        <developerConnection>scm:git:git@github.com:rafabene/qstools.git</developerConnection>
-        <url>http://github.com/rafabene/qstools</url>
+        <connection>scm:git:git@github.com:jboss-developer/maven-qstools-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:jboss-developer/maven-qstools-plugin.git</developerConnection>
+        <url>http://github.com/jboss-developer/maven-qstools-plugin</url>
     </scm>
 
     <developers>
@@ -60,7 +60,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <httpclient.version>4.0.1</httpclient.version>
-        <version.shrinkwrap.resolvers>2.0.0</version.shrinkwrap.resolvers>
+        <version.shrinkwrap.resolvers>2.0.1</version.shrinkwrap.resolvers>
         <yaml.version>1.11</yaml.version>
         <junit.version>4.10</junit.version>
         <aether.version>1.13.1</aether.version>
@@ -169,7 +169,7 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-checkstyle-plugin</artifactId>
-            <version>2.10</version>
+            <version>2.11</version>
             <exclusions>
                 <exclusion>
                     <artifactId>xml-apis</artifactId>
