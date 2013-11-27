@@ -66,6 +66,8 @@
         <aether.version>1.13.1</aether.version>
         <stacks-client.version>1.0.2.Final</stacks-client.version>
         <mojo-executor.version>2.1.0</mojo-executor.version>
+        <eclipse.jgit.version>3.1.0.201310021548-r</eclipse.jgit.version>
+        <eclipse.text.version>3.5.101</eclipse.text.version>
         
         <!-- Repository Deployment URLs -->
 
@@ -102,6 +104,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-io</artifactId>
+            <version>r03</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
             <version>3.2</version>
@@ -127,10 +134,25 @@
             <artifactId>httpclient</artifactId>
             <version>${httpclient.version}</version>
         </dependency>
+        
+        <!-- Eclipse Dependencies -->
+
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
-            <version>2.3.1.201302201838-r</version>
+            <version>${eclipse.jgit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.text</groupId>
+            <artifactId>org.eclipse.text</artifactId>
+            <version>${eclipse.text.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.core</artifactId>
+            <version>3.7.1</version>
         </dependency>
 
         <dependency>

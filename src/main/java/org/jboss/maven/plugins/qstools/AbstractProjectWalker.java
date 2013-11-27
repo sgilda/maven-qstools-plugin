@@ -81,8 +81,6 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
-        this.mavenSession = mavenSession;
-        this.log = log;
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
         if (violationsQtd > 0) {
@@ -93,14 +91,14 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     @Override
     public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
-        this.mavenSession = mavenSession;
-        this.log = log;
         walk(WalkType.FIX, project, mavenSession, reactorProjects, log, null);
     }
 
     @SuppressWarnings("unchecked")
     public void walk(WalkType walkType, MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log, Map<String, List<Violation>> results)
         throws QSCheckerException {
+        this.mavenSession = mavenSession;
+        this.log = log;
         try {
             List<String> ignoredQuickstarts = (List<String>) context.get(Constants.IGNORED_QUICKSTARTS_CONTEXT);
             for (MavenProject mavenProject : reactorProjects) {

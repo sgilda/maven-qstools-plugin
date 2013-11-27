@@ -55,13 +55,13 @@ public class ConfigurationProvider {
     @Requirement
     private Context context;
 
-    private URL configFileURL;
-
     private Log log;
 
     private MavenSession mavenSession;
 
     private Map<String, Rules> configRules = new HashMap<String, Rules>();
+
+    private URL configFileURL;
 
     private void configure() throws ContextException {
         configFileURL = (URL) context.get(Constants.CONFIG_FILE_CONTEXT);
@@ -97,7 +97,7 @@ public class ConfigurationProvider {
         InputStream inputStream = null;
         try {
             // Retrieve inputStream (local cache or remote)
-            inputStream = getConfigFileInputStream();
+            inputStream = getFileInputStream(configFileURL);
             Yaml yaml = new Yaml();
             Map<String, Object> configFile = (Map<String, Object>) yaml.load(inputStream);
             Map<String, Object> quickstartsGroupIds = (Map<String, Object>) configFile.get("quickstarts");
@@ -106,7 +106,7 @@ public class ConfigurationProvider {
                 Map<String, Object> defaultRulesSection = (Map<String, Object>) ((List<Object>) configFile.get("rules")).get(0);
                 List<Object> defaultRules = new LinkedList<Object>();
                 defaultRules.add(defaultRulesSection);
-                configs  = defaultRules;
+                configs = defaultRules;
             }
             Rules rules = new Rules(configs);
             configRules.put(groupId, rules);
@@ -126,33 +126,39 @@ public class ConfigurationProvider {
     }
 
     /**
+     * Return a FileInputStream from a local file.
+     * 
+     * The local file is cached based on {@link Constants#CACHE_EXPIRES_SECONDS}
+     * 
+     * If the caches expires, them the file is downloaded again
+     * 
      * @return
      * @throws FileNotFoundException
      * 
      */
-    private InputStream getConfigFileInputStream() throws FileNotFoundException {
-        InputStream repoStream = getCachedRepoStream(false);
+    public InputStream getFileInputStream(URL url) throws FileNotFoundException {
+        InputStream repoStream = getCachedRepoStream(false, url);
         // if cache expired
         if (repoStream == null) {
-            log.debug("Local cache file " + getLocalCacheFile() + " doesn't exist or cache has been expired");
+            log.debug("Local cache file " + getLocalCacheFile(url) + " doesn't exist or cache has been expired");
             try {
-                log.debug("Retrieving Configuration from Remote repository " + configFileURL);
-                repoStream = retrieveConfigurationFileFromRemoteRepository();
-                setCachedRepoStream(repoStream);
-                log.debug("Forcing the use of local cache after download file without error from " + configFileURL);
-                repoStream = getCachedRepoStream(true);
+                log.debug("Retrieving File from Remote repository " + url);
+                repoStream = retrieveFileFromRemoteRepository(url);
+                setCachedRepoStream(repoStream, url);
+                log.debug("Forcing the use of local cache after download file without error from " + url);
+                repoStream = getCachedRepoStream(true, url);
             } catch (Exception e) {
-                log.warn("It was not possible to contact the repository at " + configFileURL + " . Cause " + e.getMessage());
+                log.warn("It was not possible to contact the repository at " + url + " . Cause " + e.getMessage());
                 log.warn("Falling back to cache!");
-                repoStream = getCachedRepoStream(true);
+                repoStream = getCachedRepoStream(true, url);
             }
         }
         return repoStream;
     }
 
-    private InputStream getCachedRepoStream(final boolean force) throws FileNotFoundException {
+    private InputStream getCachedRepoStream(final boolean force, URL url) throws FileNotFoundException {
         final String logmessage = "Local file %1s %2s used! Reason: Force:[%3b] - LastModification: %4d/%5d";
-        File localCacheFile = getLocalCacheFile();
+        File localCacheFile = getLocalCacheFile(url);
         if (localCacheFile.exists()) {
             long cachedvalidity = 1000 * Constants.CACHE_EXPIRES_SECONDS;
             long lastModified = localCacheFile.lastModified();
@@ -169,8 +175,8 @@ public class ConfigurationProvider {
         return null;
     }
 
-    private void setCachedRepoStream(final InputStream stream) throws IOException {
-        File localCacheFile = getLocalCacheFile();
+    private void setCachedRepoStream(final InputStream stream, URL url) throws IOException {
+        File localCacheFile = getLocalCacheFile(url);
         log.debug("Content stored at " + localCacheFile);
         if (!localCacheFile.exists()) {
             localCacheFile.createNewFile();
@@ -184,25 +190,25 @@ public class ConfigurationProvider {
         fos.close();
     }
 
-    private File getLocalCacheFile() {
+    private File getLocalCacheFile(URL url) {
         // Remove no word character from the repo url
-        String repo = configFileURL.toString().replaceAll("[^a-zA-Z_0-9]", "");
-        return new File(System.getProperty("java.io.tmpdir"), repo + "qstools_config.yaml");
+        String repo = url.toString().replaceAll("[^a-zA-Z_0-9]", "");
+        return new File(System.getProperty("java.io.tmpdir"), repo);
     }
 
-    private InputStream retrieveConfigurationFileFromRemoteRepository() throws Exception {
-        if (configFileURL.getProtocol().startsWith("http")) {
-            HttpGet httpGet = new HttpGet(configFileURL.toURI());
+    private InputStream retrieveFileFromRemoteRepository(URL url) throws Exception {
+        if (url.getProtocol().startsWith("http")) {
+            HttpGet httpGet = new HttpGet(url.toURI());
             DefaultHttpClient client = new DefaultHttpClient();
             configureProxy(client);
             HttpResponse httpResponse = client.execute(httpGet);
             switch (httpResponse.getStatusLine().getStatusCode()) {
                 case 200:
-                    log.debug("Connected to repository! Getting available Stacks");
+                    log.debug("Connected to repository! Getting " + url);
                     break;
 
                 case 404:
-                    log.error("Failed! (Config file not found: " + configFileURL + ")");
+                    log.error("Failed! (File not found: " + url + ")");
                     return null;
 
                 default:
@@ -210,9 +216,10 @@ public class ConfigurationProvider {
                         + httpResponse.getStatusLine().getStatusCode());
                     return null;
             }
+            log.info("Downloading " + url);
             return httpResponse.getEntity().getContent();
-        } else if (configFileURL.getProtocol().startsWith("file")) {
-            return new FileInputStream(new File(configFileURL.toURI()));
+        } else if (url.getProtocol().startsWith("file")) {
+            return new FileInputStream(new File(url.toURI()));
         }
         return null;
     }
