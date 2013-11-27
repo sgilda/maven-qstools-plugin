@@ -38,12 +38,11 @@ import java.util.List;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.UnusedPropertiesChecker}
- *
+ * 
  * @author Paul Robinson
  */
 @Component(role = QSFixer.class, hint = "UnusedPropertiesFixer")
-public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
-
+public class UnusedPropertiesFixer implements QSFixer {
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -62,7 +61,7 @@ public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
 
             for (UnusedPropertiesUtil.PomInformation pomInfo : unusedPropertyInfo) {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(pomInfo.getProject().getFile()));
-                Node unusedPropertyNode = (Node) xPath.evaluate("/project/properties/" + pomInfo.getProperty() , doc, XPathConstants.NODE);
+                Node unusedPropertyNode = (Node) xPath.evaluate("/project/properties/" + pomInfo.getProperty(), doc, XPathConstants.NODE);
 
                 removePreviousWhiteSpace(unusedPropertyNode);
                 unusedPropertyNode.getParentNode().removeChild(unusedPropertyNode);
@@ -82,11 +81,5 @@ public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
             node.getParentNode().removeChild(prev);
         }
     }
-
-    @Override
-    public void fixProject(MavenProject project, Document doc) throws Exception {
-        //Not used
-    }
-
 
 }
