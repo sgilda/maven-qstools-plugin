@@ -63,9 +63,9 @@ public class Rules {
         Object moduleExclude = getConfig("excludes-" + module.getClass().getSimpleName());
         return moduleExclude == null ? "" : moduleExclude.toString().replace('[', ' ').replace(']', ' ');
     }
-    
+
     @SuppressWarnings("unchecked")
-    public List<String> getFixerSpecificExcludesArray(QSFixer fixer){
+    public List<String> getFixerSpecificExcludesArray(QSFixer fixer) {
         List<String> moduleExclude = (List<String>) getConfig("excludes-" + fixer.getClass().getSimpleName());
         return moduleExclude == null ? new ArrayList<String>() : moduleExclude;
     }
@@ -77,12 +77,16 @@ public class Rules {
     public String getHeaderLocation() {
         return (String) getConfig("header-file");
     }
-    
+
     public String getLicenseFileLocation() {
         return (String) getConfig("license-file");
     }
-    
-    public String getHeaderDefinitionLocation(){
+
+    public String getEclipseFormatterProfileLocation() {
+        return (String) getConfig("eclipse-formatter-location");
+    }
+
+    public String getHeaderDefinitionLocation() {
         return (String) getConfig("header-definition");
     }
 
