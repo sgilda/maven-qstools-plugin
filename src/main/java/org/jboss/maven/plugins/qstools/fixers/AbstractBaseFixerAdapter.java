@@ -20,5 +20,10 @@ public abstract class AbstractBaseFixerAdapter extends AbstractProjectWalker {
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         // Empty method
     }
+    
+    @Override
+    public int order() {
+        return 0;
+    }
 
 }

@@ -87,7 +87,12 @@ public class FixViolationsMojo extends AbstractMojo {
 
                     @Override
                     public int compare(QSFixer o1, QSFixer o2) {
-                        return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+                        int value = Integer.valueOf(o1.order()).compareTo(o2.order());
+                        if (value == 0){
+                            return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+                        }else{
+                            return value;
+                        }
                     }
                 });
                 for (QSFixer fixer : fixers) {
