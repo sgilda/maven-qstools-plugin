@@ -30,7 +30,7 @@ import javax.xml.xpath.XPathConstants;
  *
  * @author Paul Robinson
  */
-@Component(role = QSFixer.class, hint = "LicenseFixer")
+@Component(role = QSFixer.class, hint = "FinalNameFixer")
 public class FinalNameFixer extends AbstractBaseFixerAdapter {
 
     @Override
