@@ -27,7 +27,7 @@ import javax.xml.xpath.XPathConstants;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.FinalNameChecker}
- *
+ * 
  * @author Paul Robinson
  */
 @Component(role = QSFixer.class, hint = "FinalNameFixer")
@@ -37,7 +37,9 @@ public class FinalNameFixer extends AbstractBaseFixerAdapter {
     public void fixProject(MavenProject project, Document doc) throws Exception {
 
         String packaging = project.getPackaging();
-        String expectedFinalName = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getFinalNamePatterns().get(packaging);
+        String expectedFinalName = getConfigurationProvider().getQuickstartsRules(project.getGroupId())
+            .getFinalNamePatterns()
+            .get(packaging);
 
         Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
         String declaredFinalName = finalNameNode == null ? project.getBuild().getFinalName() : finalNameNode.getTextContent();
@@ -54,7 +56,7 @@ public class FinalNameFixer extends AbstractBaseFixerAdapter {
             finalNameNode = (Node) getxPath().evaluate("/project/build/finalName", doc, XPathConstants.NODE);
             if (finalNameNode == null) {
                 finalNameNode = doc.createElement("finalName");
-                buildNode.appendChild(finalNameNode);
+                buildNode.insertBefore(finalNameNode, buildNode.getFirstChild());
             }
 
             finalNameNode.setTextContent(expectedFinalName);
@@ -62,5 +64,4 @@ public class FinalNameFixer extends AbstractBaseFixerAdapter {
 
         XMLWriter.writeXML(doc, project.getFile());
     }
-
 }
