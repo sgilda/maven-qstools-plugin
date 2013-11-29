@@ -11,4 +11,8 @@ public abstract class AbstractBaseCheckerAdapter extends AbstractProjectWalker {
         // Empty method
     }
 
+    @Override
+    public int order() {
+        return 0;
+    }
 }

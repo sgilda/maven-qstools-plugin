@@ -82,4 +82,9 @@ public class UnusedPropertiesFixer implements QSFixer {
         }
     }
 
+    @Override
+    public int order() {
+        return 0;
+    }
+
 }

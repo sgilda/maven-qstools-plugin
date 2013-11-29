@@ -76,5 +76,10 @@ public class FileHeaderFixer implements QSFixer {
         }
 
     }
+    
+    @Override
+    public int order() {
+        return 0;
+    }
 
 }
