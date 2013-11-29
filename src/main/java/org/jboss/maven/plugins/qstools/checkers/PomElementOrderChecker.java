@@ -16,16 +16,15 @@
  */
 package org.jboss.maven.plugins.qstools.checkers;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.xpath.XPathConstants;
-
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstoolsc.common.PomOrderUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -35,6 +34,9 @@ import org.w3c.dom.Node;
  */
 @Component(role = QSChecker.class, hint = "pomElementOrderChecker")
 public class PomElementOrderChecker extends AbstractBaseCheckerAdapter {
+
+    @Requirement
+    private PomOrderUtil pomOrderUtil;
 
     /*
      * (non-Javadoc)
@@ -54,26 +56,22 @@ public class PomElementOrderChecker extends AbstractBaseCheckerAdapter {
      */
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
-        List<String> pomElements = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getPomOrder();
-        Map<String, Integer> elementsFound = new LinkedHashMap<String, Integer>();
-        // Find all elements position
-        for (String element : pomElements) {
-            Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
-            if (elementNode != null) {
-                int lineNumber = getLineNumberFromNode(elementNode);
-                elementsFound.put(element, lineNumber);
-            }
+        List<String> pomElementsOrder = getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getPomOrder();
+        Map<String, Node> elementsFound = pomOrderUtil.getElementsOrder(project, doc, pomElementsOrder);
 
-        }
         // Compare found elements order
         String previousElement = null;
         for (String element : elementsFound.keySet()) {
-            int lineNumber = elementsFound.get(element);
+            int lineNumber = getLineNumberFromNode(elementsFound.get(element));
             if (previousElement != null) {
-                int previousElementLineNumber = elementsFound.get(previousElement);
+                int previousElementLineNumber = getLineNumberFromNode(elementsFound.get(previousElement));
                 if (lineNumber < previousElementLineNumber) {
-                    String msg = "Element [%s] is not in the correct order: " + pomElements + ". It shoud come after [%s] on line %s";
-                    addViolation(project.getFile(), results, lineNumber, String.format(msg, element, previousElement, previousElementLineNumber));
+                    String msg = "Element [%s] is not in the correct order: " + pomElementsOrder
+                        + ". It shoud come after [%s] on line %s";
+                    addViolation(project.getFile(),
+                        results,
+                        lineNumber,
+                        String.format(msg, element, previousElement, previousElementLineNumber));
                 }
             }
             previousElement = element;

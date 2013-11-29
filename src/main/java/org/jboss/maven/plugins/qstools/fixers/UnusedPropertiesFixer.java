@@ -30,9 +30,11 @@ import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.jboss.maven.plugins.qstoolsc.common.UnusedPropertiesUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import java.io.FileInputStream;
 import java.util.List;
 
@@ -42,7 +44,7 @@ import java.util.List;
  * @author Paul Robinson
  */
 @Component(role = QSFixer.class, hint = "UnusedPropertiesFixer")
-public class UnusedPropertiesFixer implements QSFixer {
+public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -53,15 +55,19 @@ public class UnusedPropertiesFixer implements QSFixer {
     private UnusedPropertiesUtil unusedPropertiesUtil;
 
     @Override
-    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log)
+        throws QSCheckerException {
 
         try {
             Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
-            List<UnusedPropertiesUtil.PomInformation> unusedPropertyInfo = unusedPropertiesUtil.findUnusedProperties(reactorProjects, rules);
+            List<UnusedPropertiesUtil.PomInformation> unusedPropertyInfo = unusedPropertiesUtil.findUnusedProperties(reactorProjects,
+                rules);
 
             for (UnusedPropertiesUtil.PomInformation pomInfo : unusedPropertyInfo) {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(pomInfo.getProject().getFile()));
-                Node unusedPropertyNode = (Node) xPath.evaluate("/project/properties/" + pomInfo.getProperty(), doc, XPathConstants.NODE);
+                Node unusedPropertyNode = (Node) xPath.evaluate("/project/properties/" + pomInfo.getProperty(),
+                    doc,
+                    XPathConstants.NODE);
 
                 removePreviousWhiteSpace(unusedPropertyNode);
                 unusedPropertyNode.getParentNode().removeChild(unusedPropertyNode);
@@ -74,17 +80,10 @@ public class UnusedPropertiesFixer implements QSFixer {
         }
     }
 
-    private void removePreviousWhiteSpace(Node node) {
-
-        Node prev = node.getPreviousSibling();
-        if (prev != null && prev.getNodeType() == Node.TEXT_NODE && prev.getNodeValue().trim().length() == 0) {
-            node.getParentNode().removeChild(prev);
-        }
-    }
-
     @Override
-    public int order() {
-        return 0;
+    public void fixProject(MavenProject project, Document doc) throws Exception {
+        // Empty method.
+
     }
 
 }

@@ -39,7 +39,8 @@ import org.w3c.dom.Node;
 public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     private enum WalkType {
-        FIX, CHECK
+        FIX,
+        CHECK
     };
 
     @Requirement
@@ -80,9 +81,13 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
     }
 
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
+        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
+
+        // iterate over all reactor projects
         walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
+
         if (violationsQtd > 0) {
             log.info("There are " + violationsQtd + " checkers errors");
         }
@@ -90,13 +95,14 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
     }
 
     @Override
-    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log)
+        throws QSCheckerException {
         walk(WalkType.FIX, project, mavenSession, reactorProjects, log, null);
     }
 
     @SuppressWarnings("unchecked")
-    public void walk(WalkType walkType, MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log, Map<String, List<Violation>> results)
-        throws QSCheckerException {
+    public void walk(WalkType walkType, MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects,
+        Log log, Map<String, List<Violation>> results) throws QSCheckerException {
         this.mavenSession = mavenSession;
         this.log = log;
         try {
@@ -106,7 +112,10 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
                     Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                     if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
                         String msg = "Skiping %s for %s:%s";
-                        log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+                        log.warn(String.format(msg,
+                            this.getClass().getSimpleName(),
+                            project.getGroupId(),
+                            project.getArtifactId()));
                     } else {
                         switch (walkType) {
                             case CHECK:
@@ -136,12 +145,21 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         }
         return (Integer) node.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
     }
+    
+    protected void removePreviousWhiteSpace(Node node) {
+
+        Node prev = node.getPreviousSibling();
+        if (prev != null && prev.getNodeType() == Node.TEXT_NODE && prev.getNodeValue().trim().length() == 0) {
+            node.getParentNode().removeChild(prev);
+        }
+    }
 
     /**
      * Adds violation referencing the pom.xml file as the violated file
      * 
      */
-    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber, String violationMessage) {
+    protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber,
+        String violationMessage) {
         // Get relative path based on maven work dir
         String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
         String fileAsString = file.getAbsolutePath().replace(rootDirectory, "");
@@ -152,7 +170,8 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         violationsQtd++;
     }
 
-    public abstract void checkProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results) throws Exception;
+    public abstract void checkProject(final MavenProject project, Document doc, final Map<String, List<Violation>> results)
+        throws Exception;
 
     public abstract void fixProject(final MavenProject project, Document doc) throws Exception;
 
@@ -187,14 +206,14 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
     /**
      * @return the context
      */
-    public Context getContext() {
+    protected Context getContext() {
         return context;
     }
 
     /**
      * @return the configurationProvider
      */
-    public ConfigurationProvider getConfigurationProvider() {
+    protected ConfigurationProvider getConfigurationProvider() {
         return configurationProvider;
     }
 
