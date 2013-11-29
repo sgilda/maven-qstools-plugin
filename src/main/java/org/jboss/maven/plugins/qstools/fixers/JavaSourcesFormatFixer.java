@@ -28,13 +28,13 @@ import org.w3c.dom.NodeList;
 import com.google.common.io.Files;
 
 /**
- * Fixer for {@link TabSpaceChecker} and {@link IndentationChecker}
+ * Fixer for {@link TabSpaceChecker} and {@link IndentationChecker} from Java Source files
  * 
  * @author rafaelbenevides
  * 
  */
-@Component(role = QSFixer.class, hint = "FileFormatFixer")
-public class FileFormatFixer extends AbstractBaseFixerAdapter {
+@Component(role = QSFixer.class, hint = "JavaSourcesFormatFixer")
+public class JavaSourcesFormatFixer extends AbstractBaseFixerAdapter {
 
     @SuppressWarnings("unchecked")
     @Override
@@ -66,6 +66,7 @@ public class FileFormatFixer extends AbstractBaseFixerAdapter {
         // Apply the formatter to every Java source under the project's folder
         List<File> javaSources = FileUtils.getFiles(project.getBasedir(), "**/*.java", "");
         for (File javaSource : javaSources) {
+            getLog().debug("Formating " + javaSource);
             String source = Files.toString(javaSource, Charset.forName("UTF-8"));
             TextEdit edit = codeFormatter.format(CodeFormatter.K_COMPILATION_UNIT, // format a compilation unit
                 source, // source to format
@@ -79,6 +80,5 @@ public class FileFormatFixer extends AbstractBaseFixerAdapter {
             edit.apply(document);
             Files.write(document.get(), javaSource, Charset.forName("UTF-8"));
         }
-
     }
 }
