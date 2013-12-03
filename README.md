@@ -1,10 +1,10 @@
-Quickstarts tools Maven plugin
-==============================
+# Quickstarts tools maven plugin
+
 Author: Rafael Benevides
 Summary: Maven plugin that helps JBoss Developer materials maintenance
 
-What is it?
------------
+## What is it?
+
 
 This a Maven Plugin that helps JBoss Developer materials maintenance.
 
@@ -15,14 +15,14 @@ For Maven BOMs,it can be used to verify if your Maven BOM has all dependencies b
 You can also use QSTools to synchronize an Maven Archetype with and existing project.
 
 
-System requirements
--------------------
+## System requirements
+
 
 All you need is [Apache Maven 3.0.X](http://maven.apache.org/) and a working internet connection.
 
 
-Checking the quickstarts made easy
-----------------------------------
+## Checking the quickstarts made easy
+
 
 Select a Maven project and run:
 
@@ -33,8 +33,9 @@ This will check your project and all modules to seek for potential violations.
 
 The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 
-Configuring QSTools Checkers
-----------------------------
+
+### Configuring QSTools Checkers
+
 
 QSTools configuration is made by editing the online file https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml
 
@@ -43,25 +44,48 @@ You can use a local config file by overwriting qstools property:
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
          -Dqstools.configFileURL=file:///Users/rafaelbenevides/path/qstools_config.yaml
 
-Using a custom stacks.yaml definition
--------------------------------------
+
+### Using a custom stacks.yaml definition
+
 
 [Stacks](https://github.com/jboss-jdf/jdf-stack) is used to check the BOM versions used on you project.
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-   mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
-      -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
+       -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
 
 
 or
 
-   mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check)
-      -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check)
+       -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
+ 
+## Automatically fixing the quickstarts
 
 
-If you need to update quickstarts BOMs
---------------------------------------
+QSTools can fix most of the violations.
+
+You can run:
+
+
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:fix
+    
+
+`NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
+
+### Running individual fixers
+
+You can run individual fixers informing their names on the `qstools.fixers` property. Example:
+
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:fix 
+      -Dqstools.fixers=UnusedPropertiesFixer,XMLTabFixer
+
+`NOTE:` The list of existing fixers can be found here: <https://github.com/jboss-developer/maven-qstools-plugin/tree/master/src/main/java/org/jboss/maven/plugins/qstools/fixers>
+
+
+## If you need to update quickstarts BOMs
+
 
 This goal will check the [Expected BOM Version](https://github.com/jboss-developer/maven-qstools-plugin/blob/master/config/qstools_config.yaml#L24)  and update the BOM versions to the expected version.
 
@@ -75,8 +99,8 @@ To run the plugin:
     
 
 
-Checking the BOM dependencies
------------------------------
+## Checking the BOM dependencies
+
 
 This goal will check the given BOM project if all declared dependencies under </dependencyManagement> section is resolvable.
 
@@ -109,8 +133,8 @@ Example:
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check -Dorg.apache.maven.user-settings=<your custom settings.xml>
     
 
-Syncronizing Archetypes with Quickstarts
-----------------------------------------
+## Syncronizing Archetypes with Quickstarts
+
 
 QSTools can be used on archetype to synchronize the archetype-resources with a given project
 
@@ -148,18 +172,14 @@ This is an example of configuration:
 
 The `archetypeExpressionReplaceValues` configuration is used to replace the given expression to the `${artifactId} expression.
 
-Plugin Documentation
----------------------
+## Plugin Documentation
 
 The plugin documentation *generated from mvn site* [is available here](target/site/plugin-info.html) 
 
 
-Troubleshooting
----------------
+## Troubleshooting
 
 You can turn on debugging messages:   
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check -X
     
-
-
