@@ -60,9 +60,14 @@ public class FixViolationsMojo extends AbstractMojo {
     /**
      * Overwrite the config file
      */
-    @Parameter(property = "qstools.configFileURL",
-        defaultValue = "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml")
+    @Parameter(property = "qstools.configFileURL", defaultValue = "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml")
     private URL configFileURL;
+
+    /**
+     * Enable only the following list of Fixers
+     */
+    @Parameter(property = "qstools.fixers")
+    private List<String> enabledFixers;
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
@@ -88,21 +93,25 @@ public class FixViolationsMojo extends AbstractMojo {
                     @Override
                     public int compare(QSFixer o1, QSFixer o2) {
                         int value = Integer.valueOf(o1.order()).compareTo(o2.order());
-                        if (value == 0){
+                        if (value == 0) {
                             return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-                        }else{
+                        } else {
                             return value;
                         }
                     }
                 });
                 for (QSFixer fixer : fixers) {
-                    getLog().info("Running Fixer: " + fixer.getClass().getSimpleName());
-                    fixer.fix(mavenProject, mavenSession, reactorProjects, getLog());
+                    System.out.println("FIXER" + enabledFixers);
+                    // if fixers was specified, run only those informed fixers
+                    if (enabledFixers.size() == 0
+                        || (enabledFixers.size() > 0 && enabledFixers.contains(fixer.getClass().getSimpleName()))) {
+                        getLog().info("Running Fixer: " + fixer.getClass().getSimpleName());
+                        fixer.fix(mavenProject, mavenSession, reactorProjects, getLog());
+                    }
                 }
-                getLog().info(" ***** All projects were processed! Total Processed: " + reactorProjects.size() +
-                    "\nRun [mvn clean compile] to get sure that everything is working" +
-                    "\nRun [git diff] to see the changes made." +
-                    "\n");
+                getLog().info(" ***** All projects were processed! Total Processed: " + reactorProjects.size()
+                    + "\nRun [mvn clean compile] to get sure that everything is working"
+                    + "\nRun [git diff] to see the changes made." + "\n");
             } else {
                 getLog().info("Aborted");
             }
@@ -125,5 +134,4 @@ public class FixViolationsMojo extends AbstractMojo {
         container.getContext().put(Constants.PLUGIN_MANAGER, pluginManager);
     }
 
-   
 }
