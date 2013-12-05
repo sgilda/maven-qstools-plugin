@@ -32,9 +32,11 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -53,6 +55,9 @@ public class SamePropertyValueChecker implements QSChecker {
 
     private Properties projectProperties = new Properties();
 
+    @Requirement
+    private ConfigurationProvider configurationProvider;
+
     /*
      * (non-Javadoc)
      * 
@@ -63,35 +68,44 @@ public class SamePropertyValueChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         try {
-            // iterate over all reactor projects to iterate on all declared properties
-            for (MavenProject mavenProject : reactorProjects) {
-                Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
-                // find all declared properties
-                for (int x = 0; x < propertiesNodes.getLength(); x++) {
-                    Node property = propertiesNodes.item(x);
-                    String propertyName = property.getNodeName();
-                    String propertyValue = property.getTextContent();
+            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+                String msg = "Skiping %s for %s:%s";
+                log.warn(String.format(msg,
+                    this.getClass().getSimpleName(),
+                    project.getGroupId(),
+                    project.getArtifactId()));
+            }else{
+                // iterate over all reactor projects to iterate on all declared properties
+                for (MavenProject mavenProject : reactorProjects) {
+                    Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
+                    NodeList propertiesNodes = (NodeList) xPath.evaluate("/project/properties/*", doc, XPathConstants.NODESET);
+                    // find all declared properties
+                    for (int x = 0; x < propertiesNodes.getLength(); x++) {
+                        Node property = propertiesNodes.item(x);
+                        String propertyName = property.getNodeName();
+                        String propertyValue = property.getTextContent();
 
-                    if (projectProperties.get(propertyName) == null) {
-                        projectProperties.put(propertyName, propertyValue);
-                    } else if (projectProperties.get(propertyName) != null && !projectProperties.get(propertyName).equals(propertyValue)) {
-                        // The property was used but with an different value
-                        int lineNumber = (Integer) property.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
-                        String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
-                        String fileAsString = mavenProject.getFile().getAbsolutePath().replace(rootDirectory, "");
-                        if (results.get(fileAsString) == null) {
-                            results.put(fileAsString, new ArrayList<Violation>());
+                        if (projectProperties.get(propertyName) == null) {
+                            projectProperties.put(propertyName, propertyValue);
+                        } else if (projectProperties.get(propertyName) != null && !projectProperties.get(propertyName).equals(propertyValue)) {
+                            // The property was used but with an different value
+                            int lineNumber = (Integer) property.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
+                            String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
+                            String fileAsString = mavenProject.getFile().getAbsolutePath().replace(rootDirectory, "");
+                            if (results.get(fileAsString) == null) {
+                                results.put(fileAsString, new ArrayList<Violation>());
+                            }
+                            String msg = "Property [%s] was declared with a value [%s] that differ from previous value [%s]";
+                            results.get(fileAsString).add(new Violation(getClass(), lineNumber, String.format(msg, propertyName, propertyValue, projectProperties.get(propertyName))));
+                            violationsQtd++;
                         }
-                        String msg = "Property [%s] was declared with a value [%s] that differ from previous value [%s]";
-                        results.get(fileAsString).add(new Violation(getClass(), lineNumber, String.format(msg, propertyName, propertyValue, projectProperties.get(propertyName))));
-                        violationsQtd++;
                     }
                 }
+                if (violationsQtd > 0) {
+                    log.info("There are " + violationsQtd + " checkers errors");
+                }
             }
-            if (violationsQtd > 0) {
-                log.info("There are " + violationsQtd + " checkers errors");
-            }
+
         } catch (Exception e) {
             throw new QSCheckerException(e);
         }
