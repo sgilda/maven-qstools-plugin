@@ -93,9 +93,9 @@ public class BomCheckerMojo extends AbstractMojo {
         if (exceptions.isEmpty()) {
             getLog().info("All Dependencies were resolved");
         } else {
-            getLog().info("The following dependencies where NOT resolved:");
+            getLog().error("The following dependencies where NOT resolved:");
             for (NoResolvedResultException e : exceptions) {
-                getLog().info(e.getMessage());
+                getLog().error(e.getMessage());
             }
             if (failbuild){
                 throw new MojoFailureException("Unresolved dependencies on project");
