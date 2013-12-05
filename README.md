@@ -43,6 +43,7 @@ You can use a local config file by overwriting qstools property:
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
          -Dqstools.configFileURL=file:///Users/rafaelbenevides/path/qstools_config.yaml
+         
 
 
 ### Using a custom stacks.yaml definition
@@ -54,12 +55,14 @@ If you need to use a custom Stacks.yaml definition you can overwrite the stacks 
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
        -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
+       
 
 
 or
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check)
        -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
+       
  
 ## Automatically fixing the quickstarts
 
@@ -80,6 +83,7 @@ You can run individual fixers informing their names on the `qstools.fixers` prop
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:fix 
       -Dqstools.fixers=UnusedPropertiesFixer,XMLTabFixer
+      
 
 `NOTE:` The list of existing fixers can be found here: <https://github.com/jboss-developer/maven-qstools-plugin/tree/master/src/main/java/org/jboss/maven/plugins/qstools/fixers>
 
@@ -115,7 +119,8 @@ If you need to ignore certain known dependencies from being checked, you can use
 
 Example:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check -Dqstools.bom-check.ignoredDependencies=<groupId 1>:<artifactId 1>:jar:<version 1>,<groupId 2>:<artifactId 2>:jar:<version 2>
+    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check 
+       -Dqstools.bom-check.ignoredDependencies=<groupId 1>:<artifactId 1>:jar:<version 1>,<groupId 2>:<artifactId 2>:jar:<version 2>
     
 
 By default, the project build will fail if some managed dependenciy is not resolvable. You can overwrite this behavior by using `qstools.bom-check.failbuild` property.
