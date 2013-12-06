@@ -59,7 +59,7 @@ rules:
        header-definition: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/headerdefinition.xml"
        
        #Eclipse Formatter Profile XML settings Location. Used to run Formatter Fixers
-       eclipse-formatter-location: "https://raw.github.com/jboss/ide-config/master/eclipse/jboss-java-formatter.xml"
+       eclipse-formatter-location: "https://raw.github.com/rafabene/ide-config/qstoolsFormatter/eclipse/jboss-java-formatter.xml"
 
        #Ignored modules on ModuleDefinedChecker - Checks if all project subdirectories are defined as module
        ignored-modules:
