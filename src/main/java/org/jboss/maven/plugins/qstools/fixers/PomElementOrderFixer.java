@@ -50,25 +50,24 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
         List<String> elementsList = new ArrayList<String>(elementsFound.keySet());
 
         for (String element : elementsList) {
+            Node commentNode = null;
+            Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
+            // Get comment over the element
+            if (elementNode.getPreviousSibling() != null
+                && elementNode.getPreviousSibling().getNodeType() == Node.COMMENT_NODE) {
+                commentNode = elementNode.getPreviousSibling();
+            }
             for (String anotherElement : elementsList) {
                 if (elementsList.indexOf(element) < elementsList.indexOf(anotherElement)) {
-                    Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
                     XMLUtil.removePreviousWhiteSpace(elementNode);
-
-                    // Get comment over the element
-                    Node commentNode = null;
-                    Node n = XMLUtil.getPreviousCommentElement(elementNode);
-                    if (n != null && n.getNodeType() == Node.COMMENT_NODE) {
-                        commentNode = n;
-                        XMLUtil.removePreviousWhiteSpace(elementNode.getPreviousSibling());
-                    }
 
                     Node anotherElementNode = (Node) getxPath().evaluate("/project/" + anotherElement, doc, XPathConstants.NODE);
                     anotherElementNode.getParentNode().insertBefore(elementNode, anotherElementNode);
 
                     // If the element had a comment, move it too.
                     if (commentNode != null) {
-                        elementNode.getParentNode().insertBefore(commentNode, anotherElementNode);
+                        XMLUtil.removePreviousWhiteSpace(commentNode);
+                        elementNode.getParentNode().insertBefore(commentNode, elementNode);
                     }
                 }
             }

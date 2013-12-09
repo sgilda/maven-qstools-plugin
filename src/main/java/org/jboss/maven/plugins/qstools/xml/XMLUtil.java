@@ -16,22 +16,9 @@
  */
 package org.jboss.maven.plugins.qstools.xml;
 
-import org.w3c.dom.Comment;
 import org.w3c.dom.Node;
 
 public class XMLUtil {
-
-    public static Comment getPreviousCommentElement(Node node) {
-        Node prevSibling = node.getPreviousSibling();
-        while (prevSibling != null) {
-            if (prevSibling.getNodeType() == Node.COMMENT_NODE) {
-                return (Comment) prevSibling;
-            }
-            prevSibling = prevSibling.getPreviousSibling();
-        }
-
-        return null;
-    }
 
     public static void removePreviousWhiteSpace(Node node) {
 
