@@ -208,7 +208,8 @@ rules:
          - FinalNameChecker #QStools isn't an application
    - &stacks
        groupid: org.jboss.stacks
-       artifactid-prefix: "stacks-" #It should be changed/removed to "jboss-" on 1.2
+       artifactid-prefix: "" 
+       pom-name-pattern: "QSTools Maven Plugin"
        ignored-checkers:
          - ReadmeChecker #Stacks-client is not a quickstart
          - DependencyChecker #Stacks-client doesn't use BOMs
