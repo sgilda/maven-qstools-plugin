@@ -22,10 +22,10 @@ import java.util.Map;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.jboss.maven.plugins.qstool.common.PomOrderUtil;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstoolsc.common.PomOrderUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 

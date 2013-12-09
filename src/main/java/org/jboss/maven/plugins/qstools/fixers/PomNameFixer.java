@@ -21,11 +21,11 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.jboss.maven.plugins.qstool.common.PomNameUtil;
 import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.PomNameChecker;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
-import org.jboss.maven.plugins.qstoolsc.common.PomNameUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 

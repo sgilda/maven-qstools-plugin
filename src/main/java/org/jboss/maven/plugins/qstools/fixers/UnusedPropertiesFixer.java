@@ -21,6 +21,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.jboss.maven.plugins.qstool.common.UnusedPropertiesUtil;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
@@ -28,7 +29,6 @@ import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
-import org.jboss.maven.plugins.qstoolsc.common.UnusedPropertiesUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
