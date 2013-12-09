@@ -30,6 +30,7 @@ import org.jboss.maven.plugins.qstools.Constants;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -63,7 +64,7 @@ public class BomVersionChecker extends AbstractBaseCheckerAdapter {
                     bomUsed = bom;
                 }
             }
-            int lineNumber = getLineNumberFromNode(dependency);
+            int lineNumber = XMLUtil.getLineNumberFromNode(dependency);
             if (bomUsed == null // No JDF Bom used
                 && !mavenDependency.getGroupId().startsWith("org.jboss") // Escape jboss boms
                 && !mavenDependency.getGroupId().startsWith(project.getGroupId()) // Escape projects with same groupId (subprojects)

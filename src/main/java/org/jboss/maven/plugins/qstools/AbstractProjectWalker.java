@@ -34,7 +34,6 @@ import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
@@ -139,20 +138,6 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         }
     }
 
-    protected int getLineNumberFromNode(Node node) {
-        if (node == null) {
-            return 0;
-        }
-        return (Integer) node.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
-    }
-    
-    protected void removePreviousWhiteSpace(Node node) {
-
-        Node prev = node.getPreviousSibling();
-        if (prev != null && prev.getNodeType() == Node.TEXT_NODE && prev.getNodeValue().trim().length() == 0) {
-            node.getParentNode().removeChild(prev);
-        }
-    }
 
     /**
      * Adds violation referencing the pom.xml file as the violated file

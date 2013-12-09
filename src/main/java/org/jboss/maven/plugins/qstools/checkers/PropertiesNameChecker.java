@@ -27,6 +27,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -81,7 +82,7 @@ public class PropertiesNameChecker extends AbstractBaseCheckerAdapter {
                     wrongVersionName = true;
                 }
                 if (wrongVersionName) {
-                    int lineNumber = getLineNumberFromNode(dependency);
+                    int lineNumber = XMLUtil.getLineNumberFromNode(dependency);
                     String msg = "Version for [%s:%s:%s] isn't using the recommended property name: %s";
                     // GroupId + ArtifacIt has precedence
                     String recommendedName = recommendedNameGA != null ? recommendedNameGA : recommendedNameG;

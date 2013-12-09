@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -59,7 +60,7 @@ public class FinalNameChecker extends AbstractBaseCheckerAdapter {
         Node finalNameNode = (Node) getxPath().evaluate("//finalName", doc, XPathConstants.NODE);
         String declaredFinalName = finalNameNode == null ? project.getBuild().getFinalName() : finalNameNode.getTextContent();
         if (expectedFinalName != null && !expectedFinalName.equals(declaredFinalName)) {
-            int lineNumber = finalNameNode == null ? 0 : getLineNumberFromNode(finalNameNode);
+            int lineNumber = finalNameNode == null ? 0 : XMLUtil.getLineNumberFromNode(finalNameNode);
             addViolation(project.getFile(), results, lineNumber, ("File doesn't contain <finalName>" + expectedFinalName + "</finalName>"));
         }
     }

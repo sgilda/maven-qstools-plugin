@@ -1,5 +1,14 @@
 package org.jboss.maven.plugins.qstoolsc.common;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -10,14 +19,6 @@ import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author paul.robinson@redhat.com 02/12/2013
  */
@@ -25,8 +26,6 @@ import java.util.List;
 public class ArtifactIdNameUtil {
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
-
-    private int violationsQtd;
 
     @Requirement
     private ConfigurationProvider configurationProvider;
@@ -62,8 +61,7 @@ public class ArtifactIdNameUtil {
     /**
      * (non-Javadoc)
      * <p/>
-     * Walks up the parent directories looking for the last containing a pom.xml with the same groupId as the
-     * specified project.
+     * Walks up the parent directories looking for the last containing a pom.xml with the same groupId as the specified project.
      */
     private File getRootDirOfQuickstarts(MavenProject project) throws Exception {
 
@@ -93,7 +91,7 @@ public class ArtifactIdNameUtil {
         Document doc = PositionalXMLReader.readXML(new FileInputStream(pom));
         Node actualGroupId = (Node) xPath.evaluate("/project/groupId", doc, XPathConstants.NODE);
 
-        //If groupId missing, then take from parent
+        // If groupId missing, then take from parent
         if (actualGroupId == null) {
             actualGroupId = (Node) xPath.evaluate("/project/parent/groupId", doc, XPathConstants.NODE);
         }
@@ -107,14 +105,13 @@ public class ArtifactIdNameUtil {
             return artifactPrefix + "quickstart-parent";
         } else {
             String modulePath = moduleBaseDir.getPath().substring(rootDirOfQuickstarts.getPath().length());
-            //Remove preceding '-'
+            // Remove preceding '-'
             modulePath = modulePath.substring(1);
             return artifactPrefix + modulePath.replace(File.separatorChar, '-');
         }
     }
 
     protected int getLineNumberFromNode(Node node) {
-
         if (node == null) {
             return 0;
         }

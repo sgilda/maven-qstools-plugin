@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -60,7 +61,7 @@ public class GroupIdChecker extends AbstractBaseCheckerAdapter {
 
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
         if (node != null && !project.getGroupId().equals(groupId)) {
-            int lineNumber = getLineNumberFromNode(node);
+            int lineNumber = XMLUtil.getLineNumberFromNode(node);
             addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId '" + groupId + "'");
         }
 

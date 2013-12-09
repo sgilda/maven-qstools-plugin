@@ -10,6 +10,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSFixer;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.jboss.maven.plugins.qstoolsc.common.PomOrderUtil;
 import org.w3c.dom.Document;
@@ -20,7 +21,7 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
 
     @Requirement
     private PomOrderUtil pomOrderUtil;
-    
+
     @Override
     public String getFixerDescription() {
         return "Fix the pom.xml element order";
@@ -36,10 +37,23 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
             for (String anotherElement : elementsList) {
                 if (elementsList.indexOf(element) < elementsList.indexOf(anotherElement)) {
                     Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
-                    removePreviousWhiteSpace(elementNode);
+                    XMLUtil.removePreviousWhiteSpace(elementNode);
+
+                    // Get comment over the element
+                    Node commentNode = null;
+                    Node n = XMLUtil.getPreviousCommentElement(elementNode);
+                    if (n != null && n.getNodeType() == Node.COMMENT_NODE) {
+                        commentNode = n;
+                        XMLUtil.removePreviousWhiteSpace(elementNode.getPreviousSibling());
+                    }
 
                     Node anotherElementNode = (Node) getxPath().evaluate("/project/" + anotherElement, doc, XPathConstants.NODE);
                     anotherElementNode.getParentNode().insertBefore(elementNode, anotherElementNode);
+
+                    // If the element had a comment, move it too.
+                    if (commentNode != null) {
+                        elementNode.getParentNode().insertBefore(commentNode, anotherElementNode);
+                    }
                 }
             }
         }

@@ -19,6 +19,7 @@ package org.jboss.maven.plugins.qstools.fixers;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSFixer;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,7 +30,7 @@ import javax.xml.xpath.XPathConstants;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.MavenCompilerChecker}
- *
+ * 
  * @author Paul Robinson
  */
 @Component(role = QSFixer.class, hint = "MavenCompilerFixer")
@@ -39,7 +40,7 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
     public String getFixerDescription() {
         return "Fix the maven.compiler.(source|target) from pom.xml files";
     }
-    
+
     @Override
     public void fixProject(MavenProject project, Document doc) throws Exception {
 
@@ -54,11 +55,17 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
         Node compilerConfigNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
 
         if (compilerNode != null && compilerConfigNode == null) {
-            removePreviousWhiteSpace(compilerNode, pluginsNode);
+            XMLUtil.removePreviousWhiteSpace(compilerNode);
             pluginsNode.removeChild(compilerNode);
         } else if (compilerConfigNode != null) {
             removeConfigIfPresent(compilerConfigNode, "target");
             removeConfigIfPresent(compilerConfigNode, "source");
+        }
+
+        // Remove compiler plugin if it doesn't have any configuration
+        if (compilerConfigNode != null && compilerConfigNode.getChildNodes().getLength() == 1) {
+            XMLUtil.removePreviousWhiteSpace(compilerNode);
+            compilerNode.getParentNode().removeChild(compilerNode);
         }
 
         XMLWriter.writeXML(doc, project.getFile());
@@ -70,17 +77,9 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
         for (int i = 0; i < configs.getLength(); i++) {
             Node config = configs.item(i);
             if (config.getNodeName().equals(configItem)) {
-                removePreviousWhiteSpace(config, compilerConfigNode);
+                XMLUtil.removePreviousWhiteSpace(config);
                 compilerConfigNode.removeChild(config);
             }
-        }
-    }
-
-    private void removePreviousWhiteSpace(Node child, Node parent) {
-
-        Node prev = child.getPreviousSibling();
-        if (prev != null && prev.getNodeType() == Node.TEXT_NODE && prev.getNodeValue().trim().length() == 0) {
-            parent.removeChild(prev);
         }
     }
 

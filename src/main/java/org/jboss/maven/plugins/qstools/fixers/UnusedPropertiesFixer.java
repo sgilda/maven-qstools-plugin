@@ -26,6 +26,7 @@ import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.jboss.maven.plugins.qstoolsc.common.UnusedPropertiesUtil;
 import org.w3c.dom.Document;
@@ -44,7 +45,7 @@ import java.util.List;
  * @author Paul Robinson
  */
 @Component(role = QSFixer.class, hint = "UnusedPropertiesFixer")
-public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
+public class UnusedPropertiesFixer implements QSFixer {
 
     protected XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -53,7 +54,7 @@ public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
 
     @Requirement
     private UnusedPropertiesUtil unusedPropertiesUtil;
-    
+
     @Override
     public String getFixerDescription() {
         return "Remove unused properties from pom.xml files";
@@ -74,7 +75,7 @@ public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
                     doc,
                     XPathConstants.NODE);
 
-                removePreviousWhiteSpace(unusedPropertyNode);
+                XMLUtil.removePreviousWhiteSpace(unusedPropertyNode);
                 unusedPropertyNode.getParentNode().removeChild(unusedPropertyNode);
 
                 XMLWriter.writeXML(doc, pomInfo.getProject().getFile());
@@ -86,9 +87,9 @@ public class UnusedPropertiesFixer extends AbstractBaseFixerAdapter {
     }
 
     @Override
-    public void fixProject(MavenProject project, Document doc) throws Exception {
-        // Empty method.
-
+    public int order() {
+        // TODO Auto-generated method stub
+        return 0;
     }
 
 }

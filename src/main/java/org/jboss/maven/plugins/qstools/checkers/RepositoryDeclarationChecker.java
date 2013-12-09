@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -56,7 +57,7 @@ public class RepositoryDeclarationChecker extends AbstractBaseCheckerAdapter {
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node repositoriesNode = (Node) getxPath().evaluate("//project/repositories", doc, XPathConstants.NODE);
         if (repositoriesNode != null) {
-            int lineNumber = getLineNumberFromNode(repositoriesNode);
+            int lineNumber = XMLUtil.getLineNumberFromNode(repositoriesNode);
             addViolation(project.getFile(), results, lineNumber, ("You should NOT declare <repositories/> on your pom.xml"));
         }
     }

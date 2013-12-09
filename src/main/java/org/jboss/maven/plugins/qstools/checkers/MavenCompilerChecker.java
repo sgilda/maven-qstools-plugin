@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -65,7 +66,7 @@ public class MavenCompilerChecker extends AbstractBaseCheckerAdapter {
         }
         Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']", doc, XPathConstants.NODE);
         Node compilerConfigNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
-        int lineNumber = compilerConfigNode == null ? -1 : getLineNumberFromNode(compilerConfigNode);
+        int lineNumber = compilerConfigNode == null ? -1 : XMLUtil.getLineNumberFromNode(compilerConfigNode);
         if (compilerNode !=null && compilerConfigNode == null) {
             addViolation(project.getFile(), results, lineNumber, "You should NOT declare 'maven-compile-plugin' without any configuration");
         } else if (compilerConfigNode != null){
@@ -73,7 +74,7 @@ public class MavenCompilerChecker extends AbstractBaseCheckerAdapter {
             for (int i = 0; i < configs.getLength(); i++) {
                 Node config = configs.item(i);
                 if (config.getNodeName().equals("source") || config.getNodeName().equals("target")) {
-                    lineNumber = compilerConfigNode == null ? -1 : getLineNumberFromNode(config);
+                    lineNumber = compilerConfigNode == null ? -1 : XMLUtil.getLineNumberFromNode(config);
                     addViolation(project.getFile(), results, lineNumber, "You should not define 'source' or 'target' for 'maven-compiler-plugin'");
                 }
             }

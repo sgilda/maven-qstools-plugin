@@ -28,6 +28,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -63,7 +64,7 @@ public class DuplicateDependencyChecker extends AbstractBaseCheckerAdapter {
         for (int x = 0; x < managedDependency.getLength(); x++) {
             Node dependency = managedDependency.item(x);
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
-            int lineNumber = getLineNumberFromNode(dependency);
+            int lineNumber = XMLUtil.getLineNumberFromNode(dependency);
             if (!declaredManagedDependencies.add(mavenDependency)) { // return false if already exists
                 String msg = "Managed Dependency [%s] is declared more than once";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, mavenDependency.getArtifactId()));
@@ -75,7 +76,7 @@ public class DuplicateDependencyChecker extends AbstractBaseCheckerAdapter {
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
-            int lineNumber = getLineNumberFromNode(dependency);
+            int lineNumber = XMLUtil.getLineNumberFromNode(dependency);
             if (!declaredDependencies.add(mavenDependency)) { // return false if already exists
                 String msg = "Dependency [%s] is declared more than once";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, mavenDependency.getArtifactId()));

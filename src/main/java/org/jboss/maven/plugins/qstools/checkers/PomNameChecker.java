@@ -27,6 +27,7 @@ import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.config.Rules;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstoolsc.common.PomNameUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -64,7 +65,7 @@ public class PomNameChecker extends AbstractBaseCheckerAdapter {
         String pattern = pomNameUtil.getExpectedPattern(project, rules); 
         if (!pattern.equals(project.getName())) {
             Node nameNode = (Node) getxPath().evaluate("/project/name", doc, XPathConstants.NODE);
-            int lineNumber = getLineNumberFromNode(nameNode);
+            int lineNumber = XMLUtil.getLineNumberFromNode(nameNode);
             String msg = "Project uses name [%s] but should use the define name: %s";
             addViolation(project.getFile(), results, lineNumber, String.format(msg, project.getName(), pattern));
         }

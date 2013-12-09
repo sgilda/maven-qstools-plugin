@@ -31,6 +31,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -74,7 +75,7 @@ public class MavenCentralRepositoryChecker extends AbstractBaseCheckerAdapter {
             arr.setArtifact(dependencyArtifact).setRemoteRepositories(remoteRepositories).setLocalRepository(getMavenSession().getLocalRepository());
             ArtifactResolutionResult result = repositorySystem.resolve(arr);
             Node dependencyNode = (Node) getxPath().evaluate("//artifactId[text() ='" + dependency.getArtifactId() + "']", doc, XPathConstants.NODE);
-            int lineNumber = getLineNumberFromNode(dependencyNode);
+            int lineNumber = XMLUtil.getLineNumberFromNode(dependencyNode);
             if (!result.isSuccess()) {
                 addViolation(project.getFile(), results, lineNumber, dependency + " doesn't comes from Maven Central Repository");
             }

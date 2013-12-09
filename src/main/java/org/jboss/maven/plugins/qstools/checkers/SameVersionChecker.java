@@ -30,6 +30,7 @@ import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.QSCheckerException;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -85,7 +86,7 @@ public class SameVersionChecker extends AbstractBaseCheckerAdapter {
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node versionNode = (Node) getxPath().evaluate("/project/version", doc, XPathConstants.NODE);
         if (versionNode != null && !versionNode.getTextContent().equals(rootVersion)) {
-            int lineNumber = getLineNumberFromNode(versionNode);
+            int lineNumber = XMLUtil.getLineNumberFromNode(versionNode);
             String msg = "This project uses a version [%s] different from the root version [%s]";
             addViolation(project.getFile(), results, lineNumber, String.format(msg, versionNode.getTextContent(), rootVersion));
         }

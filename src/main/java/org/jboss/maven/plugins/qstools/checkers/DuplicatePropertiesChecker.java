@@ -27,6 +27,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,7 +62,7 @@ public class DuplicatePropertiesChecker extends AbstractBaseCheckerAdapter {
         for (int x = 0; x < properties.getLength(); x++) {
             Node property = properties.item(x);
             String propertyName = property.getNodeName();
-            int lineNumber = getLineNumberFromNode(property);
+            int lineNumber = XMLUtil.getLineNumberFromNode(property);
             if (!declaredProperties.add(propertyName)) { // return false if already exists
                 String msg = "Property [%s] is declared more than once";
                 addViolation(project.getFile(), results, lineNumber, String.format(msg, propertyName));

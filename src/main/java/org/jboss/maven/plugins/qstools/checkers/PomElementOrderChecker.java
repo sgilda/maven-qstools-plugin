@@ -24,6 +24,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstoolsc.common.PomOrderUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -62,9 +63,9 @@ public class PomElementOrderChecker extends AbstractBaseCheckerAdapter {
         // Compare found elements order
         String previousElement = null;
         for (String element : elementsFound.keySet()) {
-            int lineNumber = getLineNumberFromNode(elementsFound.get(element));
+            int lineNumber = XMLUtil.getLineNumberFromNode(elementsFound.get(element));
             if (previousElement != null) {
-                int previousElementLineNumber = getLineNumberFromNode(elementsFound.get(previousElement));
+                int previousElementLineNumber = XMLUtil.getLineNumberFromNode(elementsFound.get(previousElement));
                 if (lineNumber < previousElementLineNumber) {
                     String msg = "Element [%s] is not in the correct order: " + pomElementsOrder
                         + ". It shoud come after [%s] on line %s";

@@ -64,8 +64,8 @@ public class UnusedPropertiesUtil {
         // search if all declared properties have been used
         for (String declared : declaredProperties.keySet()) {
             if (!declared.startsWith("project") && // Escape project configuration
-                    !rules.getIgnoredUnusedProperties().contains(declared) && // Escape ignored properties
-                    !usedProperties.contains(declared)) {
+                !rules.getIgnoredUnusedProperties().contains(declared) && // Escape ignored properties
+                !usedProperties.contains(declared)) {
 
                 unusedPropertyInfo.addAll(declaredProperties.get(declared));
             }
