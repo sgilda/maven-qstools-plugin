@@ -76,11 +76,11 @@ public class ModuleDefinedChecker extends AbstractBaseCheckerAdapter {
         submodules.removeAll(getConfigurationProvider().getQuickstartsRules(project.getGroupId()).getIgnoredModules());
         for (String dir : submodules) {
             boolean contains = project.getModules().contains(dir);
-            if (!contains){
+            if (!contains) {
                 //If doesn't contains, look in other profiles
-                for(Profile profile: project.getModel().getProfiles()){
+                for (Profile profile : project.getModel().getProfiles()) {
                     contains = profile.getModules().contains(dir);
-                    if (contains){
+                    if (contains) {
                         break;
                     }
                 }

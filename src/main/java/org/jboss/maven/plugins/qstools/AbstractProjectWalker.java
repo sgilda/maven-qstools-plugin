@@ -138,7 +138,6 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         }
     }
 
-
     /**
      * Adds violation referencing the pom.xml file as the violated file
      * 

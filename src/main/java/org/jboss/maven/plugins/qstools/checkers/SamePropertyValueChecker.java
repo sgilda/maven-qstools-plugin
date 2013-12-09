@@ -74,7 +74,7 @@ public class SamePropertyValueChecker implements QSChecker {
                     this.getClass().getSimpleName(),
                     project.getGroupId(),
                     project.getArtifactId()));
-            }else{
+            } else {
                 // iterate over all reactor projects to iterate on all declared properties
                 for (MavenProject mavenProject : reactorProjects) {
                     Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
@@ -96,7 +96,8 @@ public class SamePropertyValueChecker implements QSChecker {
                                 results.put(fileAsString, new ArrayList<Violation>());
                             }
                             String msg = "Property [%s] was declared with a value [%s] that differ from previous value [%s]";
-                            results.get(fileAsString).add(new Violation(getClass(), lineNumber, String.format(msg, propertyName, propertyValue, projectProperties.get(propertyName))));
+                            results.get(fileAsString).add(
+                                new Violation(getClass(), lineNumber, String.format(msg, propertyName, propertyValue, projectProperties.get(propertyName))));
                             violationsQtd++;
                         }
                     }

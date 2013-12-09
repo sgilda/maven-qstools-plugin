@@ -120,6 +120,4 @@ public class UnusedPropertiesChecker implements QSChecker {
         return results;
     }
 
-
-
 }

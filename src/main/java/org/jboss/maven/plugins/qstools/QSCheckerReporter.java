@@ -232,8 +232,6 @@ public class QSCheckerReporter extends AbstractMavenReport {
         container.getContext().put(Constants.IGNORED_QUICKSTARTS_CONTEXT, Utils.readIgnoredFile());
     }
 
- 
-
     /**
      * Add all violations found by a Checker to tha global File Violation
      * 

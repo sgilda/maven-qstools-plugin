@@ -39,7 +39,7 @@ public class PrivateApiChecker extends AbstractCheckstyleChecker {
 
     @Override
     String getCheckstyleConfig() {
-         return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-private_api.xml";
+        return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-private_api.xml";
     }
 
 }

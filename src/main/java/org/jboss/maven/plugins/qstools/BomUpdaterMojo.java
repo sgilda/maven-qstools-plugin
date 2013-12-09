@@ -57,7 +57,8 @@ import org.w3c.dom.NodeList;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "updateBoms", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = true)
+@Mojo(name = "updateBoms", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true,
+    aggregator = true)
 public class BomUpdaterMojo extends AbstractMojo {
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)

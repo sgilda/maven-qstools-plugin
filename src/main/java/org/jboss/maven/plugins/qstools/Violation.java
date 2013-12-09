@@ -16,7 +16,6 @@
  */
 package org.jboss.maven.plugins.qstools;
 
-
 /**
  * @author Rafael Benevides
  * 
@@ -26,7 +25,7 @@ public class Violation {
     private int lineNumber;
 
     private String violationMessage;
-    
+
     private Class<? extends QSChecker> sourceChecker;
 
     public Violation(Class<? extends QSChecker> checker, int lineNumber, String violationMessage) {
@@ -48,7 +47,7 @@ public class Violation {
     public String getViolationMessage() {
         return violationMessage;
     }
-    
+
     /**
      * @return the sourceChecker
      */

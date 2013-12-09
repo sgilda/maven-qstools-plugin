@@ -96,7 +96,7 @@ public class ArtifactIdNameChecker implements QSChecker {
         try {
 
             Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
-            List<ArtifactIdNameUtil.PomInformation> pomsWithInvalidArtifactIds =  artifactIdNameUtil.findAllIncorrectArtifactIdNames(reactorProjects, rules);
+            List<ArtifactIdNameUtil.PomInformation> pomsWithInvalidArtifactIds = artifactIdNameUtil.findAllIncorrectArtifactIdNames(reactorProjects, rules);
 
             for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
                 String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");

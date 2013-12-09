@@ -38,7 +38,7 @@ import org.w3c.dom.Node;
  */
 @Component(role = QSChecker.class, hint = "pomNameChecker")
 public class PomNameChecker extends AbstractBaseCheckerAdapter {
-    
+
     @Requirement
     private PomNameUtil pomNameUtil;
 
@@ -62,7 +62,7 @@ public class PomNameChecker extends AbstractBaseCheckerAdapter {
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Rules rules = getConfigurationProvider().getQuickstartsRules(project.getGroupId());
-        String pattern = pomNameUtil.getExpectedPattern(project, rules); 
+        String pattern = pomNameUtil.getExpectedPattern(project, rules);
         if (!pattern.equals(project.getName())) {
             Node nameNode = (Node) getxPath().evaluate("/project/name", doc, XPathConstants.NODE);
             int lineNumber = XMLUtil.getLineNumberFromNode(nameNode);
@@ -72,5 +72,4 @@ public class PomNameChecker extends AbstractBaseCheckerAdapter {
 
     }
 
-   
 }

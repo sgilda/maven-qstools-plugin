@@ -41,16 +41,17 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "bom-check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = false)
+@Mojo(name = "bom-check", defaultPhase = LifecyclePhase.VERIFY, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true,
+    aggregator = false)
 public class BomCheckerMojo extends AbstractMojo {
 
     @Component
     private MavenProject project;
-    
-    @Parameter(property="qstools.bom-check.failbuild", defaultValue="true")
+
+    @Parameter(property = "qstools.bom-check.failbuild", defaultValue = "true")
     private boolean failbuild;
-    
-    @Parameter(property="qstools.bom-check.ignoredDependencies")
+
+    @Parameter(property = "qstools.bom-check.ignoredDependencies")
     private List<String> ignoredDependencies = new ArrayList<String>();
 
     /*
@@ -76,9 +77,9 @@ public class BomCheckerMojo extends AbstractMojo {
                     try {
                         String pkg = dep.getType() == null ? "jar" : dep.getType();
                         String gav = dep.getGroupId() + ":" + dep.getArtifactId() + ":" + pkg + ":" + dep.getVersion();
-                        if (ignoredDependencies.contains(gav)){
-                            getLog().warn(gav + " ignored. It won't be resolved") ;
-                        }else{
+                        if (ignoredDependencies.contains(gav)) {
+                            getLog().warn(gav + " ignored. It won't be resolved");
+                        } else {
                             getLog().debug("Trying to resolve " + gav);
                             Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
                         }
@@ -97,7 +98,7 @@ public class BomCheckerMojo extends AbstractMojo {
             for (NoResolvedResultException e : exceptions) {
                 getLog().error(e.getMessage());
             }
-            if (failbuild){
+            if (failbuild) {
                 throw new MojoFailureException("Unresolved dependencies on project");
             }
         }

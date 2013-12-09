@@ -49,7 +49,7 @@ public class LicenseChecker extends AbstractBaseCheckerAdapter {
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Node licenseURL = (Node) getxPath().evaluate("/project/licenses/license/url", doc, XPathConstants.NODE);
-        if (licenseURL == null || !licenseURL.getTextContent().contains("apache")){ 
+        if (licenseURL == null || !licenseURL.getTextContent().contains("apache")) {
             addViolation(project.getFile(), results, 0, "File doesn't the 'Apache License, Version 2.0' license");
         }
 

@@ -59,7 +59,8 @@ import org.xml.sax.SAXException;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "archetypeSync", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true, aggregator = false)
+@Mojo(name = "archetypeSync", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true,
+    aggregator = false)
 public class ArchetypeSyncMojo extends AbstractMojo {
 
     private XPath xPath = XPathFactory.newInstance().newXPath();
