@@ -37,6 +37,7 @@ import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.ArtifactIdNameChecker}
@@ -89,9 +90,14 @@ public class ArtifactIdNameFixer implements QSFixer {
 
                 // Update each incorrect artifactId dependency
                 for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
-                    Node artfactIdNode = (Node) xPath.evaluate("//dependency/artifactId[text()='" + pi.getActualArtifactId() + "']", doc, XPathConstants.NODE);
-                    if (artfactIdNode != null) {
-                        artfactIdNode.setTextContent(pi.getExpectedArtifactId());
+                    // It can have more than one occurrence on the same file
+                    NodeList artfactIdNodes = (NodeList) xPath.evaluate("//artifactId[text()='" + pi.getActualArtifactId() + "']", doc, XPathConstants.NODESET);
+                    for (int x = 0; x < artfactIdNodes.getLength(); x++) {
+                        Node artfactIdNode = artfactIdNodes.item(x);
+                        if (artfactIdNode != null) {
+                            artfactIdNode.setTextContent(pi.getExpectedArtifactId());
+                        }
+
                     }
                 }
                 XMLWriter.writeXML(doc, subProject.getFile());
