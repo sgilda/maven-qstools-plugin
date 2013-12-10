@@ -172,6 +172,7 @@ rules:
 
        excludes-FileHeaderFixer:
            - "**/petclinic-spring/**"
+           - "**/test/resources/xml/*.xml"
            
        #Doesn't check Private APIs on test folder
        excludes-PrivateApiChecker:
