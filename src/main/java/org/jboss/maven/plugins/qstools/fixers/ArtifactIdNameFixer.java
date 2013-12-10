@@ -76,7 +76,6 @@ public class ArtifactIdNameFixer implements QSFixer {
 
             // Update all the parents, to use the changed artifactId
             for (MavenProject subProject : reactorProjects) {
-
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(subProject.getFile()));
                 Node parentArtifactIdNode = (Node) xPath.evaluate("/project/parent/artifactId", doc, XPathConstants.NODE);
                 if (parentArtifactIdNode != null && subProject.getParentFile() != null) {
@@ -85,9 +84,17 @@ public class ArtifactIdNameFixer implements QSFixer {
 
                     if (!parentArtifactIdNode.getTextContent().equals(artifactIdNode.getTextContent())) {
                         parentArtifactIdNode.setTextContent(artifactIdNode.getTextContent());
-                        XMLWriter.writeXML(doc, subProject.getFile());
                     }
                 }
+
+                // Update each incorrect artifactId dependency
+                for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
+                    Node artfactIdNode = (Node) xPath.evaluate("//dependency/artifactId[text()='" + pi.getActualArtifactId() + "']", doc, XPathConstants.NODE);
+                    if (artfactIdNode != null) {
+                        artfactIdNode.setTextContent(pi.getExpectedArtifactId());
+                    }
+                }
+                XMLWriter.writeXML(doc, subProject.getFile());
             }
         } catch (Exception e) {
             throw new QSCheckerException(e);
