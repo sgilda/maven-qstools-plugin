@@ -110,6 +110,7 @@ rules:
          - "developers"
          #environment
          - "repositories"
+         - "pluginRepositories"
          - "scm"
          - "distributionManagement"
          #general
