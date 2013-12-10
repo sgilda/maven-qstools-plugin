@@ -47,6 +47,11 @@ public class Rules {
     public List<String> getIgnoredUnusedProperties() {
         return (List<String>) getConfig("ignored-unused-properties");
     }
+    
+    @SuppressWarnings("unchecked")
+    public List<String> getIgnoredDifferentValuesProperties() {
+        return (List<String>) getConfig("ignored-differet-value-properties");
+    }
 
     public String getExcludes() {
         Object excludes = getConfig("excludes");
