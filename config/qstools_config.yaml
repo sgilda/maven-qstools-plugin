@@ -124,6 +124,7 @@ rules:
        #Format - groupId: recommended.version.name // Only GroupId check
        #Format - groupId|aertifactId: recommended.version.name // GroupId + ArtifactId check
        property-names:
+         #boms
          - com.sun.faces: version.com.sun.faces.jsf.impl
          - org.jboss.arquillian.junit: version.jboss.arquillian
          - org.jboss.arquillian.protocol: version.jboss.arquillian
@@ -138,6 +139,8 @@ rules:
          - org.jboss.spec: version.jboss.spec.javaee.6.0
          - org.jboss.weld.se: version.jboss.weld
          - org.jboss.weld.servlet: version.jboss.weld
+         #plugins
+         - org.codehaus.mojo|exec-maven-plugin: version.exec.plugin
 
        #What files should be excluded from being checked
        excludes:
