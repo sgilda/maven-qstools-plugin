@@ -154,9 +154,9 @@ public class DependencyChecker extends AbstractBaseCheckerAdapter {
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
             int lineNumber = XMLUtil.getLineNumberFromNode(dependency);
             MavenGA ga = new MavenGA(mavenDependency.getGroupId(), mavenDependency.getArtifactId());
-            //IF declares a version
+            // IF declares a version
             if (mavenDependency.getDeclaredVersion() != null &&
-                //skip multi modules projects (ejb, ear, war)
+                // skip multi modules projects (ejb, ear, war)
                 !mavenDependency.getDeclaredVersion().equals("${project.version}")) {
                 StringBuilder sb =
                     new StringBuilder(String.format("You should NOT declare a version for %s:%s:%s. Consider using <dependencyManagement/>", mavenDependency.getGroupId(),

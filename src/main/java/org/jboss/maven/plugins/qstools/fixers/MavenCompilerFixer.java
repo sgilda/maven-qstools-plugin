@@ -91,7 +91,9 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
         if (target == null) {
             Element targetElement = doc.createElement(key);
             targetElement.setTextContent(value);
+            propertiesElement.appendChild(doc.createTextNode("    "));
             propertiesElement.appendChild(targetElement);
+            propertiesElement.appendChild(doc.createTextNode("\n    "));
         } else if (!target.equals(value)) {
             Node property = (Node) getxPath().evaluate("/project/properties/" + key, doc, XPathConstants.NODE);
             property.setTextContent(value);
@@ -107,6 +109,7 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
             Node projectElement = (Node) getxPath().evaluate("/project", doc, XPathConstants.NODE);
             projectElement.appendChild(doc.createTextNode("\n\n    "));
             projectElement.appendChild(propertiesElement);
+            propertiesElement.appendChild(doc.createTextNode("\n    "));
         }
     }
 
