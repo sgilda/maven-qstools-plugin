@@ -133,6 +133,7 @@ rules:
          - org.jboss.as.plugins: version.jboss.maven.plugin
          - org.jboss.bom: version.jboss.bom.eap
          - org.jboss.bom.eap: version.jboss.bom.eap
+         - org.jboss.bom.brms: version.jboss.bom.brms
          - org.jboss.bom.wfk: version.jboss.bom.wfk
          - org.jboss.bom.jdg: version.jboss.bom.jdg
          - org.jboss.bom.sandbox: version.jboss.bom.sandbox
@@ -209,7 +210,6 @@ rules:
        artifactid-prefix: "brms-"
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
-         - DependencyChecker #BRMS doesn't use BOMs
    - &qstools
        groupid: org.jboss.maven.plugins
        artifactid-prefix: "maven-"
