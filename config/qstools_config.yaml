@@ -85,12 +85,12 @@ rules:
 
        #Metadatas that should be present on Readme files and its Regex pattern
        readme-metadatas:
-         - "Author:": "\\w.*"
-         - "Level:": "Beginner|Intermediate|Advanced"
-         - "Technologies:": "\\w.*"
-         - "Summary:": "\\w.*"
-         - "Target Product:": "EAP|WFK|JPP|JDG|JBoss ON|Fuse|FSW|BRMS|Sandbox"
-         - "Source:": "<(http|https)://\\w.*>" #<http://www.etc...>
+         - "Author:": "\\w.*\\s\\s"
+         - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
+         - "Technologies:": "\\w.*\\s\\s"
+         - "Summary:": "\\w.*\\s\\s"
+         - "Target Product:": "(EAP|WFK|JPP|JDG|JBoss ON|Fuse|FSW|BRMS|Sandbox)\\s\\s"
+         - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
        pom-order:
