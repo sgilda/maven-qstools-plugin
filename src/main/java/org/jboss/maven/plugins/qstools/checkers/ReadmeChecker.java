@@ -27,10 +27,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSChecker;
 import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.common.ReadmeUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -39,6 +42,9 @@ import org.w3c.dom.Document;
  */
 @Component(role = QSChecker.class, hint = "readmeChecker")
 public class ReadmeChecker extends AbstractBaseCheckerAdapter {
+
+    @Requirement
+    private ReadmeUtil readmeUtil;
 
     private String regexPattern;
 
@@ -64,30 +70,11 @@ public class ReadmeChecker extends AbstractBaseCheckerAdapter {
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         folderName = project.getBasedir().getName() + ":";
-        setupRegexPattern(project.getGroupId());
+        regexPattern = readmeUtil.setupRegexPattern(project.getGroupId(), folderName);
         File readme = new File(project.getBasedir(), "README.md");
         if (readme.exists()) {
             checkReadmeFile(project.getGroupId(), readme, results);
         }
-    }
-
-    /**
-     * Create a regex pattern using all metadata clauses
-     * 
-     * Format: metadata1:|metadata2:|metadata3:
-     * 
-     * @param string
-     * 
-     * @param string
-     */
-    private void setupRegexPattern(String groupid) {
-        Map<String, String> metadatas = getConfigurationProvider().getQuickstartsRules(groupid).getReadmeMetadatas();
-        StringBuilder sb = new StringBuilder();
-        for (String metadata : metadatas.keySet()) {
-            sb.append(metadata + "|");
-        }
-        sb.append(folderName);
-        regexPattern = sb.toString();
     }
 
     /**
@@ -105,7 +92,7 @@ public class ReadmeChecker extends AbstractBaseCheckerAdapter {
                 Matcher m = p.matcher(line);
                 if (m.find()) {
                     usedPatterns.add(m.group());
-                    usedValues.put(m.group(), line.substring(m.group().length(), line.length()).trim());
+                    usedValues.put(m.group(), StringUtils.stripStart(line.substring(m.group().length(), line.length()), " "));
                 }
             }
             for (String metadata : metadatas.keySet()) {

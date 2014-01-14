@@ -44,7 +44,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.eclipse.jgit.api.ApplyCommand;
-import org.eclipse.jgit.api.ApplyResult;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -145,9 +144,6 @@ public class ArchetypeSyncMojo extends AbstractMojo {
 
     // Extracted from original Pom Metadata
     private String originalVersion = null;
-
-    // Extracted from original Pom Metadata
-    private String originalBomVersion = null;
 
     // artifactId or rootArtifactId base on multiModuleProject value
     private String artifactExpression;
