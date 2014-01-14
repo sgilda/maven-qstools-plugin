@@ -43,11 +43,17 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.eclipse.jgit.api.ApplyCommand;
+import org.eclipse.jgit.api.ApplyResult;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.PatchApplyException;
+import org.eclipse.jgit.api.errors.PatchFormatException;
 import org.eclipse.jgit.api.errors.TransportException;
+import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -59,7 +65,10 @@ import org.xml.sax.SAXException;
  * @author Rafael Benevides
  * 
  */
-@Mojo(name = "archetypeSync", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true, threadSafe = true,
+@Mojo(name = "archetypeSync", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+    requiresDependencyResolution = ResolutionScope.COMPILE,
+    requiresProject = true,
+    threadSafe = true,
     aggregator = false)
 public class ArchetypeSyncMojo extends AbstractMojo {
 
@@ -113,6 +122,12 @@ public class ArchetypeSyncMojo extends AbstractMojo {
     @Parameter(readonly = true)
     private Map<String, String> replaceValueWithExpression = new HashMap<String, String>();
 
+    /**
+     * This will apply a patch file to the generated archetype to modify the generated synch.
+     */
+    @Parameter(readonly = true)
+    private File applyPatch;
+
     @Parameter(property = "project.build.directory", required = true)
     private String outputPath;
 
@@ -121,9 +136,6 @@ public class ArchetypeSyncMojo extends AbstractMojo {
 
     // local reference to the origin project
     private File exampleProjectPath;
-
-    // stops the file writing while on ignoreMode
-    private boolean ignoreMode = false;
 
     // Extracted from original Pom Metadata
     private String originalGroupId = null;
@@ -152,9 +164,38 @@ public class ArchetypeSyncMojo extends AbstractMojo {
             artifactExpression = multiModuleProject ? "rootArtifactId" : "artifactId";
             cloneOriginProject();
             generateArchetype();
+            applyPatch();
             getLog().info("Archetype synched with " + projectPath + " from " + branch + " branch. You can check what changed running git diff.");
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Apply a path file to the generated archetype
+     * 
+     * @throws IOException
+     * @throws GitAPIException
+     * @throws PatchApplyException
+     * @throws PatchFormatException
+     * 
+     * @see {@link ArchetypeSyncMojo#applyPatch}
+     */
+    private void applyPatch() throws IOException, PatchApplyException {
+        if (this.applyPatch != null) {
+            FileRepositoryBuilder builder = new FileRepositoryBuilder();
+            Repository repository = builder.findGitDir(new File(baseDir))
+                .build();
+
+            Git git = new Git(repository);
+            ApplyCommand applyCommand = git.apply();
+            applyCommand.setPatch(new FileInputStream(applyPatch));
+            try {
+                applyCommand.call();
+            } catch (GitAPIException e) {
+                throw new PatchApplyException("Can't apply " + applyPatch, e);
+            }
+            getLog().info("Patch " + applyPatch + " applied");
         }
     }
 
@@ -246,9 +287,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                         // default content interpolation
                         content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
 
-                        if (!ignoreMode) { // Don't write content to file while on Ignore mode
-                            bw.write(content + "\n");
-                        }
+                        bw.write(content + "\n");
                     }
                     closeStreams(br, bw);
                 } else {
@@ -323,29 +362,6 @@ public class ArchetypeSyncMojo extends AbstractMojo {
         }
         if (line.trim().startsWith("<version>" + originalVersion + "</version>")) {
             return line.replaceAll(originalVersion, "\\${version}");
-        }
-        if (line.trim().startsWith("<version.jboss.bom>")) {
-            ignoreMode = true;
-            int i = line.indexOf("<version.jboss.bom>") + "<version.jboss.bom>".length();
-            int j = line.indexOf("</version.jboss.bom>");
-            originalBomVersion = line.substring(i, j);
-        }
-        if (line.trim().startsWith("<!-- <version.jboss.bom>")) {
-            ignoreMode = false;
-            line = ("#if ($enterprise == \"true\" || $enterprise == \"y\" || $enterprise == \"yes\" )\n"
-                + "        <!-- Certified version of the JBoss EAP components we want to use -->\n"
-                + "        <version.jboss.bom>${jboss-bom-enterprise-version}</version.jboss.bom>\n"
-                + "        <!-- Alternatively, comment out the above line, and un-comment the\n"
-                + "            line below to use version BOMVERSION which is based on community built dependencies. -->\n"
-                + "        <!-- <version.jboss.bom>BOMVERSION</version.jboss.bom> -->\n"
-                + "#else\n"
-                + "        <version.jboss.bom>BOMVERSION</version.jboss.bom>\n"
-                + "        <!-- Alternatively, comment out the above line, and un-comment the line\n"
-                + "            below to use version ${jboss-bom-enterprise-version} which is a release certified to\n"
-                + "            work with JBoss EAP 6. It requires you have access to the JBoss EAP 6\n"
-                + "            maven repository. -->\n"
-                + "        <!-- <version.jboss.bom>${jboss-bom-enterprise-version}</version.jboss.bom>> -->\n"
-                + "#end").replaceAll("BOMVERSION", originalBomVersion);
         }
         return line;
     }
