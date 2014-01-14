@@ -146,6 +146,7 @@ This is an example of configuration:
                     <projectPath>kitchensink-ear</projectPath>
                     <rootPackage>org.jboss.as.quickstarts.kitchensink_ear</rootPackage>
                     <multiModuleProject>true</multiModuleProject>
+                    <applyPatch>A-patch-file.patch</applyPatch>
                     <branch>jdf-2.1.7.Final</branch>
                     <archetypeExpressionReplaceValues>
                         <archetypeExpressionReplaceValue>jboss-as-kitchensink-ear</archetypeExpressionReplaceValue>
@@ -154,6 +155,9 @@ This is an example of configuration:
                         <archetypeExpressionReplaceValue>KitchensinkEarQuickstart</archetypeExpressionReplaceValue>
                         <archetypeExpressionReplaceValue>JBoss EAP Quickstart: kitchensink-ear</archetypeExpressionReplaceValue>
                     </archetypeExpressionReplaceValues>
+                    <replaceValueWithExpression>
+                        <html5mobi>tableSuffix</html5mobi>
+                    </replaceValueWithExpression>
                 </configuration>
                 <executions>
                     <execution>
