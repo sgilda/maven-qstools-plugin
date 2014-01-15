@@ -17,6 +17,7 @@
 package org.jboss.maven.plugins.qstools.xml;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class XMLUtil {
 
@@ -33,6 +34,23 @@ public class XMLUtil {
             return 0;
         }
         return (Integer) node.getUserData(PositionalXMLReader.BEGIN_LINE_NUMBER_KEY_NAME);
+    }
+
+    /**
+     * Checks if a Node has a valid element
+     * 
+     * @param node
+     * @return
+     */
+    public static boolean hasChildElements(Node node) {
+        NodeList nodelist = node.getChildNodes();
+        for (int i = 0; i < nodelist.getLength(); i++) {
+            Node childNode = nodelist.item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

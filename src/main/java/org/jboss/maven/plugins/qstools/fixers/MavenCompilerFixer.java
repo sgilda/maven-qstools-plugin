@@ -50,20 +50,33 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
         ensurePropertySet(doc, "maven.compiler.target", compilerSource);
         ensurePropertySet(doc, "maven.compiler.source", compilerSource);
 
-        Node pluginsNode = (Node) getxPath().evaluate("/project/build/plugins", doc, XPathConstants.NODE);
-        Node compilerNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']", doc, XPathConstants.NODE);
-        Node compilerConfigNode = (Node) getxPath().evaluate("/project/build/plugins/plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
+        Node compilerNode = (Node) getxPath().evaluate("//plugin[artifactId='maven-compiler-plugin']", doc, XPathConstants.NODE);
+        Node compilerConfigNode = (Node) getxPath().evaluate("//plugin[artifactId='maven-compiler-plugin']/./configuration", doc, XPathConstants.NODE);
 
         if (compilerNode != null && compilerConfigNode == null) {
             XMLUtil.removePreviousWhiteSpace(compilerNode);
-            pluginsNode.removeChild(compilerNode);
+            compilerNode.getParentNode().removeChild(compilerNode);
         } else if (compilerConfigNode != null) {
             removeConfigIfPresent(compilerConfigNode, "target");
             removeConfigIfPresent(compilerConfigNode, "source");
         }
 
+        // Get comment over the element
+        Node commentNode = null;
+        if (compilerNode != null
+            && compilerNode.getPreviousSibling() != null
+            && compilerNode.getPreviousSibling() != null
+            && compilerNode.getPreviousSibling().getPreviousSibling().getNodeType() == Node.COMMENT_NODE) {
+            commentNode = compilerNode.getPreviousSibling().getPreviousSibling();
+        }
+
         // Remove compiler plugin if it doesn't have any configuration
-        if (compilerConfigNode != null && compilerConfigNode.getChildNodes().getLength() == 1) {
+        if (compilerConfigNode != null && !XMLUtil.hasChildElements(compilerConfigNode)) {
+            // If the element had a comment, remove it too.
+            if (commentNode != null) {
+                XMLUtil.removePreviousWhiteSpace(commentNode);
+                commentNode.getParentNode().removeChild(commentNode);
+            }
             XMLUtil.removePreviousWhiteSpace(compilerNode);
             compilerNode.getParentNode().removeChild(compilerNode);
         }
@@ -72,7 +85,6 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
     }
 
     private void removeConfigIfPresent(Node compilerConfigNode, String configItem) throws Exception {
-
         NodeList configs = compilerConfigNode.getChildNodes();
         for (int i = 0; i < configs.getLength(); i++) {
             Node config = configs.item(i);
@@ -86,7 +98,7 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
     private void ensurePropertySet(Document doc, String key, String value) throws Exception {
 
         Element propertiesElement = (Element) getxPath().evaluate("/project/properties", doc, XPathConstants.NODE);
-        Element property = (Element) getxPath().evaluate("/project/properties/"+key, doc, XPathConstants.NODE);
+        Element property = (Element) getxPath().evaluate("/project/properties/" + key, doc, XPathConstants.NODE);
 
         if (property == null) {
             Element targetElement = doc.createElement(key);

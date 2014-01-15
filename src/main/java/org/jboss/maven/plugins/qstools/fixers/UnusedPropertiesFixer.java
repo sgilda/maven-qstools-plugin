@@ -70,11 +70,24 @@ public class UnusedPropertiesFixer implements QSFixer {
                 rules);
 
             for (UnusedPropertiesUtil.PomInformation pomInfo : unusedPropertyInfo) {
+
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(pomInfo.getProject().getFile()));
                 Node unusedPropertyNode = (Node) xPath.evaluate("/project/properties/" + pomInfo.getProperty(),
                     doc,
                     XPathConstants.NODE);
 
+                // Get comment over the element
+                Node commentNode = null;
+                if (unusedPropertyNode.getPreviousSibling() != null
+                    && unusedPropertyNode.getPreviousSibling() != null
+                    && unusedPropertyNode.getPreviousSibling().getPreviousSibling().getNodeType() == Node.COMMENT_NODE) {
+                    commentNode = unusedPropertyNode.getPreviousSibling().getPreviousSibling();
+                }
+                // If the element had a comment, remove it too.
+                if (commentNode != null) {
+                    XMLUtil.removePreviousWhiteSpace(commentNode);
+                    commentNode.getParentNode().removeChild(commentNode);
+                }
                 XMLUtil.removePreviousWhiteSpace(unusedPropertyNode);
                 unusedPropertyNode.getParentNode().removeChild(unusedPropertyNode);
 
