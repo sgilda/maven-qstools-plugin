@@ -77,6 +77,7 @@ rules:
          - stacks.branch
          - maven.compiler.source
          - maven.compiler.target
+         - maven.test.skip
          - m2e.jpa.activation #Specific for m2e plugin
        
        #Ignored properties on SamePropertyValueChecker
