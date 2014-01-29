@@ -176,11 +176,11 @@ rules:
            - "brms-quickstarts/**/support/**"
 
        excludes-FileHeaderChecker:
-           - "**/petclinic-spring/**"
+           - "**/spring-petclinic/**"
            - "**/test/resources/xml/*.xml"
 
        excludes-FileHeaderFixer:
-           - "**/petclinic-spring/**"
+           - "**/spring-petclinic/**"
            - "**/test/resources/xml/*.xml"
            
        #Doesn't check Private APIs on test folder
