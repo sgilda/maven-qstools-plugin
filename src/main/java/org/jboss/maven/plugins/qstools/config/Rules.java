@@ -172,6 +172,16 @@ public class Rules {
     }
 
     @SuppressWarnings("unchecked")
+    public Properties getProjectBomsMigration() {
+        List<Object> propertiesAsList = (List<Object>) getConfig("project-boms-migration");
+        Properties p = new Properties();
+        for (Object o : propertiesAsList) {
+            p.putAll((Map<? extends Object, ? extends Object>) o);
+        }
+        return p;
+    }
+
+    @SuppressWarnings("unchecked")
     public Object getConfig(String configValue) {
         Object value = null;
         // Get the overwritten non-null value
@@ -184,14 +194,5 @@ public class Rules {
         return value;
     }
 
-    @SuppressWarnings("unchecked")
-    public Properties getProjectBomsMigration() {
-        List<Object> propertiesAsList = (List<Object>) getConfig("project-boms-migration");
-        Properties p = new Properties();
-        for (Object o : propertiesAsList) {
-            p.putAll((Map<? extends Object, ? extends Object>) o);
-        }
-        return p;
-    }
 
 }

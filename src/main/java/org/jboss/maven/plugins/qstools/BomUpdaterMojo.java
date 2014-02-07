@@ -43,6 +43,7 @@ import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -156,7 +157,7 @@ public class BomUpdaterMojo extends AbstractMojo {
                 String declaredVersion = mavenDependency.getDeclaredVersion().replace("${", "").replace("}", "");
                 // There's a declared property ?
                 if (project.getProperties().get(declaredVersion) != null) { // Properties.contains() didn't work
-                    // Alter ir
+                    // Alter it
                     Node propertyNode = (Node) xPath.evaluate("/project/properties/" + declaredVersion, doc, XPathConstants.NODE);
                     if (propertyNode != null) { // It can be null for inherited property
                         getLog().info("Updating property [" + declaredVersion + "] from " + version + " to " + expectedBomVersion);
@@ -191,13 +192,31 @@ public class BomUpdaterMojo extends AbstractMojo {
             String oldBomGA = mavenDependency.getGroupId() + "|" + mavenDependency.getArtifactId();
             String newBomGAV = bomsMigration.getProperty(oldBomGA);
 
-            if (newBomGAV != null) {
+            if ("REMOVE".equals(newBomGAV)) {
+                removeDependency(dependency);
+            } else if (newBomGAV != null) {
                 getLog().info("Replacing " + oldBomGA + " BOM by " + newBomGAV);
                 pomModified = true;
                 String[] newBomGavSplited = newBomGAV.split("[|]");
                 updateBomNode(dependency, newBomGavSplited[0], newBomGavSplited[1], newBomGavSplited[2]);
             }
         }
+    }
+
+    private void removeDependency(Node dependency) {
+        // Get comment over the element
+        Node commentNode = null;
+        if (dependency.getPreviousSibling() != null
+            && dependency.getPreviousSibling() != null
+            && dependency.getPreviousSibling().getPreviousSibling().getNodeType() == Node.COMMENT_NODE) {
+            commentNode = dependency.getPreviousSibling().getPreviousSibling();
+        }
+        // If the element had a comment, remove it too.
+        if (commentNode != null) {
+            XMLUtil.removePreviousWhiteSpace(commentNode);
+            commentNode.getParentNode().removeChild(commentNode);
+        }
+        dependency.getParentNode().removeChild(dependency);
     }
 
     private void updateBomNode(Node dependencyNode, String groupId, String artifactId, String version) {

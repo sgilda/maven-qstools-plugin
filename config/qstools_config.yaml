@@ -33,7 +33,8 @@ rules:
          
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
-         - org.richfaces|richfaces-bom: org.jboss.bom.wfk|jboss-javaee-6.0-with-richfaces|version.jboss.bom.wfk
+         - oldGroupId|oldArtifactId: newGroupId|newArtifactId|property  
+         - oldGroupId|oldArtifactId: REMOVE #This will fully remove the BOM and its comment 
 
        #Final name patterns
        final-name-patterns:
@@ -195,6 +196,8 @@ rules:
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
          - org.jboss.bom|jboss-javaee-6.0-with-tools: org.jboss.bom.wfk|jboss-javaee-6.0-with-tools|version.jboss.bom.wfk
+         - org.richfaces|richfaces-bom: org.jboss.bom.wfk|jboss-javaee-6.0-with-richfaces|version.jboss.bom.wfk
+         - org.jboss.spec|jboss-javaee-6.0: REMOVE
    - &jdg
        groupid: org.jboss.quickstarts.jdg
    - &jboss-on
