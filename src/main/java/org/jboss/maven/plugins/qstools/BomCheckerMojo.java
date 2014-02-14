@@ -61,7 +61,7 @@ public class BomCheckerMojo extends AbstractMojo {
      */
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        //Shut up Shrinkwrap resolver
+        // Shut up Shrinkwrap resolver
         Logger.getLogger("org.jboss.shrinkwrap.resolver.impl").setLevel(Level.SEVERE);
         List<NoResolvedResultException> exceptions = new ArrayList<NoResolvedResultException>();
         getLog().info("Verifying if the dependencies on project's Dependency Management section are resolvable");
@@ -71,8 +71,8 @@ public class BomCheckerMojo extends AbstractMojo {
             for (Dependency dep : dependencies) {
                 if (dep.getScope() != null
                     // ignore runtime/system dependencies
-                    && (dep.getScope().equals("runtime") || dep.getScope().equals("system"))) {
-                    getLog().debug("Ignoring runtime/system dependency " + dep);
+                    && (dep.getScope().equals("runtime") || dep.getScope().equals("system") || dep.getScope().equals("test"))) {
+                    getLog().debug("Ignoring " + dep.getScope() + " dependency " + dep);
                 } else {
                     try {
                         String pkg = dep.getType() == null ? "jar" : dep.getType();
@@ -84,7 +84,7 @@ public class BomCheckerMojo extends AbstractMojo {
                             Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
                         }
                     } catch (NoResolvedResultException e) {
-                        //Collect all resolution failures
+                        // Collect all resolution failures
                         exceptions.add(e);
                     }
                 }
