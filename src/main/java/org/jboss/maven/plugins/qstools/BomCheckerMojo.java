@@ -70,7 +70,7 @@ public class BomCheckerMojo extends AbstractMojo {
             List<Dependency> dependencies = depmgmt.getDependencies();
             for (Dependency dep : dependencies) {
                 if (dep.getScope() != null
-                    // ignore runtime/system dependencies
+                    // ignore runtime/system/test dependencies
                     && (dep.getScope().equals("runtime") || dep.getScope().equals("system") || dep.getScope().equals("test"))) {
                     getLog().debug("Ignoring " + dep.getScope() + " dependency " + dep);
                 } else {
@@ -80,7 +80,7 @@ public class BomCheckerMojo extends AbstractMojo {
                         if (ignoredDependencies.contains(gav)) {
                             getLog().warn(gav + " ignored. It won't be resolved");
                         } else {
-                            getLog().debug("Trying to resolve " + gav);
+                            getLog().debug("Trying to resolve " + gav + " in scope " + dep.getScope());
                             Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
                         }
                     } catch (NoResolvedResultException e) {
