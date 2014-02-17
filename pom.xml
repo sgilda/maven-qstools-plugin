@@ -60,7 +60,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <httpclient.version>4.0.1</httpclient.version>
-        <version.shrinkwrap.resolvers>2.0.1</version.shrinkwrap.resolvers>
+        <version.shrinkwrap.resolvers>2.0.2</version.shrinkwrap.resolvers>
         <yaml.version>1.11</yaml.version>
         <junit.version>4.10</junit.version>
         <juniversalchardet.version>1.0.3</juniversalchardet.version>
