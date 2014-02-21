@@ -91,7 +91,7 @@ rules:
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "\\w.*\\s\\s"
          - "Summary:": "\\w.*\\s\\s"
-         - "Target Product:": "(EAP|WFK|JPP|JDG|JBoss ON|Fuse|FSW|BRMS|Sandbox)\\s\\s"
+         - "Target Product:": "(EAP|WFK|JPP|JDG|JBoss ON|Fuse|FSW|BRMS|BPM-SUITE|Sandbox)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
