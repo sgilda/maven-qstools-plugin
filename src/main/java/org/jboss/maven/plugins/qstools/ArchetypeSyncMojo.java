@@ -264,6 +264,10 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                     BufferedReader br = new BufferedReader(new FileReader(file));
                     BufferedWriter bw = new BufferedWriter(new FileWriter(dest));
                     // getLog().info("Copying from " + file + " to " + dest);
+                    bw.append("#set( $symbol_pound = '#' )\n");
+                    bw.append("#set( $symbol_dollar = '$' )\n");
+                    bw.append("#set( $symbol_escape = '\\' )\n");
+
                     while (br.ready()) {
                         String line = br.readLine();
                         String content = line;
