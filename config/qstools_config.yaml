@@ -196,6 +196,7 @@ rules:
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
          - org.jboss.bom|jboss-javaee-6.0-with-tools: org.jboss.bom.wfk|jboss-javaee-6.0-with-tools|version.jboss.bom.wfk
+         - org.jboss.bom|jboss-javaee-6.0-with-hibernate: org.jboss.bom.eap|jboss-javaee-6.0-with-hibernate|version.jboss.bom.eap
          - org.richfaces|richfaces-bom: org.jboss.bom.wfk|jboss-javaee-6.0-with-richfaces|version.jboss.bom.wfk
          - org.jboss.spec|jboss-javaee-6.0: REMOVE
    - &jdg
