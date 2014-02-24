@@ -263,10 +263,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                     // Filtered copy files
                     BufferedReader br = new BufferedReader(new FileReader(file));
                     BufferedWriter bw = new BufferedWriter(new FileWriter(dest));
-                    // getLog().info("Copying from " + file + " to " + dest);
-                    bw.append("#set( $symbol_pound = '#' )\n");
-                    bw.append("#set( $symbol_dollar = '$' )\n");
-                    bw.append("#set( $symbol_escape = '\\' )\n");
+                    getLog().debug("Copying from " + file + " to " + dest);
 
                     while (br.ready()) {
                         String line = br.readLine();
@@ -277,8 +274,8 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                             content = getPomLine(line);
                         }
 
-                        for (String value : archetypeExpressionReplaceValues) {
-                            content = content.replaceAll(value, "\\${" + artifactExpression + "}");
+                        for (String key : archetypeExpressionReplaceValues) {
+                            content = content.replaceAll(key, "\\${" + artifactExpression + "}");
                         }
                         for (String key : replaceValueWithExpression.keySet()) {
                             String value = "\\${" + replaceValueWithExpression.get(key) + "}";
