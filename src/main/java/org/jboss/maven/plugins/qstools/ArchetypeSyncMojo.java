@@ -246,14 +246,14 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                 }
 
                 String rootPath = exampleProjectPath.getPath();
-                String relativePath = file.getPath().replaceAll(rootPath, "");
-                String relativePathWithoutPackage = relativePath.replace(rootPackage.replaceAll("\\.", File.separator), "");
+                String relativePath = file.getPath().replace(rootPath, "");
+                String relativePathWithoutPackage = relativePath.replace(rootPackage.replace(".", File.separator), "");
                 String pathInterpolated = relativePathWithoutPackage;
                 for (String value : archetypeExpressionReplaceValues) {
-                    pathInterpolated = pathInterpolated.replaceAll(value, "__" + artifactExpression + "__");
+                    pathInterpolated = pathInterpolated.replace(value, "__" + artifactExpression + "__");
                 }
                 // default interpolation
-                pathInterpolated = pathInterpolated.replaceAll(projectPath, "__" + artifactExpression + "__");
+                pathInterpolated = pathInterpolated.replace(projectPath, "__" + artifactExpression + "__");
 
                 File dest = new File(archetypeOutputDir, pathInterpolated);
                 dest.getParentFile().mkdirs();
