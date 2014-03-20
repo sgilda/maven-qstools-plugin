@@ -97,8 +97,6 @@ To run the plugin:
 
 This goal will check the given BOM project if all declared dependencies under </dependencyManagement> section is resolvable.
 
-`NOTE:` This Goal is only compatible with Maven 3.0.X versions until [SHRINKRES-147](https://issues.jboss.org/browse/SHRINKRES-147) is resolved
-
 To run the plugin: 
 
     mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check

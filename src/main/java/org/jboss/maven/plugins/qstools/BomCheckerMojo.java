@@ -80,8 +80,14 @@ public class BomCheckerMojo extends AbstractMojo {
                         if (ignoredDependencies.contains(gav)) {
                             getLog().warn(gav + " ignored. It won't be resolved");
                         } else {
-                            getLog().debug("Trying to resolve " + gav + " in " + (dep.getScope()==null?"default[compile]":dep.getScope()) + " scope");
-                            Maven.resolver().loadPomFromFile(project.getFile()).resolve(gav).withMavenCentralRepo(true).withClassPathResolution(false).withTransitivity().asFile();
+                            getLog().debug("Trying to resolve " + gav + " in " + (dep.getScope() == null ? "default[compile]" : dep.getScope()) + " scope");
+                            Maven.configureResolver()
+                                .withMavenCentralRepo(true)
+                                .withClassPathResolution(false)
+                                .loadPomFromFile(project.getFile())
+                                .resolve(gav)
+                                .withTransitivity()
+                                .asFile();
                         }
                     } catch (NoResolvedResultException e) {
                         // Collect all resolution failures
