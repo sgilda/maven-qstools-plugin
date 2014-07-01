@@ -26,7 +26,7 @@ All you need is [Apache Maven 3.0.X](http://maven.apache.org/) and a working int
 
 Select a Maven project and run:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
+    mvn -U org.jboss.maven.plugins:qstools:check
     
 
 This will check your project and all modules to seek for potential violations.
@@ -41,7 +41,7 @@ QSTools configuration is made by editing the online file https://raw.github.com/
 
 You can use a local config file by overwriting qstools property:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
+    mvn -U org.jboss.maven.plugins:qstools:check
          -Dqstools.configFileURL=file:///Users/rafaelbenevides/path/qstools_config.yaml
          
 
@@ -72,7 +72,7 @@ QSTools can fix most of the violations.
 You can run:
 
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:fix
+    mvn -U org.jboss.maven.plugins:qstools:fix
     
 
 `NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
@@ -88,7 +88,7 @@ It will also replace any community BOMs by the Product BOMs if it is specified u
 
 To run the plugin:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:updateBoms
+    mvn -U org.jboss.maven.plugins:qstools:updateBoms
     
 
 
@@ -99,14 +99,14 @@ This goal will check the given BOM project if all declared dependencies under </
 
 To run the plugin: 
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check
+    mvn -U org.jboss.maven.plugins:qstools:bom-check
     
 
 If you need to ignore certain known dependencies from being checked, you can use the `qstools.bom-check.ignoredDependencies` property.
 
 Example:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check 
+    mvn -U org.jboss.maven.plugins:qstools:bom-check 
        -Dqstools.bom-check.ignoredDependencies=<groupId 1>:<artifactId 1>:jar:<version 1>,<groupId 2>:<artifactId 2>:jar:<version 2>
     
 
@@ -115,7 +115,7 @@ This will run on `REPORT ONLY` mode.
 
 Example:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check 
+    mvn -U org.jboss.maven.plugins:qstools:bom-check 
        -Dqstools.bom-check.failbuild=false
     
 
@@ -123,7 +123,7 @@ To specify a custom settings.xml file you must use `org.apache.maven.user-settin
 
 Example:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:bom-check 
+    mvn -U org.jboss.maven.plugins:qstools:bom-check 
        -Dorg.apache.maven.user-settings=<your custom settings.xml>
     
 
@@ -137,15 +137,15 @@ This is an example of configuration:
         <plugins>
             <plugin>
                 <groupId>org.jboss.maven.plugins</groupId>
-                <artifactId>maven-qstools-plugin</artifactId>
-                <version>1.3.3-SNAPSHOT</version>
+                <artifactId>qstools</artifactId>
+                <version>1.5.0-SNAPSHOT</version>
                 <configuration>
                     <projectGitRepo>git://github.com/jboss-developer/jboss-eap-quickstarts.git</projectGitRepo>
                     <projectPath>kitchensink-ear</projectPath>
                     <rootPackage>org.jboss.as.quickstarts.kitchensink_ear</rootPackage>
                     <multiModuleProject>true</multiModuleProject>
                     <applyPatch>A-patch-file.patch</applyPatch>
-                    <branch>jdf-2.1.7.Final</branch>
+                    <branch>[a branch name or a commit hash]</branch>
                     <archetypeExpressionReplaceValues>
                         <archetypeExpressionReplaceValue>jboss-as-kitchensink-ear</archetypeExpressionReplaceValue>
                         <archetypeExpressionReplaceValue>kitchensink-ear-quickstart</archetypeExpressionReplaceValue>
@@ -179,5 +179,5 @@ The plugin documentation *generated from mvn site* [is available here](target/si
 
 You can turn on debugging messages:   
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check -X
+    mvn -U org.jboss.maven.plugins:qstools:check -X
     
