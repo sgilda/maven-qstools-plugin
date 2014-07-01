@@ -56,7 +56,7 @@ public class BomVersionChecker extends AbstractBaseCheckerAdapter {
         for (int x = 0; x < dependencies.getLength(); x++) {
             Node dependency = dependencies.item(x);
             MavenDependency mavenDependency = getDependencyProvider().getDependencyFromNode(project, dependency);
-            // use stacks to find if the project is using a jdf bom
+            // use stacks to find if the project is using a jboss-developer bom
             Bom bomUsed = null;
             Stacks stacks = (Stacks) getContext().get(Constants.STACKS_CONTEXT);
             for (Bom bom : stacks.getAvailableBoms()) {
@@ -71,7 +71,7 @@ public class BomVersionChecker extends AbstractBaseCheckerAdapter {
                 && "pom".equals(mavenDependency.getType()) && "import".equals(mavenDependency.getScope()) // Only consider BOMs
 
             ) {
-                addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss/JDF BOM");
+                addViolation(project.getFile(), results, lineNumber, mavenDependency + " isn't a JBoss Developer BOM");
             } else if (bomUsed != null) {
                 String expectedBomVersion = expectedBomVersions.getProperty(bomUsed.getGroupId());
                 if (expectedBomVersion != null && !mavenDependency.getInterpoledVersion().equals(expectedBomVersion)) {

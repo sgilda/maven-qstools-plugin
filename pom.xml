@@ -39,7 +39,7 @@
         </license>
     </licenses>
 
-    <url>http://www.jboss.org/jdf</url>
+    <url>http://www.jboss.org/developer-materials/</url>
 
     <scm>
         <connection>scm:git:git@github.com:jboss-developer/maven-qstools-plugin.git</connection>

@@ -122,7 +122,7 @@ public class DependencyChecker extends AbstractBaseCheckerAdapter {
                 }
             }
         } else {
-            String msg = String.format("BOM %s (from jdf-stacks) was not found. You may need to configure an EAP/WFK repository in your settings.xml.", pomArtifact);
+            String msg = String.format("BOM %s (from jboss-stacks) was not found. You may need to configure an EAP/WFK repository in your settings.xml.", pomArtifact);
             getLog().debug(msg);
         }
     }
