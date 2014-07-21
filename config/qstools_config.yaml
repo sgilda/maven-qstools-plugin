@@ -89,7 +89,7 @@ rules:
        readme-metadatas:
          - "Author:": "\\w.*\\s\\s"
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
-         - "Technologies:": "\\w.*\\s\\s"
+         - "Technologies:": "^(.(?!and))*\\s\\s"
          - "Summary:": "\\w.*\\s\\s"
          - "Target Product:": "(EAP|WFK|JPP|JDG|JBoss ON|Fuse|FSW|BRMS|BPM-SUITE|Sandbox)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
