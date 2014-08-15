@@ -207,7 +207,6 @@ rules:
        groupid: org.jboss.quickstarts.jpp
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
-       artifactid-prefix: "jboss-portal-"
    - &fuse
        groupid: org.jboss.quickstarts.fuse
        artifactid-prefix: ""
