@@ -92,7 +92,7 @@ rules:
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "^(.(?!and))*\\s\\s"
          - "Summary:": "\\w.*\\s\\s"
-         - "Target Product:": "(EAP|WFK|Portal|JDG|JBoss ON|Fuse|FSW|BRMS|BPM-SUITE|Sandbox)\\s\\s"
+         - "Target Product:": "(EAP|WFK|Portal|JDG|JBoss ON|Fuse|FSW|BRMS|BPM-SUITE|Sandbox|Mobile)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
@@ -243,6 +243,11 @@ rules:
        pom-name-pattern: "SwitchYard Quickstart: <project-folder>"
        pom-name-pattern-submodule: "SwitchYard Quickstart: <project-folder> - <submodule-folder>"
 
+   - &mobile
+       groupid: org.jboss.quickstarts.mobile
+       ignored-checkers:
+         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
+
 #Quickstarts
 quickstarts:
    org.jboss.quickstarts.eap:
@@ -277,3 +282,6 @@ quickstarts:
    org.switchyard.quickstarts:
      - *default
      - *switchyard
+   org.jboss.quickstarts.mobile:
+     - *default
+     - *mobile
