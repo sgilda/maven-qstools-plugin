@@ -35,14 +35,14 @@ public interface QSFixer {
      * 
      * Higher values will be executed later then lower values)
      * 
-     * @return
+     * @return the order of the fixer.
      */
     public int order();
 
     /**
      * Defines the description on what the fixer will fix
      * 
-     * @return
+     * @return the description of the fixer
      */
     public String getFixerDescription();
 }

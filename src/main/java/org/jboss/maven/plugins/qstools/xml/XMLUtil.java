@@ -39,8 +39,9 @@ public class XMLUtil {
     /**
      * Checks if a Node has a valid element
      * 
-     * @param node
-     * @return
+     * @param node Node to be verified
+     * 
+     * @return true if has Child elements
      */
     public static boolean hasChildElements(Node node) {
         NodeList nodelist = node.getChildNodes();

@@ -70,13 +70,13 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Component
     private Renderer siteRenderer;
 
-    @Component
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
 
     @Component
     private BuildPluginManager pluginManager;
 
-    @Component
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
 
     @Parameter(property = "reactorProjects", readonly = true, required = true)
@@ -259,7 +259,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             plugin(
                 groupId("org.apache.maven.plugins"),
                 artifactId("maven-jxr-plugin"),
-                version("2.3")
+                version("2.4")
             ),
             goal("aggregate"),
             configuration(),
@@ -273,7 +273,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             plugin(
                 groupId("org.apache.maven.plugins"),
                 artifactId("maven-jxr-plugin"),
-                version("2.3")
+                version("2.4")
             ),
             goal("test-aggregate"),
             configuration(),
@@ -287,6 +287,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             plugin(
                 groupId("org.apache.maven.plugins"),
                 artifactId("maven-site-plugin"),
+                // Don't change this version unless you know what you're doing
                 version("2.2")
             ),
             goal("site"),

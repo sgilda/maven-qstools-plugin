@@ -41,7 +41,7 @@ import org.codehaus.plexus.PlexusContainer;
 import edu.emory.mathcs.backport.java.util.TreeSet;
 
 /**
- * This Mojo is used to check if all Dependencies declared in a </dependencyManagement> section of a BOM is resolvable.
+ * This Mojo is used to check if all Dependencies declared in a {@code<dependencyManagement/>} section of a BOM is resolvable.
  * 
  * @author Rafael Benevides
  * 
@@ -53,10 +53,10 @@ public class QSFixViolationsMojo extends AbstractMojo {
     @Component
     private PlexusContainer container;
 
-    @Component
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
 
-    @Component
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
 
     @Component

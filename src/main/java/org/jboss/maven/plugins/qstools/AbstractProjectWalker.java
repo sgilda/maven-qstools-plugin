@@ -141,6 +141,14 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
     /**
      * Adds violation referencing the pom.xml file as the violated file
      * 
+     * @param file the file where the violation happened
+     * 
+     * @param results the list of results
+     * 
+     * @param lineNumber the line number where the violation happened
+     * 
+     * @param violationMessage the violation message to be added
+     * 
      */
     protected void addViolation(final File file, final Map<String, List<Violation>> results, int lineNumber,
         String violationMessage) {

@@ -26,7 +26,6 @@ import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -36,7 +35,7 @@ import org.jboss.shrinkwrap.resolver.api.NoResolvedResultException;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 
 /**
- * This Mojo is used to check if all Dependencies declared in a </dependencyManagement> section of a BOM is resolvable.
+ * This Mojo is used to check if all Dependencies declared in a {@code<dependencyManagement/>} section of a BOM is resolvable.
  * 
  * @author Rafael Benevides
  * 
@@ -45,7 +44,7 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
     aggregator = false)
 public class BomCheckerMojo extends AbstractMojo {
 
-    @Component
+    @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject project;
 
     @Parameter(property = "qstools.bom-check.failbuild", defaultValue = "true")

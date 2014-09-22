@@ -381,10 +381,9 @@ public class ArchetypeSyncMojo extends AbstractMojo {
      * Clone the informed git repository and checkout the informed branch
      * 
      * @throws IOException
-     * @throws GitAPIException
-     * @throws TransportException
      * @throws InvalidRemoteException
-     * 
+     * @throws TransportException
+     * @throws GitAPIException
      */
     private void cloneOriginProject() throws IOException, InvalidRemoteException, TransportException, GitAPIException {
         File gitLocalRepo = new File(outputPath + File.separator + "git");

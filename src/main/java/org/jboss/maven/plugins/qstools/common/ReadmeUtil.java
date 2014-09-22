@@ -37,9 +37,11 @@ public class ReadmeUtil {
      * 
      * Format: metadata1:|metadata2:|metadata3:
      * 
-     * @param string
+     * @param groupid groupId of the project
      * 
-     * @param string
+     * @param folderName folder name
+     * 
+     * @return the regex pattern
      */
     public String setupRegexPattern(String groupid, String folderName) {
         Map<String, String> metadatas = configurationProvider.getQuickstartsRules(groupid).getReadmeMetadatas();

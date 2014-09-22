@@ -27,8 +27,7 @@ public class Utils {
     /**
      * Read Ignored quickstarts
      * 
-     * @return
-     * @throws IOException
+     * @return the list of ignored files
      */
     public static List<String> readIgnoredFile() {
         List<String> result = new ArrayList<String>();

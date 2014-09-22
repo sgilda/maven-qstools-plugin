@@ -72,9 +72,9 @@ public class ConfigurationProvider {
     /**
      * Return the {@link Rules} which should be used for a Quickstarts/Project
      * 
-     * @param groupId - the groupId of the Quickstart/Project
+     * @param groupId  the groupId of the Quickstart/Project
      * 
-     * @return
+     * @return the {@link Rules} object
      */
     public Rules getQuickstartsRules(String groupId) {
         if (configFileURL == null) {
@@ -132,8 +132,11 @@ public class ConfigurationProvider {
      * 
      * If the caches expires, them the file is downloaded again
      * 
-     * @return
-     * @throws FileNotFoundException
+     * @param url the url that contains the file to be downloaded and chached
+     * 
+     * @return {@link InputStream}
+     * 
+     * @throws FileNotFoundException if the cache file was removed
      * 
      */
     public InputStream getFileInputStream(URL url) throws FileNotFoundException {

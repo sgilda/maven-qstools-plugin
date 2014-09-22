@@ -71,7 +71,7 @@ public class BomUpdaterMojo extends AbstractMojo {
     @Component
     private ConfigurationProvider configurationProvider;
 
-    @Component
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
 
     @Component
