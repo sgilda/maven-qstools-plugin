@@ -245,9 +245,9 @@ rules:
 
    - &mobile
        groupid: org.jboss.quickstarts.mobile
+       expected-compiler-source: "1.7"
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
-        expected-compiler-source: "1.7"
 
 #Quickstarts
 quickstarts:
