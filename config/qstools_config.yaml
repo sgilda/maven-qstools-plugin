@@ -92,7 +92,7 @@ rules:
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "^(.(?!and))*\\s\\s"
          - "Summary:": "\\w.*\\s\\s"
-         - "Target Product:": "(EAP|WFK|Portal|JDG|OperationsNetwork|Fuse|FSW|BRMS|BPMSuite|Sandbox|Mobile)\\s\\s"
+         - "Target Product:": "(EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|Mobile Add-On)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
@@ -245,9 +245,10 @@ rules:
 
    - &mobile
        groupid: org.jboss.quickstarts.mobile
-       expected-compiler-source: "1.7"
        ignored-checkers:
+         - ArtifactIdNameChecker #It doesn't make sense for Mobile
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
+         - MavenCompilerChecker #Disabled because it uses 1.7 (Android) and 1.6 (Web)
 
 #Quickstarts
 quickstarts:
