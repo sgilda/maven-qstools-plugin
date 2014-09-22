@@ -51,7 +51,7 @@ public class ArtifactIdNameChecker implements QSChecker {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#getViolatonsQtd()
      */
     @Override
@@ -62,7 +62,7 @@ public class ArtifactIdNameChecker implements QSChecker {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#resetViolationsQtd()
      */
     @Override
@@ -84,7 +84,7 @@ public class ArtifactIdNameChecker implements QSChecker {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see org.jboss.maven.plugins.qstools.QSChecker#check(org.apache.maven.project.MavenProject,
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
@@ -94,19 +94,26 @@ public class ArtifactIdNameChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
 
         try {
+            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+                String msg = "Skiping %s for %s:%s";
+                log.warn(String.format(msg,
+                    this.getClass().getSimpleName(),
+                    project.getGroupId(),
+                    project.getArtifactId()));
+            } else {
+                Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
+                List<ArtifactIdNameUtil.PomInformation> pomsWithInvalidArtifactIds = artifactIdNameUtil.findAllIncorrectArtifactIdNames(reactorProjects, rules);
 
-            Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
-            List<ArtifactIdNameUtil.PomInformation> pomsWithInvalidArtifactIds = artifactIdNameUtil.findAllIncorrectArtifactIdNames(reactorProjects, rules);
-
-            for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
-                String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
-                String fileAsString = pi.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
-                if (results.get(fileAsString) == null) {
-                    results.put(fileAsString, new ArrayList<Violation>());
+                for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
+                    String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
+                    String fileAsString = pi.getProject().getFile().getAbsolutePath().replace(rootDirectory, "");
+                    if (results.get(fileAsString) == null) {
+                        results.put(fileAsString, new ArrayList<Violation>());
+                    }
+                    String msg = "Project with the following artifactId [%s] doesn't match the required format. It should be: [%s]";
+                    results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, pi.getActualArtifactId(), pi.getExpectedArtifactId())));
+                    violationsQtd++;
                 }
-                String msg = "Project with the following artifactId [%s] doesn't match the required format. It should be: [%s]";
-                results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, pi.getActualArtifactId(), pi.getExpectedArtifactId())));
-                violationsQtd++;
             }
 
             return results;

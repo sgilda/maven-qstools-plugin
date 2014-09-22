@@ -110,7 +110,7 @@ public class SamePropertyValueChecker implements QSChecker {
                     }
                 }
                 if (violationsQtd > 0) {
-                    log.info("There are " + violationsQtd + " checkers errors");
+                    log.info("There are " + violationsQtd + " checkers violations");
                 }
             }
 

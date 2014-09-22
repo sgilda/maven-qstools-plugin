@@ -111,7 +111,7 @@ public class UnusedPropertiesChecker implements QSChecker {
                 }
 
                 if (violationsQtd > 0) {
-                    log.info("There are " + violationsQtd + " checkers errors");
+                    log.info("There are " + violationsQtd + " checkers violations");
                 }
             } catch (Exception e) {
                 throw new QSCheckerException(e);

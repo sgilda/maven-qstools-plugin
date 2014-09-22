@@ -88,7 +88,7 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
 
         if (violationsQtd > 0) {
-            log.info("There are " + violationsQtd + " checkers errors");
+            log.info("There are " + violationsQtd + " checkers violations");
         }
         return results;
     }
@@ -113,8 +113,8 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
                         String msg = "Skiping %s for %s:%s";
                         log.warn(String.format(msg,
                             this.getClass().getSimpleName(),
-                            project.getGroupId(),
-                            project.getArtifactId()));
+                            mavenProject.getGroupId(),
+                            mavenProject.getArtifactId()));
                     } else {
                         switch (walkType) {
                             case CHECK:
