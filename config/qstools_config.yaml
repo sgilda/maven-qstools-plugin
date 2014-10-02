@@ -245,6 +245,8 @@ rules:
 
    - &mobile
        groupid: org.jboss.quickstarts.mobile
+       pom-name-pattern: "<target-product> Quickstart: <project-folder>"
+       pom-name-pattern-submodule: "<target-product> Quickstart: <project-folder> - <submodule-folder>"
        ignored-checkers:
          - ArtifactIdNameChecker #It doesn't make sense for Mobile
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
