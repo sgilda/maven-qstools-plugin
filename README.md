@@ -53,14 +53,14 @@ You can use a local config file by overwriting qstools property:
 
 If you need to use a custom Stacks.yaml definition you can overwrite the stacks url adding the property `qstools.stacks.url` to the command line:
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:check
+    mvn -U org.jboss.maven.plugins:qstools:check
        -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
        
 
 
 or
 
-    mvn -U org.jboss.maven.plugins:maven-qstools-plugin:(check)
+    mvn -U org.jboss.maven.plugins:qstools:(check)
        -Dqstools.stacks.url=http://www.somewhere.net/somepath/stacks.yaml
        
  
@@ -127,7 +127,7 @@ Example:
        -Dorg.apache.maven.user-settings=<your custom settings.xml>
     
 
-## Syncronizing Archetypes with Quickstarts
+## Synchronizing Archetypes with Quickstarts
 
 
 QSTools can be used on archetype to synchronize the archetype-resources with a given project
