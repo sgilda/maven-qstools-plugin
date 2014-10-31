@@ -72,6 +72,7 @@ rules:
        #List of Checkers that should be ignored. Use Class name as value
        ignored-checkers:
          - ClassNameChecker #non-existent checker just as example
+         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
 
        #Ignored property on UnusedPropertiesChecker
        ignored-unused-properties:
