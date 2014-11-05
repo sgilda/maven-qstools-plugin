@@ -21,11 +21,10 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.PomNameChecker;
 import org.jboss.maven.plugins.qstools.common.PomNameUtil;
 import org.jboss.maven.plugins.qstools.config.Rules;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -59,7 +58,7 @@ public class PomNameFixer extends AbstractBaseFixerAdapter {
                 projectNode.appendChild(nameNode);
             }
             nameNode.setTextContent(pattern);
-            XMLWriter.writeXML(doc, project.getFile());
+            XMLUtil.writeXML(doc, project.getFile());
         }
 
     }

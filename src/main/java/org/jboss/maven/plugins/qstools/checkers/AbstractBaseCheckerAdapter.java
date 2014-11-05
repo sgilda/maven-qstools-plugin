@@ -37,5 +37,5 @@ public abstract class AbstractBaseCheckerAdapter extends AbstractProjectWalker {
     public int order() {
         return 0;
     }
-
+    
 }

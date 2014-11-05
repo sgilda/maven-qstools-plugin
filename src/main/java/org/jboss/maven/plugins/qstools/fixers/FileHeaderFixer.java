@@ -16,7 +16,16 @@
  */
 package org.jboss.maven.plugins.qstools.fixers;
 
-import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.artifactId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.executionEnvironment;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.goal;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.name;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
+import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +38,11 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
 import org.jboss.maven.plugins.qstools.Constants;
-import org.jboss.maven.plugins.qstools.QSFixer;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.checkers.FileHeaderChecker;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
+import org.twdata.maven.mojoexecutor.MojoExecutor.Element;
 
 /**
  * Fixer for {@link FileHeaderChecker}
@@ -59,7 +68,7 @@ public class FileHeaderFixer implements QSFixer {
 
     @Override
     public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log)
-        throws QSCheckerException {
+        throws QSToolsException {
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         // Execute License-Maven-Plugin - http://code.mycila.com/license-maven-plugin/reports/2.3/format-mojo.html
         try {
@@ -101,7 +110,7 @@ public class FileHeaderFixer implements QSFixer {
                     element(name("excludes"), excludes.toArray(new Element[] {}))),
                 executionEnvironment(project, mavenSession, pluginManager));
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
 
     }

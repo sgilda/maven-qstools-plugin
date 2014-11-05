@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 
 public interface QSChecker {
 
@@ -29,7 +30,7 @@ public interface QSChecker {
     String ROLE = QSChecker.class.getName();
 
     public Map<String, List<Violation>> check(final MavenProject project, final MavenSession mavenSession, final List<MavenProject> reactorProjects, final Log log)
-        throws QSCheckerException;
+        throws QSToolsException;
 
     public String getCheckerDescription();
 
@@ -38,5 +39,5 @@ public interface QSChecker {
     public void resetViolationsQtd();
     
     public String getCheckerMessage();
-
+    
 }

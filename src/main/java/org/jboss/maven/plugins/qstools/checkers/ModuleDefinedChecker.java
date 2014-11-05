@@ -25,8 +25,6 @@ import java.util.Map;
 import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.Violation;
 import org.w3c.dom.Document;
 
 /**

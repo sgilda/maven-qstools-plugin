@@ -20,9 +20,8 @@ import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.LicenseChecker;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -71,7 +70,7 @@ public class LicenseFixer extends AbstractBaseFixerAdapter {
             licensesElement.appendChild(doc.createTextNode("\n        ")); // LF + 8 spaces
             licensesElement.appendChild(license);
         }
-        XMLWriter.writeXML(doc, project.getFile());
+        XMLUtil.writeXML(doc, project.getFile());
     }
 
 }

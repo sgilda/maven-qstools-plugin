@@ -16,28 +16,26 @@
  */
 package org.jboss.maven.plugins.qstools.fixers;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.QSFixer;
-import org.jboss.maven.plugins.qstools.common.UnusedPropertiesUtil;
-import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
-import org.jboss.maven.plugins.qstools.config.Rules;
-import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
-import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.io.FileInputStream;
+import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import java.io.FileInputStream;
-import java.util.List;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.jboss.maven.plugins.qstools.QSToolsException;
+import org.jboss.maven.plugins.qstools.common.UnusedPropertiesUtil;
+import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.config.Rules;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.UnusedPropertiesChecker}
@@ -62,7 +60,7 @@ public class UnusedPropertiesFixer implements QSFixer {
 
     @Override
     public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log)
-        throws QSCheckerException {
+        throws QSToolsException {
 
         try {
             Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
@@ -91,11 +89,11 @@ public class UnusedPropertiesFixer implements QSFixer {
                 XMLUtil.removePreviousWhiteSpace(unusedPropertyNode);
                 unusedPropertyNode.getParentNode().removeChild(unusedPropertyNode);
 
-                XMLWriter.writeXML(doc, pomInfo.getProject().getFile());
+                XMLUtil.writeXML(doc, pomInfo.getProject().getFile());
             }
 
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
     }
 

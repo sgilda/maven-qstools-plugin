@@ -17,7 +17,6 @@
 package org.jboss.maven.plugins.qstools.checkers;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSChecker;
 
 @Component(role = QSChecker.class, hint = "privateApiChecker")
 public class PrivateApiChecker extends AbstractCheckstyleChecker {

@@ -29,9 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.mozilla.universalchardet.UniversalDetector;
 
@@ -56,7 +54,7 @@ public class JavaEncondingChecker implements QSChecker {
 
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+        List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         try {
             if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
@@ -104,7 +102,7 @@ public class JavaEncondingChecker implements QSChecker {
                 }
             }
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
         return results;
 
@@ -118,6 +116,11 @@ public class JavaEncondingChecker implements QSChecker {
     @Override
     public void resetViolationsQtd() {
         violationsQtd = 0;
+    }
+
+    @Override
+    public String getCheckerMessage() {
+        return null;
     }
 
 }

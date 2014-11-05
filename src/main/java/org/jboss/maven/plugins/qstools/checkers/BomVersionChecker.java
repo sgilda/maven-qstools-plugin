@@ -27,8 +27,6 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.jboss.jdf.stacks.model.Bom;
 import org.jboss.jdf.stacks.model.Stacks;
 import org.jboss.maven.plugins.qstools.Constants;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;

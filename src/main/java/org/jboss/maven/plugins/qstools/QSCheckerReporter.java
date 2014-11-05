@@ -53,6 +53,8 @@ import org.apache.maven.reporting.MavenReportException;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.jdf.stacks.client.StacksClient;
 import org.jboss.jdf.stacks.model.Stacks;
+import org.jboss.maven.plugins.qstools.checkers.QSChecker;
+import org.jboss.maven.plugins.qstools.checkers.Violation;
 
 /**
  * 

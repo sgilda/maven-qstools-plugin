@@ -29,9 +29,7 @@ import org.apache.maven.plugin.checkstyle.DefaultCheckstyleExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 
@@ -68,7 +66,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     private DefaultCheckstyleExecutor checkstyleExecutor;
 
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
             String msg = "Skiping %s for %s:%s";
@@ -105,7 +103,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                     }
                 }
             } catch (Exception e) {
-                throw new QSCheckerException(e);
+                throw new QSToolsException(e);
             }
         }
         return results;
@@ -114,5 +112,10 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     abstract String getIncludes();
 
     abstract String getCheckstyleConfig();
+    
+    @Override
+    public String getCheckerMessage() {
+        return null;
+    }
 
 }

@@ -1,14 +1,11 @@
 package org.jboss.maven.plugins.qstools.config;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.HttpHost;
@@ -52,9 +49,11 @@ public class Resources {
      * 
      * If the caches expires, them the file is downloaded again
      * 
-     * @return
-     * @throws FileNotFoundException
-     * @throws ContextException
+     * @param url URL from config file
+     * 
+     * @return FileInputStream from a local cached file
+     * @throws FileNotFoundException when the cache file was removed
+     * @throws ContextException when the plugin isn't configured
      * 
      */
     public InputStream getFileInputStream(URL url) throws FileNotFoundException, ContextException {

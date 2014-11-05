@@ -22,9 +22,6 @@ import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -33,7 +30,8 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  * 
  */
-@Component(role = QSChecker.class, hint = "repositoryDeclarationChecker")
+// @Component(role = QSChecker.class, hint = "repositoryDeclarationChecker")
+@Deprecated
 public class RepositoryDeclarationChecker extends AbstractBaseCheckerAdapter {
 
     /*

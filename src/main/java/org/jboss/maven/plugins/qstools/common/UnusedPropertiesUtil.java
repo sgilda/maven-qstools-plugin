@@ -16,17 +16,6 @@
  */
 package org.jboss.maven.plugins.qstools.common;
 
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.config.Rules;
-import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +24,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.annotations.Component;
+import org.jboss.maven.plugins.qstools.config.Rules;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author paul.robinson@redhat.com 27/11/2013

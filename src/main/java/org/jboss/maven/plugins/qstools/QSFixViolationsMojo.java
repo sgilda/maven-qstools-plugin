@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.maven.execution.MavenSession;
@@ -37,6 +36,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.PlexusContainer;
+import org.jboss.maven.plugins.qstools.fixers.QSFixer;
 
 import edu.emory.mathcs.backport.java.util.TreeSet;
 
@@ -86,7 +86,7 @@ public class QSFixViolationsMojo extends AbstractMojo {
                 .warn(
                     "Running this plugin CAN MODIFY your files. Make sure to have your changes commited before running this plugin");
             getLog().warn("Do you want to continue[yes/NO]");
-            String answer = new Scanner(System.in).nextLine();
+            String answer = System.console().readLine();
             if (answer.equalsIgnoreCase("yes")) {
                 List<QSFixer> fixersFound = container.lookupList(QSFixer.class);
                 List<QSFixer> fixers = new ArrayList<QSFixer>(fixersFound);
@@ -114,7 +114,7 @@ public class QSFixViolationsMojo extends AbstractMojo {
                     sb.append("Enter the number of the Fixer to select/deselect it. Enter 'A' to select all. Enter 'N' to deselect all. ");
                     sb.append("\n\nWhen ready, enter 'R' to run the selected list of Fixers or 'Q' to quit.");
                     getLog().info(sb);
-                    answer = new Scanner(System.in).nextLine();
+                    answer = System.console().readLine();
 
                     // if selected a fixer (number from 1 to 99)
                     if (answer.matches("[1-9][0-9]*")) {

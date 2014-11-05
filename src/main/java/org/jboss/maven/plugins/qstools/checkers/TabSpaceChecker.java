@@ -17,7 +17,6 @@
 package org.jboss.maven.plugins.qstools.checkers;
 
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSChecker;
 
 @Component(role = QSChecker.class, hint = "TabSpaceChecker")
 public class TabSpaceChecker extends AbstractCheckstyleChecker {
@@ -40,5 +39,10 @@ public class TabSpaceChecker extends AbstractCheckstyleChecker {
     @Override
     String getCheckstyleConfig() {
         return "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/checkstyle-tabspace.xml";
+    }
+
+    @Override
+    public String getCheckerMessage() {
+        return null;
     }
 }

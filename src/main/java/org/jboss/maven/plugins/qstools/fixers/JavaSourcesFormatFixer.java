@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.IndentationChecker;
 import org.jboss.maven.plugins.qstools.checkers.TabSpaceChecker;
 import org.jboss.maven.plugins.qstools.config.Resources;

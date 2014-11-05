@@ -16,14 +16,13 @@
  */
 package org.jboss.maven.plugins.qstools.fixers;
 
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSFixer;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import javax.xml.xpath.XPathConstants;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.FinalNameChecker}
@@ -68,6 +67,6 @@ public class FinalNameFixer extends AbstractBaseFixerAdapter {
             finalNameNode.setTextContent(expectedFinalName);
         }
 
-        XMLWriter.writeXML(doc, project.getFile());
+        XMLUtil.writeXML(doc, project.getFile());
     }
 }

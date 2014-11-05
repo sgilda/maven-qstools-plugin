@@ -27,9 +27,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.common.ArtifactIdNameUtil;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
@@ -89,7 +87,7 @@ public class ArtifactIdNameChecker implements QSChecker {
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
 
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
 
@@ -118,8 +116,13 @@ public class ArtifactIdNameChecker implements QSChecker {
 
             return results;
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
+    }
+
+    @Override
+    public String getCheckerMessage() {
+        return null;
     }
 
 }

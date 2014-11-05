@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.FileUtils;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.checkers.TabSpaceChecker;
 import org.w3c.dom.Document;
 

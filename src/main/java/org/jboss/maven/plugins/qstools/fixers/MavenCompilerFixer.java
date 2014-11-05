@@ -16,17 +16,15 @@
  */
 package org.jboss.maven.plugins.qstools.fixers;
 
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPathConstants;
 
 /**
  * Fixer for {@link org.jboss.maven.plugins.qstools.checkers.MavenCompilerChecker}
@@ -81,7 +79,7 @@ public class MavenCompilerFixer extends AbstractBaseFixerAdapter {
             compilerNode.getParentNode().removeChild(compilerNode);
         }
 
-        XMLWriter.writeXML(doc, project.getFile());
+        XMLUtil.writeXML(doc, project.getFile());
     }
 
     private void removeConfigIfPresent(Node compilerConfigNode, String configItem) throws Exception {

@@ -27,9 +27,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.common.UnusedPropertiesUtil;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
@@ -86,7 +84,7 @@ public class UnusedPropertiesChecker implements QSChecker {
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         if (rules.isCheckerIgnored(this.getClass())) {
@@ -114,10 +112,15 @@ public class UnusedPropertiesChecker implements QSChecker {
                     log.info("There are " + violationsQtd + " checkers violations");
                 }
             } catch (Exception e) {
-                throw new QSCheckerException(e);
+                throw new QSToolsException(e);
             }
         }
         return results;
+    }
+
+    @Override
+    public String getCheckerMessage() {
+        return null;
     }
 
 }

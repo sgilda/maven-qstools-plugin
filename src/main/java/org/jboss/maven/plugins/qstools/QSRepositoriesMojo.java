@@ -51,9 +51,9 @@ import org.jboss.maven.plugins.qstools.common.ProjectUtil;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.fixers.PomElementOrderFixer;
+import org.jboss.maven.plugins.qstools.fixers.QSFixer;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -196,7 +196,7 @@ public class QSRepositoriesMojo extends AbstractMojo {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
                 removeRepositoryDefinition(project, doc, "repositories");
                 removeRepositoryDefinition(project, doc, "pluginRepositories");
-                XMLWriter.writeXML(doc, project.getFile());
+                XMLUtil.writeXML(doc, project.getFile());
             }
         }
     }
@@ -229,7 +229,7 @@ public class QSRepositoriesMojo extends AbstractMojo {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
                 createRepositoryDefinition(project, doc, repositories, repositoriesSelected, rules, "repositories", "repository", true);
                 createRepositoryDefinition(project, doc, repositories, repositoriesSelected, rules, "pluginRepositories", "pluginRepository", false);
-                XMLWriter.writeXML(doc, project.getFile());
+                XMLUtil.writeXML(doc, project.getFile());
                 getLog().debug("Sorting " + project.getFile() + "elements order");
                 // Put the element at the right order
                 PomElementOrderFixer pomElementOrderFixer = container.lookup(PomElementOrderFixer.class, QSFixer.ROLE, "PomElementOrderFixer");

@@ -26,11 +26,9 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.common.PomOrderUtil;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -74,7 +72,7 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
                 }
             }
         }
-        XMLWriter.writeXML(doc, project.getFile());
+        XMLUtil.writeXML(doc, project.getFile());
         doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
         for (String element : elementsList) {
             Node commentNode = null;
@@ -94,7 +92,7 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
                 }
             }
         }
-        XMLWriter.writeXML(doc, project.getFile());
+        XMLUtil.writeXML(doc, project.getFile());
     }
 
     @Override

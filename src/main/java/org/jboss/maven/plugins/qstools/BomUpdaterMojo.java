@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Properties;
-import java.util.Scanner;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -44,7 +43,6 @@ import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.maven.MavenDependency;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -101,7 +99,7 @@ public class BomUpdaterMojo extends AbstractMojo {
             configure();
             getLog().warn("Running this plugin CAN MODIFY your pom.xml files. Make sure to have your changes commited before running this plugin");
             getLog().warn("Do you want to continue[yes/no]");
-            String answer = new Scanner(System.in).nextLine();
+            String answer = System.console().readLine();
             if (answer.equalsIgnoreCase("yes")) {
                 for (MavenProject project : reactorProjects) {
                     processProject(project);
@@ -141,7 +139,7 @@ public class BomUpdaterMojo extends AbstractMojo {
         if (pomModified) {
             getLog().info("*** Saving changes to " + project.getFile() + "\n");
             updatedProjects++;
-            XMLWriter.writeXML(doc, project.getFile());
+            XMLUtil.writeXML(doc, project.getFile());
         }
     }
 

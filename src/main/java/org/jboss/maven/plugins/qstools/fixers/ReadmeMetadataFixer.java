@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.common.ReadmeUtil;
 import org.w3c.dom.Document;
 

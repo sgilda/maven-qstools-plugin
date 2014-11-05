@@ -31,7 +31,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.context.Context;
+import org.jboss.maven.plugins.qstools.checkers.QSChecker;
+import org.jboss.maven.plugins.qstools.checkers.Violation;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.fixers.QSFixer;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.w3c.dom.Document;
 
@@ -59,6 +62,8 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     private int violationsQtd;
 
+    private String checkerMessage;
+
     /*
      * (non-Javadoc)
      * 
@@ -81,11 +86,15 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
-        List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+        List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
 
         // iterate over all reactor projects
         walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
+
+        if (getCheckerMessage() != null) {
+            log.info("Checker Message: " + getCheckerMessage());
+        }
 
         if (violationsQtd > 0) {
             log.info("There are " + violationsQtd + " checkers violations");
@@ -95,27 +104,24 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
 
     @Override
     public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log)
-        throws QSCheckerException {
+        throws QSToolsException {
         walk(WalkType.FIX, project, mavenSession, reactorProjects, log, null);
     }
 
     @SuppressWarnings("unchecked")
     public void walk(WalkType walkType, MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects,
-        Log log, Map<String, List<Violation>> results) throws QSCheckerException {
+        Log log, Map<String, List<Violation>> results) throws QSToolsException {
         this.mavenSession = mavenSession;
         this.log = log;
         try {
             List<String> ignoredQuickstarts = (List<String>) context.get(Constants.IGNORED_QUICKSTARTS_CONTEXT);
-            for (MavenProject mavenProject : reactorProjects) {
-                if (!ignoredQuickstarts.contains(mavenProject.getBasedir().getName())) {
-                    Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                    if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
-                        String msg = "Skiping %s for %s:%s";
-                        log.warn(String.format(msg,
-                            this.getClass().getSimpleName(),
-                            mavenProject.getGroupId(),
-                            mavenProject.getArtifactId()));
-                    } else {
+            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
+                log.warn(this.getClass().getSimpleName() + " ignored for this groupId");
+            }
+            else {
+                for (MavenProject mavenProject : reactorProjects) {
+                    if (!ignoredQuickstarts.contains(mavenProject.getBasedir().getName())) {
+                        Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
                         switch (walkType) {
                             case CHECK:
                                 checkProject(mavenProject, doc, results);
@@ -126,15 +132,14 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
                             default:
                                 break;
                         }
-
+                    } else {
+                        log.info("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
                     }
-                } else {
-                    log.debug("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
                 }
             }
         } catch (Exception e) {
             // Any other exception is a problem.
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
     }
 
@@ -207,6 +212,15 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
      */
     protected ConfigurationProvider getConfigurationProvider() {
         return configurationProvider;
+    }
+
+    protected void setCheckerMessage(String checkerMessage) {
+        this.checkerMessage = checkerMessage;
+    }
+
+    @Override
+    public String getCheckerMessage() {
+        return checkerMessage;
     }
 
 }

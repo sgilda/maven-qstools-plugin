@@ -28,7 +28,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
@@ -70,7 +70,7 @@ public class ArtifactIdNameUtil {
             }
             return incorrectNames;
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
     }
 

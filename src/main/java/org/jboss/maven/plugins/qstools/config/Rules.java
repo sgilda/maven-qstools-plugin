@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSFixer;
+import org.jboss.maven.plugins.qstools.checkers.QSChecker;
+import org.jboss.maven.plugins.qstools.fixers.QSFixer;
 
 /**
  * @author Rafael Benevides
@@ -54,7 +54,7 @@ public class Rules {
     @SuppressWarnings("unchecked")
     public boolean isCheckerIgnored(Class<? extends QSChecker> checker) {
         List<String> ignoredCheckers = (List<String>) getConfig("ignored-checkers");
-        return ignoredCheckers.contains(checker.getClass().getSimpleName());
+        return ignoredCheckers.contains(checker.getSimpleName());
     }
 
     @SuppressWarnings("unchecked")

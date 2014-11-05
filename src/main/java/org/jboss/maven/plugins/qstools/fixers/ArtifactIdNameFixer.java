@@ -28,13 +28,12 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.QSFixer;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.common.ArtifactIdNameUtil;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
-import org.jboss.maven.plugins.qstools.xml.XMLWriter;
+import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,7 +60,7 @@ public class ArtifactIdNameFixer implements QSFixer {
     }
 
     @Override
-    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public void fix(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
 
         try {
             Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
@@ -72,7 +71,7 @@ public class ArtifactIdNameFixer implements QSFixer {
                 Document doc = PositionalXMLReader.readXML(new FileInputStream(pi.getProject().getFile()));
                 Node artifactIdNode = (Node) xPath.evaluate("/project/artifactId", doc, XPathConstants.NODE);
                 artifactIdNode.setTextContent(pi.getExpectedArtifactId());
-                XMLWriter.writeXML(doc, pi.getProject().getFile());
+                XMLUtil.writeXML(doc, pi.getProject().getFile());
             }
 
             // Update all the parents, to use the changed artifactId
@@ -100,10 +99,10 @@ public class ArtifactIdNameFixer implements QSFixer {
 
                     }
                 }
-                XMLWriter.writeXML(doc, subProject.getFile());
+                XMLUtil.writeXML(doc, subProject.getFile());
             }
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
     }
 

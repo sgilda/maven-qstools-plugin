@@ -26,9 +26,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
-import org.jboss.maven.plugins.qstools.QSChecker;
-import org.jboss.maven.plugins.qstools.QSCheckerException;
-import org.jboss.maven.plugins.qstools.Violation;
+import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.w3c.dom.Document;
@@ -50,7 +48,7 @@ public class SameVersionChecker extends AbstractBaseCheckerAdapter {
      * org.apache.maven.execution.MavenSession, java.util.List, org.apache.maven.plugin.logging.Log)
      */
     @Override
-    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
+    public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         try {
             Document doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
             Node versionNode = (Node) getxPath().evaluate("/project/version", doc, XPathConstants.NODE);
@@ -60,7 +58,7 @@ public class SameVersionChecker extends AbstractBaseCheckerAdapter {
                 rootVersion = versionNode.getTextContent();
             }
         } catch (Exception e) {
-            throw new QSCheckerException(e);
+            throw new QSToolsException(e);
         }
         return super.check(project, mavenSession, reactorProjects, log);
     }

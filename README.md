@@ -34,10 +34,10 @@ This will check your project and all modules to seek for potential violations.
 The report will be generated at: `MAVEN_PROJECT/target/site/qschecker.html`
 
 
-### Configuring QSTools Checkers
+### Configuring QSTools
 
 
-QSTools configuration is made by editing the online file https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/qstools_config.yaml
+QSTools configuration is made by editing the online file https://github.com/jboss-developer/maven-qstools-plugin/blob/master/config/qstools_config.yaml
 
 You can use a local config file by overwriting qstools property:
 
@@ -56,8 +56,6 @@ If you need to use a custom Stacks.yaml definition you can overwrite the stacks 
     mvn -U org.jboss.maven.plugins:qstools:check
        -Dqstools.stacks.url=file:/somewhere/on/your/disk/stacks.yaml
        
-
-
 or
 
     mvn -U org.jboss.maven.plugins:qstools:(check)
@@ -77,6 +75,20 @@ You can run:
 
 `NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
 
+
+## Setup JBoss Maven approved repositories
+
+
+QSTools can add/remove the <repositories/> section on pom.xml files. It uses [Approved JBoss Maven Repositories](https://github.com/jboss-developer/maven-qstools-plugin/blob/master/config/qstools_config.yaml#L24) list.
+
+You can run:
+
+
+    mvn -U org.jboss.maven.plugins:qstools:repositories
+    
+
+`NOTE:` It's high recommended that you have your changes saved before running this plugin because it modifies your pom files.
+
 ## If you need to update quickstarts BOMs
 
 
@@ -90,7 +102,6 @@ To run the plugin:
 
     mvn -U org.jboss.maven.plugins:qstools:updateBoms
     
-
 
 ## Checking the BOM dependencies
 
@@ -110,7 +121,7 @@ Example:
        -Dqstools.bom-check.ignoredDependencies=<groupId 1>:<artifactId 1>:jar:<version 1>,<groupId 2>:<artifactId 2>:jar:<version 2>
     
 
-By default, the project build will fail if some managed dependenciy is not resolvable. You can overwrite this behavior by using `qstools.bom-check.failbuild` property.
+By default, the project build will fail if some managed dependency is not resolvable. You can overwrite this behavior by using `qstools.bom-check.failbuild` property.
 This will run on `REPORT ONLY` mode.
 
 Example:
