@@ -37,12 +37,22 @@ public class Rules {
         this.configurations = configurations;
     }
 
-    public String getRedHatMavenProfileSnippetLocation() {
-        return (String) getConfig("redhat-maven-repository-profile-location");
+    @SuppressWarnings("unchecked")
+    public Map<String, String> getMavenApprovedRepositories() {
+        List<Object> repositories = (List<Object>) getConfig("maven-approve-repositories");
+        Map<String, String> p = new HashMap<String, String>();
+        for (Object o : repositories) {
+            p.putAll((Map<? extends String, ? extends String>) o);
+        }
+        return p;
+    }
+
+    public String getMavenRepositoryComment() {
+        return (String) getConfig("maven-repositories-comment");
     }
 
     @SuppressWarnings("unchecked")
-    public boolean isCheckerIgnored(QSChecker checker) {
+    public boolean isCheckerIgnored(Class<? extends QSChecker> checker) {
         List<String> ignoredCheckers = (List<String>) getConfig("ignored-checkers");
         return ignoredCheckers.contains(checker.getClass().getSimpleName());
     }

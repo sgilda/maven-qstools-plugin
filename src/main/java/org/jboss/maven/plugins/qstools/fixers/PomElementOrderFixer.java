@@ -16,6 +16,7 @@
  */
 package org.jboss.maven.plugins.qstools.fixers;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSFixer;
 import org.jboss.maven.plugins.qstools.common.PomOrderUtil;
+import org.jboss.maven.plugins.qstools.xml.PositionalXMLReader;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
 import org.jboss.maven.plugins.qstools.xml.XMLWriter;
 import org.w3c.dom.Document;
@@ -59,9 +61,9 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
             }
             for (String anotherElement : elementsList) {
                 if (elementsList.indexOf(element) < elementsList.indexOf(anotherElement)) {
-                    XMLUtil.removePreviousWhiteSpace(elementNode);
 
                     Node anotherElementNode = (Node) getxPath().evaluate("/project/" + anotherElement, doc, XPathConstants.NODE);
+                    XMLUtil.removePreviousWhiteSpace(anotherElementNode);
                     anotherElementNode.getParentNode().insertBefore(elementNode, anotherElementNode);
 
                     // If the element had a comment, move it too.
@@ -69,6 +71,26 @@ public class PomElementOrderFixer extends AbstractBaseFixerAdapter {
                         XMLUtil.removePreviousWhiteSpace(commentNode);
                         elementNode.getParentNode().insertBefore(commentNode, elementNode);
                     }
+                }
+            }
+        }
+        XMLWriter.writeXML(doc, project.getFile());
+        doc = PositionalXMLReader.readXML(new FileInputStream(project.getFile()));
+        for (String element : elementsList) {
+            Node commentNode = null;
+            Node elementNode = (Node) getxPath().evaluate("/project/" + element, doc, XPathConstants.NODE);
+            if (elementNode.getChildNodes().getLength() > 1) {
+                commentNode = null;
+                // Get comment over the element
+                if (elementNode.getPreviousSibling() != null
+                    && elementNode.getPreviousSibling().getPreviousSibling() != null
+                    && elementNode.getPreviousSibling().getPreviousSibling().getNodeType() == Node.COMMENT_NODE) {
+                    commentNode = elementNode.getPreviousSibling().getPreviousSibling();
+                    XMLUtil.removePreviousWhiteSpace(commentNode);
+                    elementNode.getParentNode().insertBefore(doc.createTextNode("\n\n    "), commentNode);
+                } else {
+                    XMLUtil.removePreviousWhiteSpace(elementNode);
+                    elementNode.getParentNode().insertBefore(doc.createTextNode("\n\n    "), elementNode);
                 }
             }
         }

@@ -29,6 +29,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.Violation;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
@@ -39,8 +40,7 @@ import org.w3c.dom.Node;
  * @author Rafael Benevides
  * 
  */
-//@Component(role = QSChecker.class, hint = "mavenCentralRepositoryChecker")
-@Deprecated
+@Component(role = QSChecker.class, hint = "mavenCentralRepositoryChecker")
 public class MavenCentralRepositoryChecker extends AbstractBaseCheckerAdapter {
 
     @Requirement

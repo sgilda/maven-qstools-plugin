@@ -89,7 +89,7 @@ public class UnusedPropertiesChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
-        if (rules.isCheckerIgnored(this)) {
+        if (rules.isCheckerIgnored(this.getClass())) {
             String msg = "Skiping %s for %s:%s";
             log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
         } else {

@@ -94,7 +94,7 @@ public class ArtifactIdNameChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
 
         try {
-            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
                 String msg = "Skiping %s for %s:%s";
                 log.warn(String.format(msg,
                     this.getClass().getSimpleName(),

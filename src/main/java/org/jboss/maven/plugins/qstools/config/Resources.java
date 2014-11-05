@@ -45,21 +45,6 @@ public class Resources {
         mavenSession = (MavenSession) context.get(Constants.MAVEN_SESSION_CONTEXT);
     }
 
-    public String getRedHatRepositorySnippet(String groupId) throws MalformedURLException, Exception {
-        String location = configurationProvider.getQuickstartsRules(groupId).getRedHatMavenProfileSnippetLocation();
-        InputStream is = getFileInputStream(new URL(location));
-        String line = null;
-        StringBuilder sb = new StringBuilder();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        String ls = System.getProperty("line.separator");
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-            sb.append(ls);
-        }
-
-        return sb.toString();
-    }
-
     /**
      * Return a FileInputStream from a local file.
      * 
@@ -69,7 +54,7 @@ public class Resources {
      * 
      * @return
      * @throws FileNotFoundException
-     * @throws ContextException 
+     * @throws ContextException
      * 
      */
     public InputStream getFileInputStream(URL url) throws FileNotFoundException, ContextException {

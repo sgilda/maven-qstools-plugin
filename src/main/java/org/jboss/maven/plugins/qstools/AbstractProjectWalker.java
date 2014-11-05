@@ -109,7 +109,7 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
             for (MavenProject mavenProject : reactorProjects) {
                 if (!ignoredQuickstarts.contains(mavenProject.getBasedir().getName())) {
                     Document doc = PositionalXMLReader.readXML(new FileInputStream(mavenProject.getFile()));
-                    if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+                    if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
                         String msg = "Skiping %s for %s:%s";
                         log.warn(String.format(msg,
                             this.getClass().getSimpleName(),

@@ -70,7 +70,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSCheckerException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
-        if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this)) {
+        if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
             String msg = "Skiping %s for %s:%s";
             log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
         } else {

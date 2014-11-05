@@ -70,7 +70,7 @@ public class SamePropertyValueChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         try {
-            if (rules.isCheckerIgnored(this)) {
+            if (rules.isCheckerIgnored(this.getClass())) {
                 String msg = "Skiping %s for %s:%s";
                 log.warn(String.format(msg,
                     this.getClass().getSimpleName(),

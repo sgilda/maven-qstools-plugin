@@ -33,6 +33,7 @@ public class XMLWriter {
 
     public static void writeXML(Document doc, File file) throws Exception {
         Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.setOutputProperty(OutputKeys.METHOD, "xml");
         t.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); // NOI18N
         t.setOutputProperty(OutputKeys.INDENT, "yes"); // NOI18N
         t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); // NOI18N
