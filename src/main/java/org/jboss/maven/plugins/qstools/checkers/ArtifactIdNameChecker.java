@@ -47,6 +47,8 @@ public class ArtifactIdNameChecker implements QSChecker {
     @Requirement
     private ArtifactIdNameUtil artifactIdNameUtil;
 
+    private String checkerMessage;
+
     /*
      * (non-Javadoc)
      * 
@@ -93,11 +95,7 @@ public class ArtifactIdNameChecker implements QSChecker {
 
         try {
             if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
-                String msg = "Skiping %s for %s:%s";
-                log.warn(String.format(msg,
-                    this.getClass().getSimpleName(),
-                    project.getGroupId(),
-                    project.getArtifactId()));
+                checkerMessage = "This checker is ignored for this groupId in config file.";
             } else {
                 Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
                 List<ArtifactIdNameUtil.PomInformation> pomsWithInvalidArtifactIds = artifactIdNameUtil.findAllIncorrectArtifactIdNames(reactorProjects, rules);
@@ -112,6 +110,14 @@ public class ArtifactIdNameChecker implements QSChecker {
                     results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, pi.getActualArtifactId(), pi.getExpectedArtifactId())));
                     violationsQtd++;
                 }
+                if (getCheckerMessage() != null) {
+                    log.info("--> Checker Message: " + getCheckerMessage());
+                }
+
+                if (violationsQtd > 0) {
+                    log.info("There are " + violationsQtd + " checkers violations");
+                }
+
             }
 
             return results;
@@ -122,7 +128,7 @@ public class ArtifactIdNameChecker implements QSChecker {
 
     @Override
     public String getCheckerMessage() {
-        return null;
+        return checkerMessage;
     }
 
 }

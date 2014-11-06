@@ -57,6 +57,8 @@ public class SamePropertyValueChecker implements QSChecker {
     @Requirement
     private ConfigurationProvider configurationProvider;
 
+    private String checkerMessage;
+
     /*
      * (non-Javadoc)
      * 
@@ -69,11 +71,7 @@ public class SamePropertyValueChecker implements QSChecker {
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         try {
             if (rules.isCheckerIgnored(this.getClass())) {
-                String msg = "Skiping %s for %s:%s";
-                log.warn(String.format(msg,
-                    this.getClass().getSimpleName(),
-                    project.getGroupId(),
-                    project.getArtifactId()));
+                checkerMessage = "This checker is ignored for this groupId in config file.";
             } else {
                 // iterate over all reactor projects to iterate on all declared properties
                 for (MavenProject mavenProject : reactorProjects) {
@@ -85,7 +83,7 @@ public class SamePropertyValueChecker implements QSChecker {
                         String propertyName = property.getNodeName();
                         String propertyValue = property.getTextContent();
 
-                        //skip ignored property
+                        // skip ignored property
                         if (rules.getIgnoredDifferentValuesProperties().contains(propertyName)) {
                             continue;
                         }
@@ -106,6 +104,9 @@ public class SamePropertyValueChecker implements QSChecker {
                             violationsQtd++;
                         }
                     }
+                }
+                if (getCheckerMessage() != null) {
+                    log.info("--> Checker Message: " + getCheckerMessage());
                 }
                 if (violationsQtd > 0) {
                     log.info("There are " + violationsQtd + " checkers violations");
@@ -150,7 +151,7 @@ public class SamePropertyValueChecker implements QSChecker {
 
     @Override
     public String getCheckerMessage() {
-        return null;
+        return checkerMessage;
     }
 
 }

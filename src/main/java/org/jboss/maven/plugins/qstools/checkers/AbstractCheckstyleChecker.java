@@ -42,6 +42,8 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
 
     private int violationsQtd;
 
+    private String checkerMessage;
+
     /*
      * (non-Javadoc)
      * 
@@ -69,8 +71,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession, List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
-            String msg = "Skiping %s for %s:%s";
-            log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+            checkerMessage = "This checker is ignored for this groupId in config file.";
         } else {
             CheckstyleExecutorRequest executorRequest = new CheckstyleExecutorRequest();
             Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
@@ -106,6 +107,9 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
                 throw new QSToolsException(e);
             }
         }
+        if (getCheckerMessage() != null) {
+            log.info("--> Checker Message: " + getCheckerMessage());
+        }
         return results;
     }
 
@@ -115,7 +119,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
 
     @Override
     public String getCheckerMessage() {
-        return null;
+        return checkerMessage;
     }
 
 }

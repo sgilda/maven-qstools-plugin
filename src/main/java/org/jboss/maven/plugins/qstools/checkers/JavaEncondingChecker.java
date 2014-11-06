@@ -47,6 +47,8 @@ public class JavaEncondingChecker implements QSChecker {
     @Requirement
     private ConfigurationProvider configurationProvider;
 
+    private String checkerMessage;
+
     @Override
     public String getCheckerDescription() {
         return "Verifies if java source character encoding is UTF-8";
@@ -58,8 +60,7 @@ public class JavaEncondingChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         try {
             if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
-                String msg = "Skiping %s for %s:%s";
-                log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+                checkerMessage = "This checker is ignored for this groupId in config file.";
             } else {
                 // get all files to process
                 List<File> sourceFiles = FileUtils.getFiles(project.getBasedir(), "**/*.java", "");
@@ -97,6 +98,9 @@ public class JavaEncondingChecker implements QSChecker {
                         }
                     }
                 }
+                if (getCheckerMessage() != null) {
+                    log.info("--> Checker Message: " + getCheckerMessage());
+                }
                 if (violationsQtd > 0) {
                     log.info("There are " + violationsQtd + " checkers violations");
                 }
@@ -120,7 +124,7 @@ public class JavaEncondingChecker implements QSChecker {
 
     @Override
     public String getCheckerMessage() {
-        return null;
+        return checkerMessage;
     }
 
 }

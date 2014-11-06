@@ -47,6 +47,8 @@ public class UnusedPropertiesChecker implements QSChecker {
     @Requirement
     private UnusedPropertiesUtil unusedPropertiesUtil;
 
+    private String checkerMessage;
+
     /*
      * (non-Javadoc)
      * 
@@ -88,14 +90,13 @@ public class UnusedPropertiesChecker implements QSChecker {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
         Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         if (rules.isCheckerIgnored(this.getClass())) {
-            String msg = "Skiping %s for %s:%s";
-            log.warn(String.format(msg, this.getClass().getSimpleName(), project.getGroupId(), project.getArtifactId()));
+            checkerMessage = "This checker is ignored for this groupId in config file.";
         } else {
             try {
 
                 List<UnusedPropertiesUtil.PomInformation> unusedPropertyInfo = unusedPropertiesUtil.findUnusedProperties(reactorProjects, rules);
 
-                //Construct a violation for each unused property
+                // Construct a violation for each unused property
                 for (UnusedPropertiesUtil.PomInformation pi : unusedPropertyInfo) {
                     // Get relative path based on maven work dir
                     String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
@@ -107,7 +108,9 @@ public class UnusedPropertiesChecker implements QSChecker {
                     results.get(fileAsString).add(new Violation(getClass(), pi.getLine(), String.format(msg, pi.getProperty())));
                     violationsQtd++;
                 }
-
+                if (getCheckerMessage() != null) {
+                    log.info("--> Checker Message: " + getCheckerMessage());
+                }
                 if (violationsQtd > 0) {
                     log.info("There are " + violationsQtd + " checkers violations");
                 }
@@ -120,7 +123,7 @@ public class UnusedPropertiesChecker implements QSChecker {
 
     @Override
     public String getCheckerMessage() {
-        return null;
+        return checkerMessage;
     }
 
 }
