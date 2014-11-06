@@ -28,6 +28,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,7 +73,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     @Component
     private Renderer siteRenderer;
 
-    @Parameter(defaultValue = "${project}", readonly = true)
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject mavenProject;
 
     @Component
@@ -441,9 +442,10 @@ public class QSCheckerReporter extends AbstractMavenReport {
      * 
      * @param locale
      * @param sink
+     * @throws IOException
      * 
      */
-    private void startReport(List<QSChecker> checkers, Locale locale) {
+    private void startReport(List<QSChecker> checkers, Locale locale) throws IOException {
         Sink sink = getSink();
         sink.head();
         sink.title();
@@ -456,6 +458,26 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.sectionTitle1();
         sink.text("Quickstart Check Results");
         sink.sectionTitle1_();
+
+        sink.text("QSTools version: " + Utils.getQStoolsVersion());
+        sink.lineBreak();
+        sink.text("Project Name: " + mavenProject.getModel().getName());
+        sink.lineBreak();
+        String gav = "Project GAV: %s:%s:%s";
+        sink.text(String.format(gav, mavenProject.getGroupId(), mavenProject.getArtifactId(), mavenProject.getVersion()));
+        sink.lineBreak();
+        sink.text("QSTools config file: ");
+        sink.link(this.configFileURL.toString());
+        sink.text(this.configFileURL.toString());
+        sink.link_();
+        sink.lineBreak();
+        sink.lineBreak();
+        sink.text("You can fix most of the violations running: ");
+        sink.bold();
+        sink.text("mvn org.jboss.maven.plugins:qstools:" + Utils.getQStoolsVersion() + ":fix");
+        sink.bold_();
+        sink.lineBreak();
+        sink.lineBreak();
 
         sink.text("The following checkers were used: ");
         sink.table();
@@ -475,6 +497,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.tableRow();
 
         for (QSChecker checker : checkers) {
+            int checkerViolationsQtd = checker.getViolatonsQtd();
             sink.tableRow();
             sink.tableCell();
             sink.bold();
@@ -485,10 +508,24 @@ public class QSCheckerReporter extends AbstractMavenReport {
 
             sink.tableCell();
             sink.text(checker.getCheckerDescription());
+            if (checker.getCheckerMessage() != null) {
+                sink.lineBreak();
+                sink.bold();
+                sink.text("Checker Message: ");
+                sink.bold_();
+                sink.text(checker.getCheckerMessage());
+            }
             sink.tableCell_();
 
             sink.tableCell();
-            sink.text(String.valueOf(checker.getViolatonsQtd()));
+            if (checkerViolationsQtd > 0) {
+                sink.bold();
+                sink.text(String.valueOf(checkerViolationsQtd));
+                sink.bold_();
+            } else {
+                sink.text("0");
+            }
+
             sink.tableCell_();
 
             sink.tableRow();

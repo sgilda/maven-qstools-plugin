@@ -27,6 +27,7 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
+import org.jboss.maven.plugins.qstools.Utils;
 import org.jboss.maven.plugins.qstools.common.ProjectUtil;
 import org.jboss.maven.plugins.qstools.config.Rules;
 import org.jboss.maven.plugins.qstools.xml.XMLUtil;
@@ -46,20 +47,21 @@ public class MavenApprovedRepositoriesChecker extends AbstractBaseCheckerAdapter
 
     @Override
     public String getCheckerDescription() {
-        return "Check if the Quickstart Contains the JBoss Maven Repository profile";
+        return "Check if Quickstart contains JBoss Maven approved repositories";
     }
 
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Rules rules = getConfigurationProvider().getQuickstartsRules(project.getGroupId());
         if (!rules.isCheckerIgnored(MavenCentralRepositoryChecker.class)) {
-            this.setCheckerMessage("RepositoryChecker is ignored because MavenCentralRepositoryChecker is active");
+            this.setCheckerMessage("This checker was ignored because MavenCentralRepositoryChecker is active.");
         } else {
             Node repositoriesNode = (Node) getxPath().evaluate("/project/repositories", doc, XPathConstants.NODE);
             // only valid for top-level projects
             if (!projectUtil.isSubProjec(project)) {
+                String complement = "- Please, run mvn org.jboss.maven.plugins:qstools:" + Utils.getQStoolsVersion() + ":repositories to fix it";
                 if (repositoriesNode == null) {
-                    addViolation(project.getFile(), results, 0, "pom.xml doesn't contains the JBoss Maven Repository profile");
+                    addViolation(project.getFile(), results, 0, "pom.xml doesn't contain a <repository /> section.");
                 } else {
                     NodeList ids = (NodeList) getxPath().evaluate("/project/repositories/repository/id", doc, XPathConstants.NODESET);
                     Set<String> approvedIds = rules.getMavenApprovedRepositories().keySet();
@@ -67,20 +69,20 @@ public class MavenApprovedRepositoriesChecker extends AbstractBaseCheckerAdapter
                         String id = ids.item(x).getTextContent();
                         if (!approvedIds.contains(id)) {
                             int lineNumber = XMLUtil.getLineNumberFromNode(ids.item(x));
-                            addViolation(project.getFile(), results, lineNumber, "The following id [" + id + "] is not an approved JBoss Maven Repository Id - Please, run mvn org.jboss.maven.plugins:qstools:repositories to fix it");
+                            addViolation(project.getFile(), results, lineNumber, "The following id [" + id + "] is not an approved JBoss Maven Repository Id." + complement);
                         }
                     }
                     NodeList urls = (NodeList) getxPath().evaluate("/project/repositories/repository/url", doc, XPathConstants.NODESET);
                     Collection<String> approvedUrlsRaw = rules.getMavenApprovedRepositories().values();
                     Set<String> approvedUrls = new HashSet<String>();
-                    for (String  rawValue: approvedUrlsRaw){
+                    for (String rawValue : approvedUrlsRaw) {
                         approvedUrls.add(rawValue.split("[|]")[0]);
                     }
                     for (int x = 0; x < ids.getLength(); x++) {
                         String url = urls.item(x).getTextContent();
                         if (!approvedUrls.contains(url)) {
                             int lineNumber = XMLUtil.getLineNumberFromNode(urls.item(x));
-                            addViolation(project.getFile(), results, lineNumber, "The following url [" + url + "] is not an approved JBoss Maven Repository URL - Please, run mvn org.jboss.maven.plugins:qstools:repositories to fix it");
+                            addViolation(project.getFile(), results, lineNumber, "The following url [" + url + "] is not an approved JBoss Maven Repository URL." + complement);
                         }
                     }
                 }

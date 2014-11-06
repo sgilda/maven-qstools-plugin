@@ -112,7 +112,7 @@ public abstract class AbstractCheckstyleChecker implements QSChecker {
     abstract String getIncludes();
 
     abstract String getCheckstyleConfig();
-    
+
     @Override
     public String getCheckerMessage() {
         return null;

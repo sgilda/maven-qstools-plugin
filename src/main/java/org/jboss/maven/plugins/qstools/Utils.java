@@ -19,6 +19,7 @@ package org.jboss.maven.plugins.qstools;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,5 +51,17 @@ public class Utils {
             }
         }
         return result;
+    }
+
+    public static String getQStoolsVersion() throws IOException {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(Utils.class.getResourceAsStream("/version.txt")));
+            return br.readLine();
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
     }
 }

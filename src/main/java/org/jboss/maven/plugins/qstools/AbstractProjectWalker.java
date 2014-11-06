@@ -93,7 +93,7 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         walk(WalkType.CHECK, project, mavenSession, reactorProjects, log, results);
 
         if (getCheckerMessage() != null) {
-            log.info("Checker Message: " + getCheckerMessage());
+            log.info("--> Checker Message: " + getCheckerMessage());
         }
 
         if (violationsQtd > 0) {
@@ -116,7 +116,7 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
         try {
             List<String> ignoredQuickstarts = (List<String>) context.get(Constants.IGNORED_QUICKSTARTS_CONTEXT);
             if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
-                log.warn(this.getClass().getSimpleName() + " ignored for this groupId");
+                setCheckerMessage("This checker is ignored for this groupId in config file.");
             }
             else {
                 for (MavenProject mavenProject : reactorProjects) {
@@ -133,7 +133,7 @@ public abstract class AbstractProjectWalker implements QSChecker, QSFixer {
                                 break;
                         }
                     } else {
-                        log.info("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
+                        log.warn("Ignoring " + mavenProject.getBasedir().getName() + ". It is listed on .quickstarts_ignore file");
                     }
                 }
             }
