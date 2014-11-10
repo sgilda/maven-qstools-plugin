@@ -93,10 +93,11 @@ public class ReadmeChecker extends AbstractBaseCheckerAdapter {
                     usedValues.put(m.group(), StringUtils.stripStart(line.substring(m.group().length(), line.length()), " "));
                 }
             }
-            for (String metadata : metadatas.keySet()) {
+            for (String metadataRaw : metadatas.keySet()) {
+                String metadata = metadataRaw.replace("FOLDER-NAME", folderName);
                 if (usedPatterns.contains(metadata)) {
                     String value = usedValues.get(metadata);
-                    String expected = metadatas.get(metadata);
+                    String expected = metadatas.get(metadataRaw);
                     if (!value.matches(expected)) {
                         String msg = "Content for metadata [%s = %s] should follow the [%s] pattern";
                         addViolation(readme, results, 0, String.format(msg, metadata, value, expected));
@@ -118,5 +119,4 @@ public class ReadmeChecker extends AbstractBaseCheckerAdapter {
         }
 
     }
-
 }

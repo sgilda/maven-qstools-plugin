@@ -103,10 +103,11 @@ rules:
 
        #Metadatas that should be present on Readme files and its Regex pattern
        readme-metadatas:
+         - "FOLDER-NAME": "\\w.{10,55}"
          - "Author:": "\\w.*\\s\\s"
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "^(.(?!and))*\\s\\s"
-         - "Summary:": "\\w.*\\s\\s"
+         - "Summary:": "\\w.{100,155}\\s\\s"
          - "Target Product:": "(EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|JBoss Unified Push)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 

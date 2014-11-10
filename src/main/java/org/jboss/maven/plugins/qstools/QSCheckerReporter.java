@@ -400,7 +400,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
     private void doFileSummary(Map<String, List<Violation>> filesViolations) {
         Sink sink = getSink();
         sink.section1(); // Start Section 1
-        sink.sectionTitle1();
+        sink.sectionTitle2();
         sink.text("Files");
         sink.sectionTitle2_();
 
@@ -453,11 +453,12 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.title_();
         sink.head_();
         sink.body();
-
         sink.section1(); // Section 1 Start
-        sink.sectionTitle1();
-        sink.text("Quickstart Check Results");
-        sink.sectionTitle1_();
+
+        sink.sectionTitle2();
+        sink.text("QSTools info");
+        sink.sectionTitle2_();
+
 
         sink.text("QSTools version: " + Utils.getQStoolsVersion());
         sink.lineBreak();
@@ -471,6 +472,11 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.text(this.configFileURL.toString());
         sink.link_();
         sink.lineBreak();
+        sink.text("Keep in touch with latest JBoss Developer guidelines discussion at the following mailinglist: ");
+        sink.link("https://lists.jboss.org/mailman/listinfo/jbossdeveloper");
+        sink.text("jbossdeveloper@lists.jboss.org");
+        sink.link_();
+        sink.lineBreak();
         sink.lineBreak();
         sink.text("You can fix most of the violations running: ");
         sink.bold();
@@ -478,6 +484,11 @@ public class QSCheckerReporter extends AbstractMavenReport {
         sink.bold_();
         sink.lineBreak();
         sink.lineBreak();
+
+        sink.sectionTitle1();
+        sink.text("Quickstart Check Results");
+        sink.sectionTitle1_();
+
 
         sink.text("The following checkers were used: ");
         sink.table();
