@@ -133,14 +133,14 @@ public class QSRepositoriesMojo extends AbstractMojo {
                         String part2 = " - " + repositories.get(repository) + "\n";
                         sb.append(part1padded + part2);
                     }
-                    sb.append("    A - Select All                            - Add all Fixers to the list to be run\n");
-                    sb.append("    N - Select None                           - Remove all currently selected Fixers from the list to be run\n");
+                    sb.append("    A - Select All                            - Add all repositories to the list to be run\n");
+                    sb.append("    N - Select None                           - Remove all currently selected repositories from the list to be run\n");
                     sb.append("\n");
-                    sb.append("    R - Run the plugin using the selected list of fixers (denoted by an *)\n");
+                    sb.append("    R - Run the plugin to add the selected repositories (denoted by an *)\n");
                     sb.append("    Q - Quit without running any fixers\n");
                     sb.append("\n");
-                    sb.append("Enter the number of the Fixer to select/deselect it. Enter 'A' to select all. Enter 'N' to deselect all. ");
-                    sb.append("\n\nWhen ready, enter 'R' to run the selected list of Fixers or 'Q' to quit.");
+                    sb.append("Enter the number of the repository to select/deselect it. Enter 'A' to select all. Enter 'N' to deselect all. ");
+                    sb.append("\n\nWhen ready, enter 'R' to add the selected repositories or 'Q' to quit.");
                     getLog().info(sb);
                     answer = console.readLine();
 
