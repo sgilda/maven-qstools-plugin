@@ -229,10 +229,24 @@ rules:
          - PomNameChecker #Asked by PPalaga do disable it
          - DependencyChecker #Asked by PPalaga do disable it - because of org.gatein.pc:pc-portlet:${pc-portlet.version}
    - &fuse
+       expected-compiler-source: "1.7"
        groupid: org.jboss.quickstarts.fuse
        artifactid-prefix: ""
        ignored-checkers:
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
+       #Ignored property on UnusedPropertiesChecker
+       ignored-unused-properties:
+         - fabric8.features
+         - fabric8.profile
+         - fabric8.parentProfiles
+         - fabric.version
+         - fabric8.bundles
+       #Ignored properties on SamePropertyValueChecker
+       ignored-differet-value-properties:
+         - maven.exec.mainClass #Each Project can have your own main Class
+         - fabric8.profile
+         - fabric8.features
+         - fabric8.parentProfiles
    - &brms
        groupid: org.jboss.quickstarts.brms
        artifactid-prefix: "brms-"
