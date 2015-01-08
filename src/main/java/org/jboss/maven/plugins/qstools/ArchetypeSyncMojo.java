@@ -116,7 +116,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
      * expressions that will be ignored when replacing the values specified by {@link #archetypeExpressionReplaceValues}
      */
     @Parameter(readonly = true)
-    private String[] ignoredArchetypeExpressionReplaceValues;
+    private String[] ignoredArchetypeExpressionReplaceValues = new String[]{};
 
     /**
      * Extra string values that should replaces the key for the ${value}. The value will be automatically transformed in a
@@ -280,23 +280,23 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                             content = getPomLine(line);
                         }
 
+                        // Verifies if there is a ignored expression
                         boolean ignored = false;
                         for (String ignoredString : ignoredArchetypeExpressionReplaceValues) {
-                            // Verifies if there is a ignored expression
                             if (content.contains(ignoredString)) {
                                 ignored = true;
                             }
-                            if (!ignored) {
-                                for (String key : archetypeExpressionReplaceValues) {
-                                    content = content.replaceAll(key, "\\${" + artifactExpression + "}");
-                                }
-                                for (String key : replaceValueWithExpression.keySet()) {
-                                    String value = "\\${" + replaceValueWithExpression.get(key) + "}";
-                                    content = content.replaceAll(key, value);
-                                }
-                                // default content interpolation
-                                content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
+                        }
+                        if (!ignored) {
+                            for (String key : archetypeExpressionReplaceValues) {
+                                content = content.replaceAll(key, "\\${" + artifactExpression + "}");
                             }
+                            for (String key : replaceValueWithExpression.keySet()) {
+                                String value = "\\${" + replaceValueWithExpression.get(key) + "}";
+                                content = content.replaceAll(key, value);
+                            }
+                            // default content interpolation
+                            content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
                         }
 
                         bw.write(content + "\n");
