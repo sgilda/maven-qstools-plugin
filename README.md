@@ -157,6 +157,7 @@ This is an example of configuration:
                     <multiModuleProject>true</multiModuleProject>
                     <applyPatch>A-patch-file.patch</applyPatch>
                     <branch>[a branch name or a commit hash]</branch>
+                    <-- Replace the following strings by {archetypeId} or __artifactId__ in file name
                     <archetypeExpressionReplaceValues>
                         <archetypeExpressionReplaceValue>jboss-as-kitchensink-ear</archetypeExpressionReplaceValue>
                         <archetypeExpressionReplaceValue>kitchensink-ear-quickstart</archetypeExpressionReplaceValue>
@@ -164,6 +165,11 @@ This is an example of configuration:
                         <archetypeExpressionReplaceValue>KitchensinkEarQuickstart</archetypeExpressionReplaceValue>
                         <archetypeExpressionReplaceValue>JBoss EAP Quickstart: kitchensink-ear</archetypeExpressionReplaceValue>
                     </archetypeExpressionReplaceValues>
+                    <!-- Expressions that will be ignored during the replacement -->
+                    <ignoredArchetypeExpressionReplaceValues>
+                              <ignoredArchetypeExpressionReplaceValue>https://github.com/wildfly/quickstart/tree/master/</ignoredArchetypeExpressionReplaceValue>
+                    </ignoredArchetypeExpressionReplaceValues>
+                    <!-- Replace the html5mobi string by {tableSuffix} -->
                     <replaceValueWithExpression>
                         <html5mobi>tableSuffix</html5mobi>
                     </replaceValueWithExpression>
@@ -179,7 +185,9 @@ This is an example of configuration:
             </plugin>
         </plugins>
 
-The `archetypeExpressionReplaceValues` configuration is used to replace the given expression to the `${artifactId} expression.
+The `archetypeExpressionReplaceValues` argument is used to replace the given expression to the `${artifactId}` expression or `__artifactId__` in file name.
+
+In some situations will may want to ignore a line to be replaced. You can specify the line content on the `ignoredArchetypeExpressionReplaceValues` argument.
 
 ## Plugin Documentation
 
