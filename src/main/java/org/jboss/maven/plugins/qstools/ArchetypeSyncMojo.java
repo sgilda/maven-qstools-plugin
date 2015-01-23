@@ -116,7 +116,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
      * expressions that will be ignored when replacing the values specified by {@link #archetypeExpressionReplaceValues}
      */
     @Parameter(readonly = true)
-    private String[] ignoredArchetypeExpressionReplaceValues = new String[]{};
+    private String[] ignoredArchetypeExpressionReplaceValues = new String[] {};
 
     /**
      * Extra string values that should replaces the key for the ${value}. The value will be automatically transformed in a
@@ -252,6 +252,7 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                 }
 
                 String rootPath = exampleProjectPath.getPath();
+                String rootPackagePath = rootPackage.replace(".", File.separator);
                 String relativePath = file.getPath().replace(rootPath, "");
                 String relativePathWithoutPackage = relativePath.replace(rootPackage.replace(".", File.separator), "");
                 String pathInterpolated = relativePathWithoutPackage;
@@ -289,14 +290,17 @@ public class ArchetypeSyncMojo extends AbstractMojo {
                         }
                         if (!ignored) {
                             for (String key : archetypeExpressionReplaceValues) {
-                                content = content.replaceAll(key, "\\${" + artifactExpression + "}");
+                                content = content.replace(key, "${" + artifactExpression + "}");
                             }
                             for (String key : replaceValueWithExpression.keySet()) {
-                                String value = "\\${" + replaceValueWithExpression.get(key) + "}";
-                                content = content.replaceAll(key, value);
+                                String value = "${" + replaceValueWithExpression.get(key) + "}";
+                                content = content.replace(key, value);
                             }
                             // default content interpolation
-                            content = content.replaceAll(rootPackage, "\\${package}").replaceAll(projectPath, "\\${" + artifactExpression + "}");
+                            content = content
+                                .replace(rootPackage, "${package}")
+                                .replace(rootPackagePath, "${packagePath}")
+                                .replace(projectPath, "${" + artifactExpression + "}");
                         }
 
                         bw.write(content + "\n");
@@ -367,13 +371,13 @@ public class ArchetypeSyncMojo extends AbstractMojo {
     private String getPomLine(String line) {
 
         if (line.trim().startsWith("<groupId>" + originalGroupId + "</groupId>")) {
-            return line.replaceAll(originalGroupId, "\\${groupId}");
+            return line.replace(originalGroupId, "${groupId}");
         }
         if (line.trim().startsWith("<artifactId>" + originalArtifactId + "</artifactId>")) {
-            return line.replaceAll(originalArtifactId, "\\${" + artifactExpression + "}");
+            return line.replace(originalArtifactId, "${" + artifactExpression + "}");
         }
         if (line.trim().startsWith("<version>" + originalVersion + "</version>")) {
-            return line.replaceAll(originalVersion, "\\${version}");
+            return line.replace(originalVersion, "${version}");
         }
         return line;
     }
