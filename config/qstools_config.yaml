@@ -29,7 +29,7 @@ rules:
          - jboss-developer-staging-repository: http://jboss-developer.github.io/temp-maven-repo/|true|false
          
        #Comment that should be added for repository definition
-       maven-repositories-comment: " Activate JBoss Product Maven repository.\n\n        NOTE: Configuring the Maven repository in the pom.xml file is not a recommended procedure\n        and is only done here to make it easier to use the quickstarts.\n\n        For more information about how to configure Maven for your application,\n        see the section entitled 'Use the Maven Repository'\n        in the Development Guide for JBoss EAP 6 located here:\n\n        https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html-single/Development_Guide\n    "
+       maven-repositories-comment: " Activate JBoss Product Maven repository.\n\n        NOTE: Configuring the Maven repository in the pom.xml file is not a recommended procedure\n        and is only done here to make it easier to use the quickstarts.\n\n        For more information about how to configure Maven for your application,\n        see the section entitled 'Use the Maven Repository'\n        in the Development Guide for Red Hat JBoss Enterprise Application Platform 6 located here:\n\n        https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/ \n    "
 
        #Expected JDF BOM Version
        expected-bom-versions:
@@ -61,8 +61,8 @@ rules:
        artifactid-prefix: "jboss-"
 
        #Pom name pattern
-       pom-name-pattern: "JBoss <target-product> Quickstart: <project-folder>"
-       pom-name-pattern-submodule: "JBoss <target-product> Quickstart: <project-folder> - <submodule-folder>"
+       pom-name-pattern: "<target-product> Quickstart: <project-folder>"
+       pom-name-pattern-submodule: "<target-product> Quickstart: <project-folder> - <submodule-folder>"
 
        #Header file pattern
        header-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/header.txt"
@@ -108,7 +108,7 @@ rules:
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "^(.(?!and))*\\s\\s"
          - "Summary:": "\\w.{100,155}\\s\\s"
-         - "Target Product:": "(EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|JBoss Unified Push)\\s\\s"
+         - "Target Product:": "(JBoss EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|JBoss Unified Push)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
