@@ -74,6 +74,14 @@ public class ValidXMLSchemaChecker implements QSChecker {
         return "Verifies if XML files are using a valid according to XML Schema or DTD";
     }
 
+    private void addViolation(String fileAsString, int line, String message, Map<String, List<Violation>> results) {
+        violationsQtd++;
+        if (results.get(fileAsString) == null) {
+            results.put(fileAsString, new ArrayList<Violation>());
+        }
+        results.get(fileAsString).add(new Violation(ValidXMLSchemaChecker.class, line, message));
+    }
+
     @Override
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
         List<MavenProject> reactorProjects, Log log) throws QSToolsException {
@@ -95,10 +103,15 @@ public class ValidXMLSchemaChecker implements QSChecker {
                     String fileAsString = xml.getAbsolutePath().replace(rootDirectory, "");
                     Validator validator = schema.newValidator();
                     validator.setResourceResolver(new URLBasedResourceResolver());
-                    validator.setErrorHandler(new XMLErrorHandler(mavenSession, fileAsString, results));
+                    validator.setErrorHandler(new XMLErrorHandler(fileAsString, results));
 
                     log.info("Validating " + fileAsString);
-                    validator.validate(new StreamSource(new BufferedInputStream(new FileInputStream(xml))));
+                    try {
+                        validator.validate(new StreamSource(new BufferedInputStream(new FileInputStream(xml))));
+                    } catch (SAXException e) {
+                        // validator.validate can throw a SAXException coming from the ErrorHandler
+                        addViolation(fileAsString, 0, e.getMessage(), results);
+                    }
                 }
                 if (getCheckerMessage() != null) {
                     log.info("--> Checker Message: " + getCheckerMessage());
@@ -134,33 +147,26 @@ public class ValidXMLSchemaChecker implements QSChecker {
         private Map<String, List<Violation>> results;
         private String fileAsString;
 
-        public XMLErrorHandler(MavenSession mavenSession, String fileAsString, Map<String, List<Violation>> results) {
+        public XMLErrorHandler(String fileAsString, Map<String, List<Violation>> results) {
             this.results = results;
             this.fileAsString = fileAsString;
         }
 
         @Override
         public void warning(SAXParseException exception) throws SAXException {
-            addViolation(exception.getLineNumber(), exception.getMessage());
+            addViolation(fileAsString, exception.getLineNumber(), exception.getMessage(), results);
         }
 
         @Override
         public void error(SAXParseException exception) throws SAXException {
-            addViolation(exception.getLineNumber(), exception.getMessage());
+            addViolation(fileAsString, exception.getLineNumber(), exception.getMessage(), results);
         }
 
         @Override
         public void fatalError(SAXParseException exception) throws SAXException {
-            addViolation(exception.getLineNumber(), exception.getMessage());
+            addViolation(fileAsString, exception.getLineNumber(), exception.getMessage(), results);
         }
 
-        public void addViolation(int line, String message) {
-            violationsQtd++;
-            if (results.get(fileAsString) == null) {
-                results.put(fileAsString, new ArrayList<Violation>());
-            }
-            results.get(fileAsString).add(new Violation(ValidXMLSchemaChecker.class, line, message));
-        }
     }
 
     private class URLBasedResourceResolver implements LSResourceResolver {
@@ -195,108 +201,107 @@ public class ValidXMLSchemaChecker implements QSChecker {
             return null;
         }
 
-    }
+        private class MyLSInput implements LSInput {
 
-    private class MyLSInput implements LSInput {
+            private Reader characterStream;
 
-        private Reader characterStream;
+            private InputStream inputStream;
 
-        private InputStream inputStream;
+            private String stringData;
 
-        private String stringData;
+            private String systemId;
 
-        private String systemId;
+            private String publicId;
 
-        private String publicId;
+            private String baseURI;
 
-        private String baseURI;
+            private String encoding;
 
-        private String encoding;
+            private boolean certified;
 
-        private boolean certified;
+            @Override
+            public Reader getCharacterStream() {
+                return characterStream;
+            }
 
-        @Override
-        public Reader getCharacterStream() {
-            return characterStream;
+            @Override
+            public void setCharacterStream(Reader characterStream) {
+                this.characterStream = characterStream;
+            }
+
+            @Override
+            public InputStream getByteStream() {
+                return inputStream;
+            }
+
+            @Override
+            public void setByteStream(InputStream byteStream) {
+                this.inputStream = byteStream;
+            }
+
+            @Override
+            public String getStringData() {
+                return stringData;
+            }
+
+            @Override
+            public void setStringData(String stringData) {
+                this.stringData = stringData;
+            }
+
+            @Override
+            public String getSystemId() {
+                return systemId;
+            }
+
+            @Override
+            public void setSystemId(String systemId) {
+                this.systemId = systemId;
+            }
+
+            @Override
+            public String getPublicId() {
+                return publicId;
+            }
+
+            @Override
+            public void setPublicId(String publicId) {
+                this.publicId = publicId;
+
+            }
+
+            @Override
+            public String getBaseURI() {
+                return baseURI;
+            }
+
+            @Override
+            public void setBaseURI(String baseURI) {
+                this.baseURI = baseURI;
+
+            }
+
+            @Override
+            public String getEncoding() {
+                return encoding;
+            }
+
+            @Override
+            public void setEncoding(String encoding) {
+                this.encoding = encoding;
+            }
+
+            @Override
+            public boolean getCertifiedText() {
+                return certified;
+            }
+
+            @Override
+            public void setCertifiedText(boolean certifiedText) {
+                this.certified = certifiedText;
+            }
+
         }
-
-        @Override
-        public void setCharacterStream(Reader characterStream) {
-            this.characterStream = characterStream;
-        }
-
-        @Override
-        public InputStream getByteStream() {
-            return inputStream;
-        }
-
-        @Override
-        public void setByteStream(InputStream byteStream) {
-            this.inputStream = byteStream;
-        }
-
-        @Override
-        public String getStringData() {
-            return stringData;
-        }
-
-        @Override
-        public void setStringData(String stringData) {
-            this.stringData = stringData;
-        }
-
-        @Override
-        public String getSystemId() {
-            return systemId;
-        }
-
-        @Override
-        public void setSystemId(String systemId) {
-            this.systemId = systemId;
-        }
-
-        @Override
-        public String getPublicId() {
-            return publicId;
-        }
-
-        @Override
-        public void setPublicId(String publicId) {
-            this.publicId = publicId;
-
-        }
-
-        @Override
-        public String getBaseURI() {
-            return baseURI;
-        }
-
-        @Override
-        public void setBaseURI(String baseURI) {
-            this.baseURI = baseURI;
-
-        }
-
-        @Override
-        public String getEncoding() {
-            return encoding;
-        }
-
-        @Override
-        public void setEncoding(String encoding) {
-            this.encoding = encoding;
-        }
-
-        @Override
-        public boolean getCertifiedText() {
-            return certified;
-        }
-
-        @Override
-        public void setCertifiedText(boolean certifiedText) {
-            this.certified = certifiedText;
-        }
-
     }
 
 }
