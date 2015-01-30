@@ -226,8 +226,13 @@
             <!-- Don't change this version -->
             <version>3.3</version>
             <type>maven-plugin</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xercesImpl</artifactId>
+                    <groupId>xerces</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-
     </dependencies>
 
 

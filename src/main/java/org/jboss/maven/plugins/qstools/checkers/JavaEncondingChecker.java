@@ -31,6 +31,7 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.jboss.maven.plugins.qstools.QSToolsException;
 import org.jboss.maven.plugins.qstools.config.ConfigurationProvider;
+import org.jboss.maven.plugins.qstools.config.Rules;
 import org.mozilla.universalchardet.UniversalDetector;
 
 /**
@@ -58,12 +59,13 @@ public class JavaEncondingChecker implements QSChecker {
     public Map<String, List<Violation>> check(MavenProject project, MavenSession mavenSession,
         List<MavenProject> reactorProjects, Log log) throws QSToolsException {
         Map<String, List<Violation>> results = new TreeMap<String, List<Violation>>();
+        Rules rules = configurationProvider.getQuickstartsRules(project.getGroupId());
         try {
-            if (configurationProvider.getQuickstartsRules(project.getGroupId()).isCheckerIgnored(this.getClass())) {
+            if (rules.isCheckerIgnored(this.getClass())) {
                 checkerMessage = "This checker is ignored for this groupId in config file.";
             } else {
                 // get all files to process
-                List<File> sourceFiles = FileUtils.getFiles(project.getBasedir(), "**/*.java", "");
+                List<File> sourceFiles = FileUtils.getFiles(project.getBasedir(), "**/*.java", rules.getExcludes());
                 for (File source : sourceFiles) {
                     FileInputStream fis = null;
                     try {
