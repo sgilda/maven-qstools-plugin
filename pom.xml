@@ -21,7 +21,7 @@
 
     <groupId>org.jboss.maven.plugins</groupId>
     <artifactId>qstools</artifactId>
-    <version>1.6.0.CR2</version>
+    <version>1.6.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>QSTools Maven Plugin</name>
