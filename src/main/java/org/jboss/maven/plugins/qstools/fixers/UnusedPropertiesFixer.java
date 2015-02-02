@@ -99,7 +99,6 @@ public class UnusedPropertiesFixer implements QSFixer {
 
     @Override
     public int order() {
-        // TODO Auto-generated method stub
         return 0;
     }
 

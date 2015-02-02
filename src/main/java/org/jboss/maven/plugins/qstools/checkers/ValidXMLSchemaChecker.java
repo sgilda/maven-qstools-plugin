@@ -102,7 +102,7 @@ public class ValidXMLSchemaChecker implements QSChecker {
                     String rootDirectory = (mavenSession.getExecutionRootDirectory() + File.separator).replace("\\", "\\\\");
                     String fileAsString = xml.getAbsolutePath().replace(rootDirectory, "");
                     Validator validator = schema.newValidator();
-                    validator.setResourceResolver(new URLBasedResourceResolver());
+                    validator.setResourceResolver(new URLBasedResourceResolver(xml));
                     validator.setErrorHandler(new XMLErrorHandler(fileAsString, results));
 
                     log.info("Validating " + fileAsString);
@@ -171,34 +171,43 @@ public class ValidXMLSchemaChecker implements QSChecker {
 
     private class URLBasedResourceResolver implements LSResourceResolver {
 
+        private File xml;
+
+        public URLBasedResourceResolver(File xml) {
+            this.xml = xml;
+        }
+
         @Override
         public LSInput resolveResource(String type, String namespaceURI,
             String publicId, String systemId, String baseURI) {
             String msg = String.format("Resolve: type=%s, ns=%s, publicId=%s, systemId=%s, baseUri=%s.",
                 type, namespaceURI, publicId, systemId, baseURI);
             log.debug(msg);
-            if (type.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
-                if (namespaceURI != null) {
-                    try {
+            MyLSInput input = new MyLSInput();
+            input.setPublicId(publicId);
+            input.setSystemId(systemId);
+            try {
+                if (type.equals(XMLConstants.W3C_XML_SCHEMA_NS_URI)) {
+                    if (namespaceURI == null && systemId != null) {
+                        FileInputStream fis = new FileInputStream(new File(xml.getParent(), systemId));
+                        input.setByteStream(fis);
+                        input.setSystemId(systemId);
+                    } else if (namespaceURI != null) {
                         URI uri = new URI(baseURI == null ? "" : baseURI);
                         URL url = uri.resolve(systemId == null ? "" : systemId).toURL();
                         if (url.getProtocol().equals("http")) {
                             InputStream is = resources.getFileInputStream(url);
-                            MyLSInput input = new MyLSInput();
                             input.setBaseURI(baseURI);
                             input.setByteStream(is);
-                            input.setPublicId(publicId);
-                            input.setSystemId(systemId);
-                            return input;
                         }
-                    } catch (IllegalArgumentException e) {
-                        // It's ok for XMLs without systemId and BaseURI
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
                     }
                 }
+            } catch (IllegalArgumentException e) {
+                // It's ok for XMLs without systemId and BaseURI
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-            return null;
+            return input;
         }
 
         private class MyLSInput implements LSInput {

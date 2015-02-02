@@ -2037,7 +2037,6 @@
                 org.relaxng.datatype,
                 org.relaxng.datatype.helpers,
                 org.slf4j.impl,
-                org.w3c.dom,
                 org.wildfly.extension.picketlink,
                 org.wildfly.extension.picketlink.common.model,
                 org.wildfly.extension.picketlink.common.parser,
