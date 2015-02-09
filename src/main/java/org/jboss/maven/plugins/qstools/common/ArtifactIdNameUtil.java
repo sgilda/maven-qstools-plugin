@@ -64,7 +64,7 @@ public class ArtifactIdNameUtil {
                 if (!expectedArtifactId.equals(actualArtifactId.getTextContent())) {
 
                     int lineNumber = getLineNumberFromNode(actualArtifactId);
-                    incorrectNames.add(new PomInformation(subProject, lineNumber, expectedArtifactId, actualArtifactId.getTextContent()));
+                    incorrectNames.add(new PomInformation(subProject, lineNumber, expectedArtifactId, actualArtifactId.getTextContent(), subProject.getGroupId()));
                 }
 
             }
@@ -144,12 +144,15 @@ public class ArtifactIdNameUtil {
 
         private String actualArtifactId;
 
-        public PomInformation(MavenProject project, int line, String expectedArtifactId, String actualArtifactId) {
+        private String groupId;
+
+        public PomInformation(MavenProject project, int line, String expectedArtifactId, String actualArtifactId, String groupId) {
 
             this.project = project;
             this.line = line;
             this.expectedArtifactId = expectedArtifactId;
             this.actualArtifactId = actualArtifactId;
+            this.groupId = groupId;
         }
 
         public MavenProject getProject() {
@@ -170,6 +173,10 @@ public class ArtifactIdNameUtil {
         public String getActualArtifactId() {
 
             return actualArtifactId;
+        }
+
+        public String getGroupId() {
+            return groupId;
         }
     }
 }

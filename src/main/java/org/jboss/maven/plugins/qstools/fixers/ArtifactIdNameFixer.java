@@ -91,12 +91,15 @@ public class ArtifactIdNameFixer implements QSFixer {
                 for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
                     // It can have more than one occurrence on the same file
                     NodeList artfactIdNodes = (NodeList) xPath.evaluate("//artifactId[text()='" + pi.getActualArtifactId() + "']", doc, XPathConstants.NODESET);
-                    for (int x = 0; x < artfactIdNodes.getLength(); x++) {
-                        Node artfactIdNode = artfactIdNodes.item(x);
-                        if (artfactIdNode != null) {
-                            artfactIdNode.setTextContent(pi.getExpectedArtifactId());
-                        }
+                    //Change only if the groupId matches
+                    if (pi.getGroupId().equals(project.getGroupId())){
+                        for (int x = 0; x < artfactIdNodes.getLength(); x++) {
+                            Node artfactIdNode = artfactIdNodes.item(x);
+                            if (artfactIdNode != null) {
+                                artfactIdNode.setTextContent(pi.getExpectedArtifactId());
+                            }
 
+                        }
                     }
                 }
                 XMLUtil.writeXML(doc, subProject.getFile());
