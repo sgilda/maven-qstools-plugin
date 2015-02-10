@@ -30,7 +30,7 @@ import org.jboss.maven.plugins.qstools.config.Rules;
 
 @Component(role = PomNameUtil.class)
 public class PomNameUtil {
-    
+
     @Requirement
     private ProjectUtil projectUtil;
 
@@ -51,8 +51,10 @@ public class PomNameUtil {
                 String targetProject = getTargetProduct(readme);
                 pattern = pomNamePattern.replace("<target-product>", targetProject).replace("<project-folder>", folderName);
             } else {
-                // Not able to get the targetProject. Using the existing name to avoid wrong violations
-                pattern = project.getName();
+                // // Not able to get the targetProject. Using the existing name to avoid wrong violations
+                // pattern = project.getName();
+                pattern = pomNamePattern.replace("<project-folder>", folderName);
+
             }
         }
         return pattern;
@@ -80,5 +82,4 @@ public class PomNameUtil {
         }
     }
 
- 
 }
