@@ -281,6 +281,19 @@ rules:
          - ArtifactIdNameChecker #It doesn't make sense for Mobile
          - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
          - MavenCompilerChecker #Disabled because it uses 1.7 (Android) and 1.6 (Web)
+   - &javaee7samples
+       groupid: org.javaee7
+       ignored-checkers:
+         - FileHeaderChecker #It doesn't use any license header, as we use top-level license (MIT) for each and every file in this repository
+         - LicenseChecker #It doesn't require a pom license
+         - MavenCompilerChecker #It's defined at the root pom.xml
+         - FinalNameChecker #It's not relevant
+         - ValidXMLSchemaChecker #It's not relevant
+         - PrivateApiChecker #It's not relevant check for EAP private APIs
+         - DependencyChecker #Not relevenat for a Demo
+       artifactid-prefix: "" 
+       pom-name-pattern: "Java EE 7 Sample: <project-folder>"
+       pom-name-pattern-submodule: "Java EE 7 Sample: <project-folder> - <submodule-folder>"
 
 #Quickstarts
 quickstarts:
@@ -319,3 +332,6 @@ quickstarts:
    org.jboss.quickstarts.mobile:
      - *default
      - *mobile
+   org.javaee7:
+     - *default
+     - *javaee7samples
