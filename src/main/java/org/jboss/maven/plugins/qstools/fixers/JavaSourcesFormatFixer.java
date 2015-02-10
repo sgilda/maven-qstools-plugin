@@ -75,7 +75,7 @@ public class JavaSourcesFormatFixer extends AbstractBaseFixerAdapter {
         options.put(JavaCore.COMPILER_SOURCE, compilerSource);
 
         // Configure CodeFormatter with Eclipse XML Formatter Profile
-        InputStream xmlInputStream = resources.getFileInputStream(new URL(rules.getEclipseFormatterProfileLocation()));
+        InputStream xmlInputStream = resources.getExpirationalFileInputStream(new URL(rules.getEclipseFormatterProfileLocation()));
         Document formatterSettingsDoc = PositionalXMLReader.readXML(xmlInputStream);
         NodeList settingsNodes = formatterSettingsDoc.getElementsByTagName("setting");
         for (int i = 0; i < settingsNodes.getLength(); i++) {

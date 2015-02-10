@@ -60,7 +60,7 @@ public class GroupIdChecker extends AbstractBaseCheckerAdapter {
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
         if (node != null && !project.getGroupId().equals(groupId)) {
             int lineNumber = XMLUtil.getLineNumberFromNode(node);
-            addViolation(project.getFile(), results, lineNumber, "The project doesn't use groupId '" + groupId + "'");
+            addViolation(project.getFile(), results, lineNumber, "The project groupId[" + project.getGroupId() + "] doesn't use groupId '" + groupId + "'");
         }
 
     }

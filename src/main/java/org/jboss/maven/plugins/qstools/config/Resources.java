@@ -45,6 +45,39 @@ public class Resources {
     /**
      * Return a FileInputStream from a local file.
      * 
+     * The local file is cached and never expires
+     * 
+     * @param url URL from config file
+     * 
+     * @return FileInputStream from a local cached file
+     * @throws ContextException when the plugin isn't configured
+     * @throws IOException in case of any failure to get the file
+     * 
+     */
+    public InputStream getFileInputStream(URL url) throws ContextException, IOException {
+        configure();
+        File localFile = getLocalCacheFile(url);
+        InputStream repoStream;
+        // if file doesn't exist locally
+        if (!localFile.exists()) {
+            log.debug("Local cache file " + localFile + " doesn't exist or cache has been expired");
+            try {
+                log.debug("Retrieving File from Remote repository " + url);
+                repoStream = retrieveFileFromRemoteRepository(url);
+                setCachedRepoStream(repoStream, url);
+                log.debug("Forcing the use of local file after download file without error from " + url);
+                localFile = getLocalCacheFile(url);
+            } catch (Exception e) {
+                log.warn("It was not possible to contact the repository at " + url + " . Cause " + e.getMessage());
+                throw new IOException(e);
+            }
+        }
+        return new FileInputStream(localFile);
+    }
+
+    /**
+     * Return a FileInputStream from a local file.
+     * 
      * The local file is cached based on {@link Constants#CACHE_EXPIRES_SECONDS}
      * 
      * If the caches expires, them the file is downloaded again
@@ -56,9 +89,9 @@ public class Resources {
      * @throws ContextException when the plugin isn't configured
      * 
      */
-    public InputStream getFileInputStream(URL url) throws FileNotFoundException, ContextException {
+    public InputStream getExpirationalFileInputStream(URL url) throws FileNotFoundException, ContextException {
         configure();
-        InputStream repoStream = getCachedRepoStream(false, url);
+        InputStream repoStream = getExpirationalCachedRepoStream(false, url);
         // if cache expired
         if (repoStream == null) {
             log.debug("Local cache file " + getLocalCacheFile(url) + " doesn't exist or cache has been expired");
@@ -67,17 +100,17 @@ public class Resources {
                 repoStream = retrieveFileFromRemoteRepository(url);
                 setCachedRepoStream(repoStream, url);
                 log.debug("Forcing the use of local cache after download file without error from " + url);
-                repoStream = getCachedRepoStream(true, url);
+                repoStream = getExpirationalCachedRepoStream(true, url);
             } catch (Exception e) {
                 log.warn("It was not possible to contact the repository at " + url + " . Cause " + e.getMessage());
                 log.warn("Falling back to cache!");
-                repoStream = getCachedRepoStream(true, url);
+                repoStream = getExpirationalCachedRepoStream(true, url);
             }
         }
         return repoStream;
     }
 
-    private InputStream getCachedRepoStream(final boolean force, URL url) throws FileNotFoundException {
+    private InputStream getExpirationalCachedRepoStream(final boolean force, URL url) throws FileNotFoundException {
         final String logmessage = "Local file %1s %2s used! Reason: Force:[%3b] - LastModification: %4d/%5d";
         File localCacheFile = getLocalCacheFile(url);
         if (localCacheFile.exists()) {

@@ -53,7 +53,7 @@ public class MavenApprovedRepositoriesChecker extends AbstractBaseCheckerAdapter
     @Override
     public void checkProject(MavenProject project, Document doc, Map<String, List<Violation>> results) throws Exception {
         Rules rules = getConfigurationProvider().getQuickstartsRules(project.getGroupId());
-        if (!rules.isCheckerIgnored(MavenCentralRepositoryChecker.class)) {
+        if (!rules.isCheckerIgnored(MavenCentralRepositoryChecker.class) || rules.isCheckerIgnored(getClass())) {
             this.setCheckerMessage("This checker was ignored because MavenCentralRepositoryChecker is active.");
         } else {
             Node repositoriesNode = (Node) getxPath().evaluate("/project/repositories", doc, XPathConstants.NODE);
