@@ -90,15 +90,25 @@ public class ArtifactIdNameFixer implements QSFixer {
                 // Update each incorrect artifactId dependency
                 for (ArtifactIdNameUtil.PomInformation pi : pomsWithInvalidArtifactIds) {
                     // It can have more than one occurrence on the same file
-                    NodeList artfactIdNodes = (NodeList) xPath.evaluate("//artifactId[text()='" + pi.getActualArtifactId() + "']", doc, XPathConstants.NODESET);
-                    //Change only if the groupId matches
-                    if (pi.getGroupId().equals(project.getGroupId())){
-                        for (int x = 0; x < artfactIdNodes.getLength(); x++) {
-                            Node artfactIdNode = artfactIdNodes.item(x);
-                            if (artfactIdNode != null) {
-                                artfactIdNode.setTextContent(pi.getExpectedArtifactId());
+                    NodeList dependencyNodes = (NodeList) xPath.evaluate("//dependency", doc, XPathConstants.NODESET);
+                    for (int x = 0; x < dependencyNodes.getLength(); x++) {
+                        Node dependencyNode = dependencyNodes.item(x);
+                        NodeList childs = dependencyNode.getChildNodes();
+                        String groupId = null;
+                        String artifactId = null;
+                        Node artifactIdNode = null;
+                        for (int i = 0; i < childs.getLength(); i++) {
+                            Node node = childs.item(i);
+                            if (node.getNodeName().equals("groupId")) {
+                                groupId = node.getTextContent();
                             }
-
+                            if (node.getNodeName().equals("artifactId")) {
+                                artifactId = node.getTextContent();
+                                artifactIdNode = node;
+                            }
+                        }
+                        if (groupId.equals(pi.getGroupId()) && artifactId.equals(pi.getActualArtifactId())){
+                            artifactIdNode.setTextContent(pi.getExpectedArtifactId());
                         }
                     }
                 }
