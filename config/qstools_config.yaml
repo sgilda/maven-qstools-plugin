@@ -291,6 +291,7 @@ rules:
          - ValidXMLSchemaChecker #It's not relevant
          - PrivateApiChecker #It's not relevant check for EAP private APIs
          - DependencyChecker #Not relevenat for a Demo
+         - ReadmeChecker #Samples readme doesn't use all metadatas
        artifactid-prefix: "" 
        pom-name-pattern: "Java EE 7 Sample: <project-folder>"
        pom-name-pattern-submodule: "Java EE 7 Sample: <project-folder> - <submodule-folder>"
