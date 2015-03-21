@@ -262,7 +262,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             plugin(
                 groupId("org.apache.maven.plugins"),
                 artifactId("maven-jxr-plugin"),
-                version("2.4")
+                version("2.5")
             ),
             goal("aggregate"),
             configuration(),
@@ -276,7 +276,7 @@ public class QSCheckerReporter extends AbstractMavenReport {
             plugin(
                 groupId("org.apache.maven.plugins"),
                 artifactId("maven-jxr-plugin"),
-                version("2.4")
+                version("2.5")
             ),
             goal("test-aggregate"),
             configuration(),

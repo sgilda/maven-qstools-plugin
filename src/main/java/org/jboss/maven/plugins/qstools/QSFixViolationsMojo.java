@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -37,8 +38,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.StringUtils;
 import org.codehaus.plexus.PlexusContainer;
 import org.jboss.maven.plugins.qstools.fixers.QSFixer;
-
-import edu.emory.mathcs.backport.java.util.TreeSet;
 
 /**
  * This Mojo is used to check if all Dependencies declared in a {@code<dependencyManagement/>} section of a BOM is resolvable.
@@ -77,7 +76,6 @@ public class QSFixViolationsMojo extends AbstractMojo {
      * 
      * @see org.apache.maven.plugin.Mojo#execute()
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -91,7 +89,7 @@ public class QSFixViolationsMojo extends AbstractMojo {
                 List<QSFixer> fixersFound = container.lookupList(QSFixer.class);
                 List<QSFixer> fixers = new ArrayList<QSFixer>(fixersFound);
                 Collections.sort(fixers, fixerComparator);
-                Set<QSFixer> fixerSelected = new TreeSet(fixerComparator);
+                Set<QSFixer> fixerSelected = new TreeSet<QSFixer>(fixerComparator);
 
                 while (!answer.matches("(Q|q)|(R|r)")) {
                     getLog().warn("Please select the Fixers you want to run. Selected Fixers are denoted by a leading '*'.");
