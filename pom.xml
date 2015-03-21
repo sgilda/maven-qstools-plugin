@@ -59,6 +59,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <maven.version>3.2.5</maven.version>
+        <aether.version>0.9.0.M2</aether.version>
         <httpclient.version>4.0.1</httpclient.version>
         <version.shrinkwrap.resolvers>2.1.1</version.shrinkwrap.resolvers>
         <yaml.version>1.11</yaml.version>
@@ -98,10 +100,33 @@
     </distributionManagement>
 
     <dependencies>
+        <!--  Maven Dependencies -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.2.3</version>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aether-impl</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aether-api</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-settings</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.reporting</groupId>
+            <artifactId>maven-reporting-impl</artifactId>
+            <version>2.3</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -112,24 +137,13 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.3</version>
+            <version>3.4</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.twdata.maven</groupId>
-            <artifactId>mojo-executor</artifactId>
-            <version>${mojo-executor.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${yaml.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
-        </dependency>
+        
+        <!--  End of Maven Dependencies -->
+        
+        
         
         <!-- Eclipse Dependencies -->
 
@@ -152,6 +166,64 @@
         </dependency>
 
         <!-- end of Eclipse Dependencies -->
+        
+        <!-- Aether -->
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-aether-provider</artifactId>
+            <version>${maven.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aether-impl</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aether-api</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-util</artifactId>
+            <version>${aether.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.aether</groupId>
+            <artifactId>aether-spi</artifactId>
+            <version>${aether.version}</version>
+        </dependency>
+        <!-- End Ather -->
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-interpolation</artifactId>
+            <version>1.22</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.twdata.maven</groupId>
+            <artifactId>mojo-executor</artifactId>
+            <version>${mojo-executor.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${yaml.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jboss.jdf</groupId>
@@ -170,6 +242,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
 
         <!-- Shrinkwrap resolver -->
         <dependency>
@@ -177,6 +254,20 @@
             <artifactId>shrinkwrap-resolver-depchain</artifactId>
             <version>${version.shrinkwrap.resolvers}</version>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>aether-impl</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aether-api</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aether-connector-wagon</artifactId>
+                    <groupId>org.eclipse.aether</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Other Plugins -->
@@ -195,6 +286,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
             <version>2.5</version>
+            <scope>provided</scope>
             <type>maven-plugin</type>
             <exclusions>
                 <exclusion>
@@ -206,12 +298,16 @@
         <dependency>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-site-plugin</artifactId>
-            <!-- Don't change this version -->
-            <version>2.2</version>
+            <version>3.3</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>xercesImpl</artifactId>
                     <groupId>xerces</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>aether-util</artifactId>
+                    <groupId>org.sonatype.aether</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
