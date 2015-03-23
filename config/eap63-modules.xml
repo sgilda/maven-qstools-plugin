@@ -5328,8 +5328,8 @@
         <source-xml>system/layers/base/org/jboss/logmanager/main/module.xml</source-xml>
         <properties/>
         <resources>
-            <jar file="system/layers/base/org/jboss/logmanager/main/jboss-logmanager-1.6.0.Final-redhat-1.jar">
-                <gav groupId="org.jboss.logmanager" artifactId="jboss-logmanager" version="1.6.0.Final-redhat-1"/>
+            <jar file="system/layers/base/org/jboss/logmanager/main/jboss-logmanager-1.7.0-SNAPSHOT-redhat-1.jar">
+                <gav groupId="org.jboss.logmanager" artifactId="jboss-logmanager" version="1.7.0-SNAPSHOT-redhat-1"/>
             </jar>
         </resources>
         <packages>
