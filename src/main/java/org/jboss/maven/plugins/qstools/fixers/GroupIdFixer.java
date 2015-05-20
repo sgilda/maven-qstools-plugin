@@ -19,14 +19,14 @@ public class GroupIdFixer extends AbstractBaseFixerAdapter {
 
     @Override
     public String getFixerDescription() {
-        return "Make all projects to use the same groupId especified with -Dqstool.groupId ";
+        return "Make all projects to use the same groupId especified with -Dqstools.groupId ";
     }
 
     @Override
     public void fixProject(MavenProject project, Document doc) throws Exception {
         String groupId = System.getProperty("qstools.groupId");
         if (groupId == null) {
-            throw new IllegalAccessException("You should specifiy -Dqstool.groupId at the command line for this checker");
+            throw new IllegalAccessException("You should specifiy -Dqstools.groupId at the command line for this checker");
         }
         Node node = (Node) getxPath().evaluate("/project/groupId", doc, XPathConstants.NODE);
         if (node != null && !project.getGroupId().equals(groupId)) {
