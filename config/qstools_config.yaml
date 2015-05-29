@@ -50,10 +50,10 @@ rules:
          - org.jboss.bom.wfk|jboss-javaee-6.0-with-tools: org.jboss.bom|jboss-javaee-7.0-eap-with-tools|version.jboss.bom.eap
          - org.jboss.bom.wfk|jboss-javaee-6.0-with-deltaspike: org.jboss.bom|jboss-javaee-7.0-eap-with-deltaspike|version.jboss.bom.eap
          - org.jboss.bom.eap|jboss-javaee-6.0-with-resteasy: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
-         - org.jboss.bom.eap|jboss-javaee-6.0-with-hibernate: : org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
-         - org.jboss.bom.eap|jboss-javaee-6.0-with-logging: : org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
-         - org.jboss.bom.eap|jboss-javaee-6.0-with-security: : org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
-         - org.jboss.bom.eap|jboss-javaee-6.0-with-transactions: : org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
+         - org.jboss.bom.eap|jboss-javaee-6.0-with-hibernate: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
+         - org.jboss.bom.eap|jboss-javaee-6.0-with-logging: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
+         - org.jboss.bom.eap|jboss-javaee-6.0-with-security: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
+         - org.jboss.bom.eap|jboss-javaee-6.0-with-transactions: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
          - org.wildfly.bom|jboss-javaee-7.0-with-hibernate: REMOVE
 
        #Final name patterns
