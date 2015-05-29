@@ -46,7 +46,7 @@ rules:
        project-boms-migration:
          - oldGroupId|oldArtifactId: newGroupId|newArtifactId|property  
          - oldGroupId|oldArtifactId: REMOVE #This will fully remove the BOM and its comment 
-         - org.wildfly.bom|jboss-javaee-7.0-with-tools: org.jboss.bom|jboss-javaee-7.0-with-tools|version.jboss.bom
+         - org.wildfly.bom|jboss-javaee-7.0-with-tools: org.jboss.bom|jboss-javaee-7.0-eap-with-tools|version.jboss.bom.eap
          - org.wildfly.bom|jboss-javaee-7.0-with-hibernate: REMOVE
 
        #Final name patterns
