@@ -195,7 +195,7 @@ public class ValidXMLSchemaChecker implements QSChecker {
                     } else if (namespaceURI != null) {
                         URI uri = new URI(baseURI == null ? "" : baseURI);
                         URL url = uri.resolve(systemId == null ? "" : systemId).toURL();
-                        if (url.getProtocol().equals("http")) {
+                        if (url.getProtocol().equals("http") && url.toString().endsWith(".xsd")) {
                             InputStream is = resources.getFileInputStream(url);
                             input.setBaseURI(baseURI);
                             input.setByteStream(is);
