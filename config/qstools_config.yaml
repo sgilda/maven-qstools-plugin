@@ -33,7 +33,7 @@ rules:
 
        #Expected JDF BOM Version
        expected-bom-versions:
-         - org.jboss.bom: 7.0.0-build-1
+         - org.jboss.bom: 7.0.0-build-7
          - org.jboss.bom.eap: 6.4.0.GA
          - org.jboss.bom.jdg: 6.2.0-build-2
          - org.jboss.bom.wfk: 2.7.0-redhat-1
