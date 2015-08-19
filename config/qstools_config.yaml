@@ -117,7 +117,7 @@ rules:
          - "Level:": "(Beginner|Intermediate|Advanced)\\s\\s"
          - "Technologies:": "^(.(?!and))*\\s\\s"
          - "Summary:": "\\w.{100,155}\\s\\s"
-         - "Target Product:": "(JBoss EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|JBoss Unified Push)\\s\\s"
+         - "Target Product:": "(JBoss EAP|WFK|Portal|JDG|Operations Network|Fuse|FSW|BRMS|BPM Suite|Sandbox|JBoss Unified Push|JBoss A-MQ)\\s\\s"
          - "Source:": "<(http|https)://\\w.*>\\s\\s" #<http://www.etc...>
 
        #element order in pom.xml
@@ -249,16 +249,12 @@ rules:
    - &portal
        groupid: org.jboss.quickstarts.portal
        ignored-checkers:
-         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
          - ArtifactIdNameChecker #Asked by PPalaga do disable it
          - PomNameChecker #Asked by PPalaga do disable it
          - DependencyChecker #Asked by PPalaga do disable it - because of org.gatein.pc:pc-portlet:${pc-portlet.version}
    - &fuse
-       expected-compiler-source: "1.7"
        groupid: org.jboss.quickstarts.fuse
        artifactid-prefix: ""
-       ignored-checkers:
-         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
        #Ignored property on UnusedPropertiesChecker
        ignored-unused-properties:
          - fabric8.features
@@ -297,14 +293,12 @@ rules:
        artifactid-prefix: "switchyard-"
        pom-name-pattern: "SwitchYard Quickstart: <project-folder>"
        pom-name-pattern-submodule: "SwitchYard Quickstart: <project-folder> - <submodule-folder>"
-
    - &mobile
        groupid: org.jboss.quickstarts.mobile
        pom-name-pattern: "<target-product> Quickstart: <project-folder>"
        pom-name-pattern-submodule: "<target-product> Quickstart: <project-folder> - <submodule-folder>"
        ignored-checkers:
          - ArtifactIdNameChecker #It doesn't make sense for Mobile
-         - MavenCentralRepositoryChecker #Product doesn't use Maven Central repository
          - MavenCompilerChecker #Disabled because it uses 1.7 (Android) and 1.6 (Web)
    - &javaee7samples
        groupid: org.javaee7
@@ -320,6 +314,9 @@ rules:
        artifactid-prefix: "" 
        pom-name-pattern: "Java EE 7 Sample: <project-folder>"
        pom-name-pattern-submodule: "Java EE 7 Sample: <project-folder> - <submodule-folder>"
+   - &amq
+       groupid: org.jboss.quickstart.amq
+       artifactid-prefix: ""
 
 #Quickstarts
 quickstarts:
@@ -361,3 +358,6 @@ quickstarts:
    org.javaee7:
      - *default
      - *javaee7samples
+   org.jboss.quickstart.amq:
+     - *default
+     - *amq
