@@ -19,7 +19,7 @@ rules:
    - &default
        #Expected source code
        expected-compiler-source: "1.8"
-       
+
        #List of JBoss Developer Maven approved repositories - Format: URL|RELEASES|SNAPSHOT
        maven-approve-repositories:
          - redhat-ga-repository:  https://maven.repository.redhat.com/ga/|true|false
@@ -27,7 +27,7 @@ rules:
          - jboss-public-repository: https://repository.jboss.org/nexus/content/groups/public/|true|true
          - fuse-public-repository: https://repo.fusesource.com/nexus/content/groups/public/|true|true
          - jboss-developer-staging-repository: http://jboss-developer.github.io/temp-maven-repo/|true|false
-         
+
        #Comment that should be added for repository definition
        maven-repositories-comment: " Activate JBoss Product Maven repository.\n\n        NOTE: Configuring the Maven repository in the pom.xml file is not a recommended procedure\n        and is only done here to make it easier to use the quickstarts.\n\n        For more information about how to configure Maven for your application,\n        see the section entitled 'Use the Maven Repository'\n        in the Development Guide for Red Hat JBoss Enterprise Application Platform located here:\n\n        https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/ \n    "
 
@@ -41,11 +41,11 @@ rules:
          - org.jboss.bom.sandbox: 1.0.0-SNAPSHOT
          - org.jboss.spec: 1.0.3.Final
          - org.jboss.as: 7.4.1.Final-redhat-3
-         
+
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
-         - oldGroupId|oldArtifactId: newGroupId|newArtifactId|property  
-         - oldGroupId|oldArtifactId: REMOVE #This will fully remove the BOM and its comment 
+         - oldGroupId|oldArtifactId: newGroupId|newArtifactId|property
+         - oldGroupId|oldArtifactId: REMOVE #This will fully remove the BOM and its comment
          - org.wildfly.bom|jboss-javaee-7.0-with-tools: org.jboss.bom|jboss-javaee-7.0-eap-with-tools|version.jboss.bom.eap
          - org.jboss.bom.eap|jboss-javaee-6.0-with-resteasy: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
          - org.jboss.bom.eap|jboss-javaee-6.0-with-hibernate: org.jboss.bom|jboss-javaee-7.0-eap|version.jboss.bom.eap
@@ -77,11 +77,11 @@ rules:
 
        #Header file pattern
        header-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/header.txt"
-       
+
        #license file and header definition for FileHeaderFixer
        license-file: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/default/license.txt"
        header-definition: "https://raw.github.com/jboss-developer/maven-qstools-plugin/master/config/headerdefinition.xml"
-       
+
        #Eclipse Formatter Profile XML settings Location. Used to run Formatter Fixers
        eclipse-formatter-location: "https://raw.github.com/jboss/ide-config/master/eclipse/jboss-java-formatter.xml"
 
@@ -105,7 +105,7 @@ rules:
          - m2e.jpa.activation #Specific for m2e plugin
          - m2eclipse.wtp.contextRoot #Specific for m2e plugin
          - m2e.apt.activation #Specific for m2e plugin
-       
+
        #Ignored properties on SamePropertyValueChecker
        ignored-differet-value-properties:
          - maven.exec.mainClass #Each Project can have your own main Class
@@ -226,7 +226,7 @@ rules:
        excludes-FileHeaderFixer:
            - "**/spring-petclinic/**"
            - "**/test/resources/xml/*.xml"
-           
+
        #Doesn't check Private APIs on test folder
        excludes-PrivateApiChecker:
            - "**/test/**"
@@ -282,7 +282,7 @@ rules:
          - FinalNameChecker #QStools isn't an application
    - &stacks
        groupid: org.jboss.stacks
-       artifactid-prefix: "" 
+       artifactid-prefix: ""
        pom-name-pattern: "QSTools Maven Plugin"
        ignored-checkers:
          - ReadmeChecker #Stacks-client is not a quickstart
@@ -311,7 +311,7 @@ rules:
          - PrivateApiChecker #It's not relevant check for EAP private APIs
          - DependencyChecker #Not relevenat for a Demo
          - ReadmeChecker #Samples readme doesn't use all metadatas
-       artifactid-prefix: "" 
+       artifactid-prefix: ""
        pom-name-pattern: "Java EE 7 Sample: <project-folder>"
        pom-name-pattern-submodule: "Java EE 7 Sample: <project-folder> - <submodule-folder>"
    - &amq
