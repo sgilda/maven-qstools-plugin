@@ -106,6 +106,7 @@ rules:
          - m2e.jpa.activation #Specific for m2e plugin
          - m2eclipse.wtp.contextRoot #Specific for m2e plugin
          - m2e.apt.activation #Specific for m2e plugin
+         - openshift.enabled
 
        #Ignored properties on SamePropertyValueChecker
        ignored-differet-value-properties:
