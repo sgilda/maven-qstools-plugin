@@ -41,6 +41,7 @@ rules:
          - org.jboss.bom.sandbox: 1.0.0-SNAPSHOT
          - org.jboss.spec: 1.0.3.Final
          - org.jboss.as: 7.4.1.Final-redhat-3
+         - org.wildfly.bom: 9.0.0.Final
 
        #Community to Product BOMs - Used only on 'updateBoms' Goal
        project-boms-migration:
@@ -175,6 +176,7 @@ rules:
          - org.jboss.spec|jboss-javaee-7.0: version.jboss.spec.javaee.7.0
          - org.jboss.weld.se: version.jboss.weld
          - org.jboss.weld.servlet: version.jboss.weld
+         - org.wildfly.bom: version.wildfly.bom
          #plugins
          - org.codehaus.mojo|exec-maven-plugin: version.exec.plugin
          - org.jboss.as.plugins: version.jboss.maven.plugin
@@ -234,6 +236,11 @@ rules:
    #Specific rules
    - &sandbox
        groupid: org.jboss.quickstarts.sandbox
+   - &wildfly
+       groupid: org.wildfly.quickstarts
+       #Maven ArtifactId prefix
+       artifactid-prefix: "wildfly-"
+       ignored-checkers:
    - &wfk
        groupid: org.jboss.quickstarts.wfk
        #Community to Product BOMs - Used only on 'updateBoms' Goal
@@ -322,6 +329,9 @@ rules:
 quickstarts:
    org.jboss.quickstarts.eap:
      - *default
+   org.wildfly.quickstarts:
+     - *default
+     - *wildfly
    org.jboss.quickstarts.wfk:
      - *default
      - *wfk
