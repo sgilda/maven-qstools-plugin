@@ -163,10 +163,10 @@ rules:
          - org.jboss.as: version.jboss.as
          - org.jboss.bom: version.jboss.bom
          - org.jboss.bom|gatein-3.6-bom: version.jboss.bom.gatein #consider the artifactId for GateIn
-         - org.jboss.bom|jboss-javaee-7.0-eap: version.jboss.bom.eap
-         - org.jboss.bom|jboss-javaee-7.0-eap-with-tools: version.jboss.bom.eap
-         - org.jboss.bom|jboss-javaee-7.0-eap-with-spring3: version.jboss.bom.eap
-         - org.jboss.bom|jboss-javaee-7.0-eap-with-spring4: version.jboss.bom.eap
+         - org.jboss.bom|jboss-eap-javaee7: version.jboss.bom.eap
+         - org.jboss.bom|jboss-eap-javaee7-with-tools: version.jboss.bom.eap
+         - org.jboss.bom|jboss-eap-javaee7-with-spring3: version.jboss.bom.eap
+         - org.jboss.bom|jboss-eap-javaee7-with-spring4: version.jboss.bom.eap
          - org.jboss.bom.eap: version.jboss.bom.eap
          - org.jboss.bom.brms: version.jboss.bom.brms
          - org.jboss.bom.wfk: version.jboss.bom.eap
