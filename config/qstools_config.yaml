@@ -23,7 +23,7 @@ rules:
        #List of JBoss Developer Maven approved repositories - Format: URL|RELEASES|SNAPSHOT
        maven-approve-repositories:
          - redhat-ga-repository:  https://maven.repository.redhat.com/ga/|true|false
-         - redhat-earlyaccess-repository: https://maven.repository.redhat.com/earlyaccess/|true|false
+         - redhat-earlyaccess-repository: https://maven.repository.redhat.com/earlyaccess/all/|true|false
          - jboss-public-repository: https://repository.jboss.org/nexus/content/groups/public/|true|true
          - fuse-public-repository: https://repo.fusesource.com/nexus/content/groups/public/|true|true
          - jboss-developer-staging-repository: http://jboss-developer.github.io/temp-maven-repo/|true|false
@@ -154,7 +154,7 @@ rules:
 
        #Property names - Defined at: https://mojo.redhat.com/docs/DOC-167768
        #Format - groupId: recommended.version.name // Only GroupId check
-       #Format - groupId|aertifactId: recommended.version.name // GroupId + ArtifactId check
+       #Format - groupId|artifactId: recommended.version.name // GroupId + ArtifactId check
        property-names:
          #boms
          - com.sun.faces: version.com.sun.faces.jsf.impl
