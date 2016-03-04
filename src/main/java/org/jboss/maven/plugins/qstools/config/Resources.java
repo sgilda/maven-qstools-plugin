@@ -12,9 +12,12 @@ import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.settings.Proxy;
@@ -27,8 +30,6 @@ import org.jboss.maven.plugins.qstools.Constants;
 @Component(role = Resources.class)
 public class Resources {
 
-    @Requirement
-    private ConfigurationProvider configurationProvider;
 
     @Requirement
     private Context context;
@@ -153,8 +154,9 @@ public class Resources {
     private InputStream retrieveFileFromRemoteRepository(URL url) throws Exception {
         if (url.getProtocol().startsWith("http")) {
             HttpGet httpGet = new HttpGet(url.toURI());
-            DefaultHttpClient client = new DefaultHttpClient();
-            configureProxy(client);
+            CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+            CloseableHttpClient client = HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build();
+            configureProxy(credentialsProvider, httpGet);
             HttpResponse httpResponse = client.execute(httpGet);
             switch (httpResponse.getStatusLine().getStatusCode()) {
                 case 200:
@@ -178,20 +180,23 @@ public class Resources {
         return null;
     }
 
-    private void configureProxy(DefaultHttpClient client) {
+    private void configureProxy(CredentialsProvider credentialsProvider, HttpGet request) {
         Proxy proxyConfig = null;
         if (mavenSession.getSettings().getProxies().size() > 0) {
             proxyConfig = mavenSession.getSettings().getProxies().get(0);
         }
         if (proxyConfig != null) {
             HttpHost proxy = new HttpHost(proxyConfig.getHost(), proxyConfig.getPort());
-            client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            RequestConfig config = RequestConfig.custom()
+                .setProxy(proxy)
+                .build();
+            request.setConfig(config);
             String proxyUsername = proxyConfig.getUsername();
             if (proxyUsername != null && !proxyUsername.isEmpty()) {
                 String proxyPassword = proxyConfig.getPassword();
                 AuthScope authScope = new AuthScope(proxyConfig.getHost(), proxyConfig.getPort());
                 UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(proxyUsername, proxyPassword);
-                client.getCredentialsProvider().setCredentials(authScope, credentials);
+                credentialsProvider.setCredentials(authScope, credentials);
             }
         }
     }
