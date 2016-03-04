@@ -149,7 +149,7 @@ This is an example of configuration:
             <plugin>
                 <groupId>org.jboss.maven.plugins</groupId>
                 <artifactId>qstools</artifactId>
-                <version>1.6.3.Final</version>
+                <version>1.7.0-SNAPSHOT</version>
                 <configuration>
                     <projectGitRepo>git://github.com/jboss-developer/jboss-eap-quickstarts.git</projectGitRepo>
                     <projectPath>kitchensink-ear</projectPath>
